@@ -65,3 +65,4 @@ F:\projects\FIONA\FileSorter.UI\obj\Debug\net8.0\refint\FileSorter.UI.dll
 F:\projects\FIONA\FileSorter.UI\obj\Debug\net8.0\FileSorter.UI.pdb
 F:\projects\FIONA\FileSorter.UI\obj\Debug\net8.0\FileSorter.UI.genruntimeconfig.cache
 F:\projects\FIONA\FileSorter.UI\obj\Debug\net8.0\ref\FileSorter.UI.dll
+F:\projects\FIONA\FileSorter.UI\obj\Debug\net8.0\FileSorter.UI.sourcelink.json

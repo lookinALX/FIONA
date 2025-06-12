@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSorter.Platform", "File
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSorter.CLI", "FileSorter.CLI\FileSorter.CLI.csproj", "{32586030-B339-422E-9F86-2013B8BFCA13}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{8794F6AB-7B60-4BDF-81DC-A442DEFFA74B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{32586030-B339-422E-9F86-2013B8BFCA13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32586030-B339-422E-9F86-2013B8BFCA13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32586030-B339-422E-9F86-2013B8BFCA13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8794F6AB-7B60-4BDF-81DC-A442DEFFA74B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8794F6AB-7B60-4BDF-81DC-A442DEFFA74B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8794F6AB-7B60-4BDF-81DC-A442DEFFA74B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8794F6AB-7B60-4BDF-81DC-A442DEFFA74B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

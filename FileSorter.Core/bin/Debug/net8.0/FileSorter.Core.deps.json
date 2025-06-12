@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "FileSorter.Core/1.0.0": {
+        "runtime": {
+          "FileSorter.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FileSorter.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
