@@ -1,78 +1,35 @@
 ﻿namespace FileSorter.Core.Models;
 
-/// <summary>
-/// Represents a file with its metadata and properties
-/// </summary>
 public class FileItem
 {
-    /// <summary>
-    /// File name with extension
-    /// </summary>
     public string Name { get; set; }
     
-    /// <summary>
-    /// File extension (including the dot, e.g., ".txt")
-    /// </summary>
     public string Extension { get; set; }
     
-    /// <summary>
-    /// Full path to the file
-    /// </summary>
     public string FullPath { get; set; }
     
-    /// <summary>
-    /// File size in bytes
-    /// </summary>
     public long Size { get; set; }
     
-    /// <summary>
-    /// Directory containing the file
-    /// </summary>
     public string? Directory { get; set; }
     
-    /// <summary>
-    /// Date when the file was last modified
-    /// </summary>
     public DateTime LastModifiedDate { get; set; }
     
-    /// <summary>
-    /// Date when the file was created
-    /// </summary>
     public DateTime CreationDate { get; set; }
     
-    /// <summary>
-    /// File attributes (Hidden, ReadOnly, System, etc.)
-    /// </summary>
     public FileAttributes Attributes { get; set; }
     
-    /// <summary>
-    /// Indicates if the file is hidden
-    /// </summary>
     public bool IsHidden => Attributes.HasFlag(FileAttributes.Hidden);
     
-    /// <summary>
-    /// Indicates if the file is read-only
-    /// </summary>
     public bool IsReadOnly => Attributes.HasFlag(FileAttributes.ReadOnly);
-
-    /// <summary>
-    /// Indicates if the file is a system file
-    /// </summary>
+    
     public bool IsSystemFile => Attributes.HasFlag(FileAttributes.System);
     
-    /// <summary>
-    /// Category of the file (Document, Image, Video, etc.)
-    /// </summary>
     public FileCategory Category => GetFileCategory(Extension);
     
     public FileItem()
     {
     }
-
-    /// <summary>
-    /// Creates a FileItem from a FileInfo object
-    /// </summary>
-    /// <param name="fileInfo">FileInfo object</param>
+    
     public FileItem(FileInfo fileInfo)
     {
         ArgumentNullException.ThrowIfNull(fileInfo);
@@ -87,9 +44,6 @@ public class FileItem
         Attributes = fileInfo.Attributes;
     }
     
-    /// <summary>
-    /// Gets file category based on extension
-    /// </summary>
     private static FileCategory GetFileCategory(string extension)
     {
         return extension?.ToLower() switch
