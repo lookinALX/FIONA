@@ -8,7 +8,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4eeb05db-6b40-467b-aa56-e14f9aa94ec5" name="Changes" comment="" />
+    <list default="true" id="4eeb05db-6b40-467b-aa56-e14f9aa94ec5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.FIONA/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.FIONA/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/FileSorter.CLI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/FileSorter.CLI.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/FileSorter.CLI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/FileSorter.CLI.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/Services/ISortingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/Services/ISortingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/Services/SortingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/Services/SortingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfoInputs.cache" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,6 +30,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/2832e8c2b81f4641b3863f406ce3a519c90938/c0/83a58f10/FileOptions.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
@@ -30,6 +47,7 @@
     &quot;.NET Project.FileSorter.CLI.executor&quot;: &quot;Run&quot;,
     &quot;.NET Project.FileSorter.UI.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -89,6 +107,8 @@
       <workItem from="1749723089728" duration="291000" />
       <workItem from="1749723391910" duration="365000" />
       <workItem from="1749760037030" duration="3341000" />
+      <workItem from="1750276540283" duration="6194000" />
+      <workItem from="1750315335711" duration="2186000" />
     </task>
     <servers />
   </component>
