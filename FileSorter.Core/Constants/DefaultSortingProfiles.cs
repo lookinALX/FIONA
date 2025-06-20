@@ -4,64 +4,73 @@ namespace FileSorter.Core.Constants;
 
 public class DefaultSortingProfiles
 {
-    public static SortingProfile ByExtension => new()
+    public static GroupingProfile ByExtension => new()
     {
-        PrimaryCriteria = SortingCriteria.Extension,
-        SecondaryCriteria = SortingCriteria.None,
+        PrimaryCriteria = GroupingCriteria.Extension,
+        SecondaryCriteria = GroupingCriteria.None,
         DatePrimaryGroupingOption = DateGroupingOption.None,
         DateSecondaryGroupingOption = DateGroupingOption.None,
         FileOperationType = FileOperationType.Move
     };
     
-    public static SortingProfile ByFileType => new()
+    public static GroupingProfile ByFileType => new()
     {
-        PrimaryCriteria = SortingCriteria.FileCategory,
-        SecondaryCriteria = SortingCriteria.Extension,
+        PrimaryCriteria = GroupingCriteria.FileCategory,
+        SecondaryCriteria = GroupingCriteria.Extension,
         DatePrimaryGroupingOption = DateGroupingOption.None,
         DateSecondaryGroupingOption = DateGroupingOption.None,
         FileOperationType = FileOperationType.Move
     };
     
-    public static SortingProfile ByCreationYear => new()
+    public static GroupingProfile ByCreationYear => new()
     {
-        PrimaryCriteria = SortingCriteria.CreationDate,
-        SecondaryCriteria = SortingCriteria.None,
+        PrimaryCriteria = GroupingCriteria.CreationDate,
+        SecondaryCriteria = GroupingCriteria.None,
         DatePrimaryGroupingOption = DateGroupingOption.Year,
         DateSecondaryGroupingOption = DateGroupingOption.None,
         FileOperationType = FileOperationType.Move
     };
     
-    public static SortingProfile ByModificationYear => new()
+    public static GroupingProfile ByOldestYear => new()
     {
-        PrimaryCriteria = SortingCriteria.ModificationDate,
-        SecondaryCriteria = SortingCriteria.None,
+        PrimaryCriteria = GroupingCriteria.OldestDate,
+        SecondaryCriteria = GroupingCriteria.None,
         DatePrimaryGroupingOption = DateGroupingOption.Year,
         DateSecondaryGroupingOption = DateGroupingOption.None,
         FileOperationType = FileOperationType.Move
     };
     
-    public static SortingProfile ByCreationYearThenMonth => new()
+    public static GroupingProfile ByModificationYear => new()
     {
-        PrimaryCriteria = SortingCriteria.CreationDate,
-        SecondaryCriteria = SortingCriteria.CreationDate,
+        PrimaryCriteria = GroupingCriteria.ModificationDate,
+        SecondaryCriteria = GroupingCriteria.None,
+        DatePrimaryGroupingOption = DateGroupingOption.Year,
+        DateSecondaryGroupingOption = DateGroupingOption.None,
+        FileOperationType = FileOperationType.Move
+    };
+    
+    public static GroupingProfile ByCreationYearThenMonth => new()
+    {
+        PrimaryCriteria = GroupingCriteria.CreationDate,
+        SecondaryCriteria = GroupingCriteria.CreationDate,
         DatePrimaryGroupingOption = DateGroupingOption.Year,
         DateSecondaryGroupingOption = DateGroupingOption.Month,
         FileOperationType = FileOperationType.Move
     };
     
-    public static SortingProfile ByModificationYearThenMonth => new()
+    public static GroupingProfile ByModificationYearThenMonth => new()
     {
-        PrimaryCriteria = SortingCriteria.ModificationDate,
-        SecondaryCriteria = SortingCriteria.None,
+        PrimaryCriteria = GroupingCriteria.ModificationDate,
+        SecondaryCriteria = GroupingCriteria.None,
         DatePrimaryGroupingOption = DateGroupingOption.Year,
         DateSecondaryGroupingOption = DateGroupingOption.Month,
         FileOperationType = FileOperationType.Move
     };
     
-    public static SortingProfile TypeThenYear => new()
+    public static GroupingProfile TypeThenYear => new()
     {
-        PrimaryCriteria = SortingCriteria.FileCategory,
-        SecondaryCriteria = SortingCriteria.CreationDate,
+        PrimaryCriteria = GroupingCriteria.FileCategory,
+        SecondaryCriteria = GroupingCriteria.CreationDate,
         DatePrimaryGroupingOption = DateGroupingOption.None,
         DateSecondaryGroupingOption = DateGroupingOption.Year,
         FileOperationType = FileOperationType.Move

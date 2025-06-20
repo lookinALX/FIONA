@@ -1,6 +1,6 @@
 ﻿namespace FileSorter.Core.Models;
 
-public class SortingResult
+public class GroupingResult
 {
     public bool Success { get; set; }
     public int ProcessedFiles { get; set; }

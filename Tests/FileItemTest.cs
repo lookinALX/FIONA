@@ -5,12 +5,12 @@ namespace Tests;
 public class FileItemTest
 {
     private FileInfo _fileInfo;
-    private string _fileDirecotry = @"F:\projects\FIONA\Tests\testDir\file1.png";
+    private string _fileDirectory = @"F:\projects\FIONA\Tests\testDir\file1.png";
 
     [SetUp]
     public void Setup()
     {
-        _fileInfo = new FileInfo(_fileDirecotry);
+        _fileInfo = new FileInfo(_fileDirectory);
     }
 
     [Test]

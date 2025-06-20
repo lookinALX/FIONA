@@ -1,10 +1,10 @@
 ﻿namespace FileSorter.Core.Models;
 
-public class SortingProfile
+public class GroupingProfile
 {
-    public SortingCriteria PrimaryCriteria { get; set; } = SortingCriteria.Extension;
+    public GroupingCriteria PrimaryCriteria { get; set; } = GroupingCriteria.Extension;
     
-    public SortingCriteria SecondaryCriteria { get; set; } = SortingCriteria.None;
+    public GroupingCriteria SecondaryCriteria { get; set; } = GroupingCriteria.None;
     
     public DateGroupingOption DatePrimaryGroupingOption { get; set; } = DateGroupingOption.None;
     
@@ -19,11 +19,12 @@ public class ConflictHandling
         
 }
     
-public enum SortingCriteria
+public enum GroupingCriteria
 {
     None,
     CreationDate,
     ModificationDate,
+    OldestDate,
     Extension,
     FileCategory
 }
