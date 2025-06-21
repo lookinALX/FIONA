@@ -19,20 +19,14 @@ public sealed class GroupingService : IGroupingService
 
         foreach (var group in fileGroupsPrime)
         {
-            await ProcessFiles();
-            //await ProcessFileGroup(group.Key, group.Value, profile, cancellationToken);
+            await ProcessFileGroup(directoryPath, group.Key, group.Value, profile, cancellationToken);
         }
 
         if (profile.SecondaryCriteria is not GroupingCriteria.None)
         {
-            await ProcessFiles();
+
         }
         
-        throw new NotImplementedException();
-    }
-
-    private static Task ProcessFiles()
-    {
         throw new NotImplementedException();
     }
 
@@ -71,7 +65,10 @@ public sealed class GroupingService : IGroupingService
 
     private static Dictionary<string, List<FileItem>> GroupFilesByExtension(List<FileItem> files)
     {
-        throw new NotImplementedException();
+        var result = files.
+            GroupBy(file => file.Extension).
+            ToDictionary(group => group.Key, group => group.ToList());
+        return result;
     }
     
     private static Dictionary<string, List<FileItem>> GroupFilesByModificationDate(List<FileItem> files)
@@ -95,11 +92,31 @@ public sealed class GroupingService : IGroupingService
     }
     
     private static Task ProcessFileGroup(
+        string directoryPath,
         string groupKey, 
         List<FileItem> groupValues, 
         GroupingProfile profile, 
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var destinationDirectoryPath = Path.Combine(directoryPath, groupKey);
+        Directory.CreateDirectory(destinationDirectoryPath);
+        switch (profile.FileOperationType)
+        {
+            case FileOperationType.Move:
+                foreach (var file in groupValues)
+                {
+                    File.Move(file.FullPath, destinationDirectoryPath);
+                }
+                break;
+            case FileOperationType.Copy:
+                foreach (var file in groupValues)
+                {
+                    File.Copy(file.FullPath, destinationDirectoryPath);
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        return Task.CompletedTask;
     }
 }

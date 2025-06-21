@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FileSorter.CLI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b77f9ed6a12d1053245f69235cdcaa2aaeb3edd4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+089dbc60b760b8bd465ec3f596f99b57a6393182")]
 [assembly: System.Reflection.AssemblyProductAttribute("FileSorter.CLI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FileSorter.CLI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
