@@ -1,4 +1,5 @@
-﻿using FileSorter.Core.Services;
+﻿using FileSorter.Core.Models;
+using FileSorter.Core.Services;
 
 namespace Tests;
 
@@ -36,5 +37,35 @@ public class GroupingServiceTest
         
         // Cleanup
         Directory.Delete(fileDirectoryWithoutFiles, true);
+    }
+
+    [Test]
+    public async Task Test_GroupFilesAsync_By_Extension()
+    {
+        // Arrange
+        var profile = new GroupingProfile
+        {
+            PrimaryCriteria = GroupingCriteria.Extension,
+            SecondaryCriteria = GroupingCriteria.None,
+            FileOperationType = FileOperationType.Copy
+        };
+
+        var service = new GroupingService();
+        
+        // Act
+        var result = await service.GroupFilesAsync(_fileDirectoryWithFiles, profile);
+        
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.DestinationPathList.Count, Is.EqualTo(4));
+        Assert.That(result.DestinationPathList.Any(dir => Directory.GetFiles(dir).Length > 0), 
+            "Expected at least one destination directory to contain files.");
+        
+        // Cleanup
+        foreach (var dir in result.DestinationPathList)
+        {
+            Directory.Delete(dir, true);
+        }
     }
 }

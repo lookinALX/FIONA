@@ -41,7 +41,6 @@ public enum DateGroupingOption
     Year,
     Month,
     YearMonth,
-    YearMonthDay
 }
 
  

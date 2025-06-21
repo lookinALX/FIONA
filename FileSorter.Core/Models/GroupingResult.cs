@@ -8,5 +8,5 @@ public class GroupingResult
     public int FailedFiles { get; set; }
     public TimeSpan Duration { get; set; }
     public List<string> Errors { get; set; } = new();
-    public string? DestinationPath { get; set; }    
+    public List<string> DestinationPathList { get; set; } = new();    
 }

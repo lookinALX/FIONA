@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FileSorter.UI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+089dbc60b760b8bd465ec3f596f99b57a6393182")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd87c9e90b16d19b389a8afa196c31b7c1706855")]
 [assembly: System.Reflection.AssemblyProductAttribute("FileSorter.UI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FileSorter.UI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
