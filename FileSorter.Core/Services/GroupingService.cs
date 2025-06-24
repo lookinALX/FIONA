@@ -60,9 +60,9 @@ public sealed class GroupingService : IGroupingService
         return criteria switch
         {
             GroupingCriteria.Extension => GroupFilesByExtension(fileItems),
-            GroupingCriteria.ModificationDate => GroupFilesByModificationDate(fileItems, option),
-            GroupingCriteria.CreationDate => GroupFilesByCreationDate(fileItems),
-            GroupingCriteria.OldestDate => GroupFilesByOldestDate(fileItems),
+            GroupingCriteria.ModificationDate => GroupFilesByDate(fileItems, criteria, option),
+            GroupingCriteria.CreationDate => GroupFilesByDate(fileItems, criteria, option),
+            GroupingCriteria.OldestDate => GroupFilesByOldestDate(fileItems, option),
             GroupingCriteria.FileCategory => GroupFilesByEFileCategory(fileItems),
             GroupingCriteria.None => throw new Exception("The criteria has not been set!"),
             _ => throw new NotImplementedException()
@@ -76,39 +76,71 @@ public sealed class GroupingService : IGroupingService
             ToDictionary(group => group.Key, group => group.ToList());
         return result;
     }
-    
-    private static Dictionary<string, List<FileItem>> GroupFilesByModificationDate(
+
+    private static Dictionary<string, List<FileItem>> GroupFilesByDate(
+        List<FileItem> files, GroupingCriteria criteria, DateGroupingOption option)
+    {
+        return files
+            .GroupBy(file =>
+            {
+                DateTime date = criteria switch
+                {
+                    GroupingCriteria.CreationDate => file.CreationDate,
+                    GroupingCriteria.ModificationDate => file.LastModifiedDate,
+                    _ => throw new ArgumentOutOfRangeException(nameof(criteria), "Invalid grouping criteria")
+                };
+
+                return option switch
+                {
+                    DateGroupingOption.Year => date.ToString("yyyy"),
+                    DateGroupingOption.Month => date.ToString("MMMM"),
+                    DateGroupingOption.YearMonth => date.ToString("yyyy-MM"),
+                    DateGroupingOption.None => throw new ArgumentException("The grouping option has not been set."),
+                    _ => throw new NotImplementedException($"Unsupported DateGroupingOption: {option}")
+                };
+            })
+            .ToDictionary(group => group.Key, group => group.ToList());
+    }
+
+    private static Dictionary<string, List<FileItem>> GroupFilesByOldestDate(
         List<FileItem> files, DateGroupingOption option)
+    {
+        var result = new Dictionary<string, List<FileItem>>();
+        var keyForOption = "";
+        
+        foreach (var fileItem in files)
+        {
+            keyForOption = GetKeyForOption(option
+                , fileItem.CreationDate >= fileItem.LastModifiedDate ? fileItem.CreationDate : fileItem.LastModifiedDate);
+
+            if (result.TryGetValue(keyForOption, out var fileItems))
+            {
+                fileItems.Add(fileItem);
+            }
+            else 
+            {
+                result[keyForOption] = new List<FileItem> { fileItem };
+            }
+        }
+        return result;
+    }
+
+    private static string GetKeyForOption(DateGroupingOption option, DateTime date)
     {
         return option switch
         {
-            DateGroupingOption.Year => files
-                .GroupBy(file => file.LastModifiedDate.Year.ToString())
-                .ToDictionary(group => group.Key, group => group.ToList()),
-
-            DateGroupingOption.Month => files
-                .GroupBy(file => file.LastModifiedDate.ToString("MMMM"))
-                .ToDictionary(group => group.Key, group => group.ToList()),
-
-            DateGroupingOption.YearMonth => files
-                .GroupBy(file => $"{file.LastModifiedDate:yyyy-MM}")
-                .ToDictionary(group => group.Key, group => group.ToList()),
-
+            DateGroupingOption.Year => date.Year.ToString("yyyy"),
+            
+            DateGroupingOption.Month => date.ToString("MMMM"),
+            
+            DateGroupingOption.YearMonth => $"{date:yyyy-MM}",
+            
             DateGroupingOption.None => throw new ArgumentException("The grouping option has not been set."),
+            
             _ => throw new NotImplementedException($"Unsupported DateGroupingOption: {option}")
         };
     }
     
-    private static Dictionary<string, List<FileItem>> GroupFilesByCreationDate(List<FileItem> files)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Dictionary<string, List<FileItem>> GroupFilesByOldestDate(List<FileItem> files)
-    {
-        throw new NotImplementedException();
-    }
-
     private static Dictionary<string, List<FileItem>> GroupFilesByEFileCategory(IEnumerable<FileItem> files)
     {
         throw new NotImplementedException();

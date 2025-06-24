@@ -68,4 +68,28 @@ public class GroupingServiceTest
             Directory.Delete(dir, true);
         }
     }
+
+    [Test]
+    public async Task Test_GroupFileAsync_By_Oldest_Year_Date()
+    {
+        // Arrange
+        var profile = new GroupingProfile
+        {
+            PrimaryCriteria = GroupingCriteria.OldestDate,
+            SecondaryCriteria = GroupingCriteria.None,
+            DatePrimaryGroupingOption = DateGroupingOption.Year,
+            FileOperationType = FileOperationType.Copy
+        };
+        
+        var service = new GroupingService();
+        
+        // Act
+        var result = await service.GroupFilesAsync(_fileDirectoryWithFiles, profile);
+        
+        // TODO: Finist assert
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        
+        // Cleanup
+    }
 }

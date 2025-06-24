@@ -10,7 +10,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4eeb05db-6b40-467b-aa56-e14f9aa94ec5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.FIONA/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.FIONA/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FIONA.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/FIONA.sln.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/FileSorter.CLI.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/FileSorter.CLI.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/FileSorter.CLI.pdb" afterDir="false" />
@@ -25,14 +24,11 @@
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/apphost.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/ref/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/ref/FileSorter.CLI.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/refint/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/refint/FileSorter.CLI.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/Models/GroupingResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/Models/GroupingResult.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/Services/GroupingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/Services/GroupingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/Services/IGroupingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/Services/IGroupingService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.csproj.CoreCompileInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.sourcelink.json" afterDir="false" />
@@ -149,7 +145,8 @@
       <workItem from="1750315335711" duration="2718000" />
       <workItem from="1750451776968" duration="6091000" />
       <workItem from="1750493111384" duration="1810000" />
-      <workItem from="1750529475095" duration="4548000" />
+      <workItem from="1750529475095" duration="5226000" />
+      <workItem from="1750792085851" duration="2837000" />
     </task>
     <servers />
   </component>
