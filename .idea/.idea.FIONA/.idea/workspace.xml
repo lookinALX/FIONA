@@ -24,6 +24,7 @@
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/apphost.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/ref/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/ref/FileSorter.CLI.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/refint/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/refint/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/Models/GroupingResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/Models/GroupingResult.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/Services/GroupingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/Services/GroupingService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.pdb" afterDir="false" />
@@ -146,7 +147,8 @@
       <workItem from="1750451776968" duration="6091000" />
       <workItem from="1750493111384" duration="1810000" />
       <workItem from="1750529475095" duration="5226000" />
-      <workItem from="1750792085851" duration="2837000" />
+      <workItem from="1750792085851" duration="3015000" />
+      <workItem from="1751053693130" duration="5529000" />
     </task>
     <servers />
   </component>
