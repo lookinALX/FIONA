@@ -5,8 +5,22 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+
+        <!-- Settings for dotnet tool -->
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>fiona</ToolCommandName>
+        <PackageId>FileSorter.CLI</PackageId>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Authors>YourName</Authors>
+        <Description>File sorting tool with AI-powered face recognition</Description>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="CommandLineParser" Version="2.9.1" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    </ItemGroup>
+    
     <ItemGroup>
       <ProjectReference Include="..\FileSorter.Core\FileSorter.Core.csproj" />
       <ProjectReference Include="..\FileSorter.Platform\FileSorter.Platform.csproj" />

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FileSorter.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c67f8ddef2c8f9f0c144e8afc1e960dfdb458744")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4496c826b3252026c685d0f8f89e8cc223a14760")]
 [assembly: System.Reflection.AssemblyProductAttribute("FileSorter.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FileSorter.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

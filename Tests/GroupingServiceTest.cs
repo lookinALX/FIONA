@@ -153,5 +153,14 @@ public class GroupingServiceTest
         
         // Assert
         Assert.That(result, Is.Not.Null);
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.DestinationPathDict["primary"].Count, Is.EqualTo(1));
+        Assert.That(result.DestinationPathDict["secondary"].Count, Is.EqualTo(5));
+        
+        // Cleanup
+        foreach (var dir in result.DestinationPathDict["primary"])
+        {
+            Directory.Delete(dir, true);
+        }
     }
 }

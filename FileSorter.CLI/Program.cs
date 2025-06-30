@@ -1,18 +1,21 @@
-﻿
-using FileSorter.Core.Helpers;
-using FileSorter.Core.Models;
+﻿using CommandLine;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-const string directory = @"F:\projects\FIONA\FileSorter.CLI\testDir";
+namespace FileSorter.CLI;
 
-List<FileItem> files = new List<FileItem>();
-
-foreach (var file in Directory.GetFiles(directory))
+class Program
 {
-    FileInfo fileInfo = new FileInfo(file);
-    files.Add(new FileItem(fileInfo));
-}
+    static async Task<int> Main(string[] args)
+    {
+        var host = CreateHostBuilder(args).Build();
+        throw new NotImplementedException();
+        
+    }
 
-foreach (var file in files)
-{
-    Console.WriteLine(file.Name);
+    static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureServices((context, services) =>
+            {
+            });
 }
