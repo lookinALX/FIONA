@@ -20,4 +20,10 @@ public class GroupOptions
     
     [Option('o', "output", HelpText = "Output directory (default: source directory)")]
     public string? OutputDirectory { get; set; }
+    
+    [Option('p', "primary date", Default = "none", HelpText = "Date grouping option (year, month, year month, default: none)")]
+    public string DateGroupingPrimary { get; set; } = string.Empty;
+    
+    [Option('s', "secondary date", Default = "none", HelpText = "Date grouping option (year, month, year month, default: none)")]
+    public string DateGroupingSecondary { get; set; } = string.Empty;
 }
