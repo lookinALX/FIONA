@@ -68,11 +68,20 @@ public static class FunctionHelper
 
     public static DateGroupingOption ParseGroupingOption(this string criteria)
     {
-        if (string.IsNullOrWhiteSpace(criteria))
+        if (string.IsNullOrWhiteSpace(criteria) || criteria.Trim().ToLowerInvariant() == "none")
             return DateGroupingOption.None;
 
         switch (criteria.Trim().ToLowerInvariant())
         {
+            case "year":
+            case "years":
+                return DateGroupingOption.Year;
+            case "month":
+            case "months":
+                return DateGroupingOption.Month;
+            case "yearmonth":
+            case "year_month":
+                return DateGroupingOption.YearMonth;
             default:
                 throw new ArgumentException($"Invalid grouping option: '{criteria}'");
         }
@@ -80,11 +89,15 @@ public static class FunctionHelper
 
     public static FileOperationType ParseFileOperationType(this string criteria)
     {
-        if (string.IsNullOrWhiteSpace(criteria))
+        if (string.IsNullOrWhiteSpace(criteria) || criteria.Trim().ToLowerInvariant() == "none")
             return FileOperationType.Copy;
         
         switch (criteria.Trim().ToLowerInvariant())
         {
+            case "copy":
+                return FileOperationType.Copy;
+            case "move":
+                return FileOperationType.Move;
             default:
                 throw new ArgumentException($"Invalid grouping option: '{criteria}'");
         }

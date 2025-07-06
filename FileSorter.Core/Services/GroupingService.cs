@@ -153,7 +153,25 @@ public sealed class GroupingService : IGroupingService
     
     private static Dictionary<string, List<FileItem>> GroupFilesByEFileCategory(IEnumerable<FileItem> files)
     {
-        throw new NotImplementedException();
+        return files.GroupBy(file => GetFileCategory(file.Extension))
+            .ToDictionary(group => group.Key, group => group.ToList());
+    }
+    
+    private static string GetFileCategory(string extension)
+    {
+        return extension.ToLowerInvariant() switch
+        {
+            ".jpg" or ".jpeg" or ".png" or ".gif" or ".bmp" or ".tiff" or ".webp" or ".svg" => "images",
+            ".mp4" or ".avi" or ".mkv" or ".mov" or ".wmv" or ".flv" or ".webm" or ".m4v" => "videos", 
+            ".mp3" or ".wav" or ".flac" or ".aac" or ".ogg" or ".wma" or ".m4a" => "audio",
+            ".pdf" or ".doc" or ".docx" or ".txt" or ".rtf" or ".odt" or ".pages" => "documents",
+            ".xls" or ".xlsx" or ".csv" or ".ods" or ".numbers" => "spreadsheets",
+            ".ppt" or ".pptx" or ".odp" or ".key" => "presentations",
+            ".zip" or ".rar" or ".7z" or ".tar" or ".gz" or ".bz2" or ".xz" => "archives",
+            ".exe" or ".msi" or ".deb" or ".rpm" or ".dmg" or ".pkg" => "applications",
+            ".iso" or ".img" or ".vhd" or ".vmdk" => "disk images",
+            _ => "other"
+        };
     }
     
     private static Task<GroupingResult> ProcessFileGroup(
@@ -210,7 +228,7 @@ public sealed class GroupingService : IGroupingService
             }
         }
         
-        result.ProcessedFiles = processedFiles;
+        result.ProcessedFiles += processedFiles;
         
         return Task.FromResult(result);
     }
