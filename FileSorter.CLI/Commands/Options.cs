@@ -5,7 +5,7 @@ namespace FileSorter.CLI.Commands;
 [Verb("group", HelpText = "Group files by criteria")]
 public class GroupOptions
 {
-    [Value(0, MetaName = "source", Required = true, HelpText = "Path to source files")]
+    [Option('s', "source", Required = true, HelpText = "Path to source files")]
     public string SourceDirectory { get; set; } = string.Empty;
     
     [Option('b', "by", Default = "date", HelpText = "Group by: extension, date (oldest), " +
@@ -24,6 +24,6 @@ public class GroupOptions
     [Option('p', "primary date", Default = "none", HelpText = "Date grouping option (year, month, year month, default: none)")]
     public string DateGroupingPrimary { get; set; } = string.Empty;
     
-    [Option('s', "secondary date", Default = "none", HelpText = "Date grouping option (year, month, year month, default: none)")]
+    [Option('d', "secondary date", Default = "none", HelpText = "Date grouping option (year, month, year month, default: none)")]
     public string DateGroupingSecondary { get; set; } = string.Empty;
 }
