@@ -18,7 +18,7 @@ class Program
         return await Parser.Default.ParseArguments<GroupOptions>(args)
             .MapResult(
                 (GroupOptions opts) => {
-                    Console.WriteLine($"Parsed SourceDirectory: '{opts.SourceDirectory}'");
+                    Console.WriteLine($"Parsed SourceDirectory: '{opts.GetEffectiveSourceDirectory()}'");
                     Console.WriteLine($"Parsed GroupBy: '{opts.GroupBy}'");
                     return host.Services.GetRequiredService<GroupCommands>().ExecuteAsync(opts);
                 },

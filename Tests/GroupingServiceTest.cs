@@ -163,4 +163,34 @@ public class GroupingServiceTest
             Directory.Delete(dir, true);
         }
     }
+
+    [Test]
+    public async Task Test_GroupFileAsync_By_FileCategory()
+    {
+        // Arrange
+        var profile = new GroupingProfile
+        {
+            PrimaryCriteria = GroupingCriteria.FileCategory,
+            SecondaryCriteria = GroupingCriteria.None,
+            FileOperationType = FileOperationType.Copy
+        };
+        
+        var service = new GroupingService();
+        
+        // Act
+        var result = await service.GroupFilesAsync(_fileDirectoryWithFiles, profile);
+        
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.DestinationPathDict["primary"].Count, Is.EqualTo(2));
+        Assert.That(result.DestinationPathDict["primary"].Any(dir => Path.GetFileName(dir) == "documents"));
+        Assert.That(result.DestinationPathDict["primary"].Any(dir => Path.GetFileName(dir) == "images"));
+        
+        //Cleanup
+        foreach (var dir in result.DestinationPathDict["primary"])
+        {
+            Directory.Delete(dir, true);
+        }
+    }
 }

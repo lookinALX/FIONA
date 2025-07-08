@@ -21,7 +21,7 @@ public sealed class GroupingService : IGroupingService
 
         var fileGroups = GroupFilesByCriteria(
             allFiles, profile.PrimaryCriteria, profile.DatePrimaryGroupingOption);
-
+        
         foreach (var group in fileGroups)
         {
             await ProcessFileGroup(directoryPath, group.Key, group.Value, profile, result, "primary", cancellationToken);

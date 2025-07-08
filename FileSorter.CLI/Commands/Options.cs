@@ -5,8 +5,11 @@ namespace FileSorter.CLI.Commands;
 [Verb("group", HelpText = "Group files by criteria")]
 public class GroupOptions
 {
-    [Option('s', "source", Required = true, HelpText = "Path to source files")]
-    public string SourceDirectory { get; set; } = string.Empty;
+    [Option('s', "source", Default = null, HelpText = "Path to source files (defaults to current directory)")]
+    public string? SourceDirectory { get; set; }
+    
+    public string GetEffectiveSourceDirectory() =>
+        string.IsNullOrWhiteSpace(SourceDirectory) ? Directory.GetCurrentDirectory() : SourceDirectory;
     
     [Option('b', "by", Default = "date", HelpText = "Group by: extension, date (oldest), " +
                                                     "creation date, modify date, category, size")]
