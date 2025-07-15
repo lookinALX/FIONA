@@ -12,12 +12,6 @@ public class GroupingProfile
     
     public FileOperationType FileOperationType { get; set; } = FileOperationType.Move;
 }
-
-// TODO: TBD
-public class ConflictHandling
-{
-        
-}
     
 public enum GroupingCriteria
 {
