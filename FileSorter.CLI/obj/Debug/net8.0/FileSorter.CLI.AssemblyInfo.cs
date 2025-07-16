@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("File sorting tool with AI-powered face recognition")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+524e57a2e8c8740eeccb54cef1cdb66a184c9626")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+95085ff7c2fd89396b69f69cd4d09fb0a7926977")]
 [assembly: System.Reflection.AssemblyProductAttribute("FileSorter.CLI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FileSorter.CLI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

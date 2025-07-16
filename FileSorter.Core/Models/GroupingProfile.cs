@@ -11,6 +11,11 @@ public class GroupingProfile
     public DateGroupingOption DateSecondaryGroupingOption { get; set; } = DateGroupingOption.None;
     
     public FileOperationType FileOperationType { get; set; } = FileOperationType.Move;
+    
+    public ConflictHandling ConflictHandling { get; set; } = new ConflictHandling
+    {
+        Strategy = ConflictResolutionStrategy.Ask
+    };
 }
     
 public enum GroupingCriteria

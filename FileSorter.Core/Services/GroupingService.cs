@@ -6,6 +6,9 @@ namespace FileSorter.Core.Services;
 
 public sealed class GroupingService : IGroupingService
 {
+    private readonly RollbackService _rollbackService = new();
+    private readonly ConflictResolver _conflictResolver = new();
+
     public async Task<GroupingResult> GroupFilesAsync(string directoryPath, GroupingProfile profile, CancellationToken cancellationToken = default)
     {
         var result = new GroupingResult();
@@ -25,6 +28,12 @@ public sealed class GroupingService : IGroupingService
         foreach (var group in fileGroups)
         {
             await ProcessFileGroup(directoryPath, group.Key, group.Value, profile, result, "primary", cancellationToken);
+            
+            if (cancellationToken.IsCancellationRequested)
+            {
+                await RollbackOnCancellation(result);
+                return result;
+            }
         }
 
         if (profile.SecondaryCriteria is not GroupingCriteria.None)
@@ -37,6 +46,12 @@ public sealed class GroupingService : IGroupingService
                 foreach (var group in fileGroups)
                 {
                     await ProcessFileGroup(dirPath, group.Key, group.Value, profile, result, "secondary", cancellationToken);
+                    
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        await RollbackOnCancellation(result);
+                        return result;
+                    }
                 }
             }
         }
@@ -46,11 +61,36 @@ public sealed class GroupingService : IGroupingService
         return result;
     }
 
+    private async Task RollbackOnCancellation(GroupingResult result)
+    {
+        try
+        {
+            var rollbackResult = await _rollbackService.RollbackAsync();
+            result.Errors.Add($"Operation cancelled. Rollback: {rollbackResult.SuccessfulRollbacks} operations rolled back, {rollbackResult.FailedRollbacks} failed");
+            result.Errors.AddRange(rollbackResult.Errors);
+        }
+        catch (Exception ex)
+        {
+            result.Errors.Add($"Rollback after cancellation failed: {ex.Message}");
+        }
+    }
+    
     private void ValidateDirectory(string directoryPath)
     {
         if (!Directory.Exists(directoryPath))
         {
             throw new DirectoryNotFoundException(directoryPath);
+        }
+        
+        try
+        {
+            var testFile = Path.Combine(directoryPath, $"test_write_{Guid.NewGuid()}.tmp");
+            File.WriteAllText(testFile, "test");
+            File.Delete(testFile);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            throw new UnauthorizedAccessException($"No write access to directory: {directoryPath}");
         }
     }
 
@@ -174,7 +214,7 @@ public sealed class GroupingService : IGroupingService
         };
     }
     
-    private static Task<GroupingResult> ProcessFileGroup(
+    private async Task ProcessFileGroup(
         string directoryPath,
         string groupKey, 
         List<FileItem> groupValues, 
@@ -196,40 +236,67 @@ public sealed class GroupingService : IGroupingService
         {
             result.DestinationPathDict[pathKey] = new List<string> { destinationDirectoryPath };
         }
-        
-        if (pathKey.Equals("secondary", StringComparison.InvariantCultureIgnoreCase))
+
+        foreach (var file in groupValues)
         {
-            foreach (var file in groupValues)
+            if (cancellationToken.IsCancellationRequested)
+                break;
+
+            try
             {
-                File.Move(file.FullPath, Path.Combine(destinationDirectoryPath, file.Name));
+                var destinationPath = Path.Combine(destinationDirectoryPath, file.Name);
+                
+                var conflictResult = await _conflictResolver.ResolveConflictAsync(
+                    file.FullPath, destinationPath, profile.ConflictHandling, cancellationToken);
+                
+                if (!conflictResult.ShouldProceed)
+                {
+                    result.SkippedFiles++;
+                    continue;
+                }
+                
+                var operationRecord = new FileOperationRecord
+                {
+                    SourcePath = file.FullPath,
+                    DestinationPath = conflictResult.FinalDestinationPath,
+                    OperationType = pathKey.Equals("secondary", StringComparison.InvariantCultureIgnoreCase) 
+                        ? FileOperationType.Move 
+                        : profile.FileOperationType,
+                    Timestamp = DateTime.Now,
+                    BackupPath = conflictResult.BackupPath,
+                    ConflictResolution = conflictResult.AppliedStrategy
+                };
+                
+                await ExecuteFileOperation(operationRecord, cancellationToken);
+                
+                operationRecord.Success = true;
+                _rollbackService.RecordOperation(operationRecord);
+                
                 processedFiles++;
             }
-        }
-        else
-        {
-            switch (profile.FileOperationType)
+            catch (Exception e)
             {
-                case FileOperationType.Move:
-                    foreach (var file in groupValues)
-                    {
-                        File.Move(file.FullPath, Path.Combine(destinationDirectoryPath, file.Name));
-                        processedFiles++;
-                    }
-                    break;
-                case FileOperationType.Copy:
-                    foreach (var file in groupValues)
-                    {
-                        File.Copy(file.FullPath, Path.Combine(destinationDirectoryPath, file.Name));
-                        processedFiles++;
-                    }
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(profile.FileOperationType), "Unsupported file operation type.");
+                result.FailedFiles++;
+                result.Errors.Add($"Failed to process {file.Name}: {e.Message}");
             }
         }
-        
         result.ProcessedFiles += processedFiles;
-        
-        return Task.FromResult(result);
     }
+
+    private static async Task ExecuteFileOperation(FileOperationRecord operationRecord,
+        CancellationToken cancellationToken = default)
+    {
+        switch (operationRecord.OperationType)
+        {
+            case FileOperationType.Move:
+                await Task.Run(() => File.Move(operationRecord.SourcePath, operationRecord.DestinationPath), cancellationToken);
+                break;
+            case FileOperationType.Copy:
+                await Task.Run(() => File.Copy(operationRecord.SourcePath, operationRecord.DestinationPath), cancellationToken);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(operationRecord.OperationType), "Unsupported file operation type.");
+        }
+    }
+    
 }
