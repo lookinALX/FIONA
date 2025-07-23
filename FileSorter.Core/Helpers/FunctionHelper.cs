@@ -102,4 +102,40 @@ public static class FunctionHelper
                 throw new ArgumentException($"Invalid grouping option: '{criteria}'");
         }
     }
+
+    public static ConflictResolutionStrategy ParseConflictStrategy(this string strategy)
+    {
+        if (string.IsNullOrWhiteSpace(strategy))
+            return ConflictResolutionStrategy.Rename;
+        
+        switch (strategy.Trim().ToLowerInvariant())
+        {
+            case "skip":
+                return ConflictResolutionStrategy.Skip;
+            case "overwrite":
+            case "replace":
+                return ConflictResolutionStrategy.Overwrite;
+            case "rename":
+                return ConflictResolutionStrategy.Rename;
+            case "ask":
+            case "prompt":
+                return ConflictResolutionStrategy.Ask;
+            case "keepboth":
+            case "keep_both":
+            case "both":
+                return ConflictResolutionStrategy.KeepBoth;
+            default:
+                throw new ArgumentException($"Invalid conflict strategy: '{strategy}'");
+        }
+    }
+
+    public static ConflictHandling ParseConflictHandling(this string strategy, bool createBackup, string backupSuffix)
+    {
+        return new ConflictHandling
+        {
+            Strategy = strategy.ParseConflictStrategy(),
+            BackupOriginal = createBackup,
+            BackupSuffix = backupSuffix
+        };
+    }
 }

@@ -1,0 +1,12 @@
+F:\projects\FIONA\FileSorter.Platform\bin\Release\net8.0\osx-x64\FileSorter.Platform.deps.json
+F:\projects\FIONA\FileSorter.Platform\bin\Release\net8.0\osx-x64\FileSorter.Platform.dll
+F:\projects\FIONA\FileSorter.Platform\bin\Release\net8.0\osx-x64\FileSorter.Platform.pdb
+F:\projects\FIONA\FileSorter.Platform\obj\Release\net8.0\osx-x64\FileSorter.Platform.GeneratedMSBuildEditorConfig.editorconfig
+F:\projects\FIONA\FileSorter.Platform\obj\Release\net8.0\osx-x64\FileSorter.Platform.AssemblyInfoInputs.cache
+F:\projects\FIONA\FileSorter.Platform\obj\Release\net8.0\osx-x64\FileSorter.Platform.AssemblyInfo.cs
+F:\projects\FIONA\FileSorter.Platform\obj\Release\net8.0\osx-x64\FileSorter.Platform.csproj.CoreCompileInputs.cache
+F:\projects\FIONA\FileSorter.Platform\obj\Release\net8.0\osx-x64\FileSorter.Platform.sourcelink.json
+F:\projects\FIONA\FileSorter.Platform\obj\Release\net8.0\osx-x64\FileSorter.Platform.dll
+F:\projects\FIONA\FileSorter.Platform\obj\Release\net8.0\osx-x64\refint\FileSorter.Platform.dll
+F:\projects\FIONA\FileSorter.Platform\obj\Release\net8.0\osx-x64\FileSorter.Platform.pdb
+F:\projects\FIONA\FileSorter.Platform\obj\Release\net8.0\osx-x64\ref\FileSorter.Platform.dll

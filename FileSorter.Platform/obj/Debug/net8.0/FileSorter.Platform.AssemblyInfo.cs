@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FileSorter.Platform")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+01051654d52fc8fda7bfd5aecdf4004d65a5ee50")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+63a932db38fb236473c9fcaae0049fa9365394eb")]
 [assembly: System.Reflection.AssemblyProductAttribute("FileSorter.Platform")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FileSorter.Platform")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

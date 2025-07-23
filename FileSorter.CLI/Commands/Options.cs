@@ -29,4 +29,16 @@ public class GroupOptions
     
     [Option('d', "secondary date", Default = "none", HelpText = "Date grouping option (year, month, year month, default: none)")]
     public string DateGroupingSecondary { get; set; } = string.Empty;
+    
+    [Option('c', "conflict", Default = "rename", HelpText = "Conflict resolution strategy: skip, overwrite, rename, ask, keepboth")]
+    public string ConflictStrategy { get; set; } = string.Empty;
+    
+    [Option("backup", Default = false, HelpText = "Create backup when overwriting files")]
+    public bool CreateBackup { get; set; }
+    
+    [Option("backup-suffix", Default = "_backup", HelpText = "Suffix for backup files")]
+    public string BackupSuffix { get; set; } = string.Empty;
+    
+    [Option("dry-run", Default = false, HelpText = "Show what would be done without actually moving/copying files")]
+    public bool DryRun { get; set; }
 }

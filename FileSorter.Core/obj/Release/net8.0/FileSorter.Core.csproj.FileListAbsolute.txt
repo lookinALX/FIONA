@@ -1,0 +1,12 @@
+F:\projects\FIONA\FileSorter.Core\bin\Release\net8.0\FileSorter.Core.deps.json
+F:\projects\FIONA\FileSorter.Core\bin\Release\net8.0\FileSorter.Core.dll
+F:\projects\FIONA\FileSorter.Core\bin\Release\net8.0\FileSorter.Core.pdb
+F:\projects\FIONA\FileSorter.Core\obj\Release\net8.0\FileSorter.Core.GeneratedMSBuildEditorConfig.editorconfig
+F:\projects\FIONA\FileSorter.Core\obj\Release\net8.0\FileSorter.Core.AssemblyInfoInputs.cache
+F:\projects\FIONA\FileSorter.Core\obj\Release\net8.0\FileSorter.Core.AssemblyInfo.cs
+F:\projects\FIONA\FileSorter.Core\obj\Release\net8.0\FileSorter.Core.csproj.CoreCompileInputs.cache
+F:\projects\FIONA\FileSorter.Core\obj\Release\net8.0\FileSorter.Core.sourcelink.json
+F:\projects\FIONA\FileSorter.Core\obj\Release\net8.0\FileSorter.Core.dll
+F:\projects\FIONA\FileSorter.Core\obj\Release\net8.0\refint\FileSorter.Core.dll
+F:\projects\FIONA\FileSorter.Core\obj\Release\net8.0\FileSorter.Core.pdb
+F:\projects\FIONA\FileSorter.Core\obj\Release\net8.0\ref\FileSorter.Core.dll

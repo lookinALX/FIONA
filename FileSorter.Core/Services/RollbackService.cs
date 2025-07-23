@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using FileSorter.Core.Models;
+using FileSorter.Core.Helpers;
 
 namespace FileSorter.Core.Services;
 
@@ -11,7 +12,7 @@ public sealed class RollbackService : IRollbackService
     public void RecordOperation(FileOperationRecord record)
     {
         ArgumentNullException.ThrowIfNull(record);
-        
+
         lock (_lock)
         {
             _operationHistory.Add(record);
@@ -22,7 +23,7 @@ public sealed class RollbackService : IRollbackService
     {
         var stopwatch = Stopwatch.StartNew();
         var result = new RollbackResult();
-        
+
         List<FileOperationRecord> operationsToRollback;
         lock (_lock)
         {
@@ -30,24 +31,47 @@ public sealed class RollbackService : IRollbackService
             result.TotalOperations = operationsToRollback.Count;
         }
 
+        if (!operationsToRollback.Any())
+        {
+            Console.WriteLine("No operations to rollback.");
+            result.Success = true;
+            return result;
+        }
+
         // Rollback in reverse order
         operationsToRollback.Reverse();
 
-        foreach (var operation in operationsToRollback)
+        using (var progressBar = new ProgressBar(operationsToRollback.Count, "Rolling back operations"))
         {
-            if (cancellationToken.IsCancellationRequested)
-                break;
+            var processedCount = 0;
 
-            try
+            foreach (var operation in operationsToRollback)
             {
-                await RollbackSingleOperationAsync(operation, cancellationToken);
-                result.SuccessfulRollbacks++;
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                try
+                {
+                    await RollbackSingleOperationAsync(operation, cancellationToken);
+                    result.SuccessfulRollbacks++;
+                }
+                catch (Exception ex)
+                {
+                    result.FailedRollbacks++;
+                    result.Errors.Add($"Failed to rollback {operation.SourcePath}: {ex.Message}");
+                }
+
+                processedCount++;
+                progressBar.Update(processedCount);
             }
-            catch (Exception ex)
-            {
-                result.FailedRollbacks++;
-                result.Errors.Add($"Failed to rollback {operation.SourcePath}: {ex.Message}");
-            }
+
+            progressBar.Complete();
+        }
+
+        // Clear history after successful rollback
+        if (result.FailedRollbacks == 0)
+        {
+            ClearHistory();
         }
 
         stopwatch.Stop();
@@ -57,7 +81,8 @@ public sealed class RollbackService : IRollbackService
         return result;
     }
 
-    private static async Task RollbackSingleOperationAsync(FileOperationRecord operation, CancellationToken cancellationToken)
+    private static async Task RollbackSingleOperationAsync(FileOperationRecord operation,
+        CancellationToken cancellationToken)
     {
         if (!operation.Success)
             return; // Nothing to rollback if operation wasn't successful
@@ -67,17 +92,19 @@ public sealed class RollbackService : IRollbackService
             case FileOperationType.Move:
                 await RollbackMoveOperationAsync(operation, cancellationToken);
                 break;
-                
+
             case FileOperationType.Copy:
                 await RollbackCopyOperationAsync(operation, cancellationToken);
                 break;
-                
+
             default:
-                throw new NotSupportedException($"Rollback for operation type {operation.OperationType} is not supported");
+                throw new NotSupportedException(
+                    $"Rollback for operation type {operation.OperationType} is not supported");
         }
     }
 
-    private static async Task RollbackMoveOperationAsync(FileOperationRecord operation, CancellationToken cancellationToken)
+    private static async Task RollbackMoveOperationAsync(FileOperationRecord operation,
+        CancellationToken cancellationToken)
     {
         // For move operations, move the file back to original location
         if (File.Exists(operation.DestinationPath))
@@ -98,21 +125,19 @@ public sealed class RollbackService : IRollbackService
         }
     }
 
-    private static async Task RollbackCopyOperationAsync(FileOperationRecord operation, CancellationToken cancellationToken)
+    private static async Task RollbackCopyOperationAsync(FileOperationRecord operation,
+        CancellationToken cancellationToken)
     {
         // For copy operations, just delete the copied file
         if (File.Exists(operation.DestinationPath))
         {
             await Task.Run(() => File.Delete(operation.DestinationPath), cancellationToken);
         }
-        
+
         // If we made a backup of original file, restore it
         if (!string.IsNullOrEmpty(operation.BackupPath) && File.Exists(operation.BackupPath))
         {
-            await Task.Run(() =>
-            {
-                File.Move(operation.BackupPath, operation.SourcePath);
-            }, cancellationToken);
+            await Task.Run(() => { File.Move(operation.BackupPath, operation.SourcePath); }, cancellationToken);
         }
     }
 

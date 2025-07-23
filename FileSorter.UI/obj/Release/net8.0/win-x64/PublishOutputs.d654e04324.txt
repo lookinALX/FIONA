@@ -1,0 +1,5 @@
+F:\projects\FIONA\FileSorter.UI\bin\Release\net8.0\win-x64\publish\FileSorter.UI.pdb
+F:\projects\FIONA\FileSorter.UI\bin\Release\net8.0\win-x64\publish\av_libglesv2.dll
+F:\projects\FIONA\FileSorter.UI\bin\Release\net8.0\win-x64\publish\libHarfBuzzSharp.dll
+F:\projects\FIONA\FileSorter.UI\bin\Release\net8.0\win-x64\publish\libSkiaSharp.dll
+F:\projects\FIONA\FileSorter.UI\bin\Release\net8.0\win-x64\publish\FileSorter.UI.exe

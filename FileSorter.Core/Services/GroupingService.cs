@@ -6,12 +6,19 @@ namespace FileSorter.Core.Services;
 
 public sealed class GroupingService : IGroupingService
 {
-    private readonly RollbackService _rollbackService = new();
-    private readonly ConflictResolver _conflictResolver = new();
+    private readonly IRollbackService _rollbackService;
+    private readonly IConflictResolver _conflictResolver;
+
+    public GroupingService(IRollbackService rollbackService, IConflictResolver conflictResolver)
+    {
+        _rollbackService = rollbackService ?? throw new ArgumentNullException(nameof(rollbackService));
+        _conflictResolver = conflictResolver ?? throw new ArgumentNullException(nameof(conflictResolver));
+    }
 
     public async Task<GroupingResult> GroupFilesAsync(string directoryPath, GroupingProfile profile, CancellationToken cancellationToken = default)
     {
         var result = new GroupingResult();
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         
         ValidateDirectory(directoryPath);
         
@@ -20,42 +27,89 @@ public sealed class GroupingService : IGroupingService
             throw new Exception("The primary criteria has not been set.");
         }
         
+        // Get all files first to show accurate progress
         var allFiles = await GetFilesToGroupAsync(directoryPath, cancellationToken);
-
-        var fileGroups = GroupFilesByCriteria(
-            allFiles, profile.PrimaryCriteria, profile.DatePrimaryGroupingOption);
+        var filesList = allFiles.ToList();
         
-        foreach (var group in fileGroups)
+        if (!filesList.Any())
         {
-            await ProcessFileGroup(directoryPath, group.Key, group.Value, profile, result, "primary", cancellationToken);
-            
-            if (cancellationToken.IsCancellationRequested)
-            {
-                await RollbackOnCancellation(result);
-                return result;
-            }
+            Console.WriteLine("No files found to process.");
+            result.Success = true;
+            return result;
         }
 
-        if (profile.SecondaryCriteria is not GroupingCriteria.None)
+        var fileGroups = GroupFilesByCriteria(filesList, profile.PrimaryCriteria, profile.DatePrimaryGroupingOption);
+        
+        Console.WriteLine($"Found {filesList.Count} files in {fileGroups.Count} groups");
+        
+        // Primary grouping with progress bar
+        using (var progressBar = new ProgressBar(filesList.Count, "Grouping files"))
         {
-            foreach (var dirPath in result.DestinationPathDict["primary"])
+            var processedCount = 0;
+            
+            foreach (var group in fileGroups)
             {
-                allFiles = await GetFilesToGroupAsync(dirPath, cancellationToken);
-                fileGroups = GroupFilesByCriteria(allFiles, profile.SecondaryCriteria, profile.DateSecondaryGroupingOption);
-                
-                foreach (var group in fileGroups)
-                {
-                    await ProcessFileGroup(dirPath, group.Key, group.Value, profile, result, "secondary", cancellationToken);
-                    
-                    if (cancellationToken.IsCancellationRequested)
+                await ProcessFileGroup(directoryPath, group.Key, group.Value, profile, result, "primary", 
+                    (processed) => 
                     {
-                        await RollbackOnCancellation(result);
-                        return result;
-                    }
+                        processedCount += processed;
+                        progressBar.Update(processedCount);
+                    }, cancellationToken);
+                
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    await RollbackOnCancellation(result);
+                    return result;
                 }
             }
+            
+            progressBar.Complete();
+        }
+
+        // Secondary grouping if specified
+        if (profile.SecondaryCriteria is not GroupingCriteria.None)
+        {
+            Console.WriteLine("Applying secondary grouping...");
+            
+            var secondaryFiles = new List<FileItem>();
+            foreach (var dirPath in result.DestinationPathDict["primary"])
+            {
+                var files = await GetFilesToGroupAsync(dirPath, cancellationToken);
+                secondaryFiles.AddRange(files);
+            }
+            
+            using (var progressBar = new ProgressBar(secondaryFiles.Count, "Secondary grouping"))
+            {
+                var processedCount = 0;
+                
+                foreach (var dirPath in result.DestinationPathDict["primary"])
+                {
+                    var files = await GetFilesToGroupAsync(dirPath, cancellationToken);
+                    var fileGroups2 = GroupFilesByCriteria(files, profile.SecondaryCriteria, profile.DateSecondaryGroupingOption);
+                    
+                    foreach (var group in fileGroups2)
+                    {
+                        await ProcessFileGroup(dirPath, group.Key, group.Value, profile, result, "secondary", 
+                            (processed) => 
+                            {
+                                processedCount += processed;
+                                progressBar.Update(processedCount);
+                            }, cancellationToken);
+                        
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            await RollbackOnCancellation(result);
+                            return result;
+                        }
+                    }
+                }
+                
+                progressBar.Complete();
+            }
         }
         
+        stopwatch.Stop();
+        result.Duration = stopwatch.Elapsed;
         result.Success = true;
         
         return result;
@@ -65,7 +119,12 @@ public sealed class GroupingService : IGroupingService
     {
         try
         {
+            Console.WriteLine("\nOperation cancelled. Starting rollback...");
+            using var progressBar = new ProgressBar(1, "Rolling back");
+            
             var rollbackResult = await _rollbackService.RollbackAsync();
+            progressBar.Complete();
+            
             result.Errors.Add($"Operation cancelled. Rollback: {rollbackResult.SuccessfulRollbacks} operations rolled back, {rollbackResult.FailedRollbacks} failed");
             result.Errors.AddRange(rollbackResult.Errors);
         }
@@ -94,13 +153,16 @@ public sealed class GroupingService : IGroupingService
         }
     }
 
-    public Task<IEnumerable<FileItem>> GetFilesToGroupAsync(string directoryPath,
+    public async Task<IEnumerable<FileItem>> GetFilesToGroupAsync(string directoryPath,
         CancellationToken cancellationToken = default)
     {
-        var files = Directory.GetFiles(directoryPath);
-        var allFiles = files.Select(file => new FileInfo(file)).
-            Select(fileInfo => new FileItem(fileInfo)).ToList();
-        return Task.FromResult<IEnumerable<FileItem>>(allFiles);
+        return await Task.Run(() =>
+        {
+            var files = Directory.GetFiles(directoryPath);
+            return files.Select(file => new FileInfo(file))
+                       .Select(fileInfo => new FileItem(fileInfo))
+                       .ToList();
+        }, cancellationToken);
     }
     
     private static Dictionary<string, List<FileItem>> GroupFilesByCriteria(
@@ -221,6 +283,7 @@ public sealed class GroupingService : IGroupingService
         GroupingProfile profile, 
         GroupingResult result,
         string pathKey,
+        Action<int> onProgress,
         CancellationToken cancellationToken = default)
     {
         var processedFiles = 0;
@@ -252,6 +315,8 @@ public sealed class GroupingService : IGroupingService
                 if (!conflictResult.ShouldProceed)
                 {
                     result.SkippedFiles++;
+                    processedFiles++;
+                    onProgress(1);
                     continue;
                 }
                 
@@ -273,11 +338,14 @@ public sealed class GroupingService : IGroupingService
                 _rollbackService.RecordOperation(operationRecord);
                 
                 processedFiles++;
+                onProgress(1);
             }
             catch (Exception e)
             {
                 result.FailedFiles++;
                 result.Errors.Add($"Failed to process {file.Name}: {e.Message}");
+                processedFiles++;
+                onProgress(1);
             }
         }
         result.ProcessedFiles += processedFiles;
@@ -298,5 +366,4 @@ public sealed class GroupingService : IGroupingService
                 throw new ArgumentOutOfRangeException(nameof(operationRecord.OperationType), "Unsupported file operation type.");
         }
     }
-    
 }

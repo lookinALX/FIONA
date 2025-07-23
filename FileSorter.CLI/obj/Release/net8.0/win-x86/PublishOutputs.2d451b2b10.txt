@@ -1,0 +1,3 @@
+F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\win-x86\publish\FileSorter.CLI.pdb
+F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\win-x86\publish\FileSorter.Core.pdb
+F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\win-x86\publish\FileSorter.CLI.exe

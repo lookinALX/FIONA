@@ -5,16 +5,24 @@ using FileSorter.Core.Services;
 namespace Tests;
 
 // TODO: correct tests
+using FileSorter.Core.Models;
+using FileSorter.Core.Services;
+using NUnit.Framework;
+
 public class GroupingServiceTest
 {
     private string _fileDirectoryTest = @"F:\projects\FIONA\Tests\";
     private string _fileDirectoryWithFiles = @"F:\projects\FIONA\Tests\testDir\";
-    private GroupingService _groupingService = new GroupingService();
+    private GroupingService _groupingService;
+    private IRollbackService _rollbackService;
+    private IConflictResolver _conflictResolver;
     
     [SetUp]
     public void Setup()
     {
-        
+        _rollbackService = new RollbackService();
+        _conflictResolver = new ConflictResolver();
+        _groupingService = new GroupingService(_rollbackService, _conflictResolver);
     }
 
     [Test]
@@ -51,11 +59,9 @@ public class GroupingServiceTest
             SecondaryCriteria = GroupingCriteria.None,
             FileOperationType = FileOperationType.Copy
         };
-
-        var service = new GroupingService();
         
         // Act
-        var result = await service.GroupFilesAsync(_fileDirectoryWithFiles, profile);
+        var result = await _groupingService.GroupFilesAsync(_fileDirectoryWithFiles, profile);
         
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -83,10 +89,8 @@ public class GroupingServiceTest
             FileOperationType = FileOperationType.Copy
         };
         
-        var service = new GroupingService();
-        
         // Act
-        var result = await service.GroupFilesAsync(_fileDirectoryWithFiles, profile);
+        var result = await _groupingService.GroupFilesAsync(_fileDirectoryWithFiles, profile);
         
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -116,10 +120,8 @@ public class GroupingServiceTest
             FileOperationType = FileOperationType.Copy
         };
         
-        var service = new GroupingService();
-        
         // Act
-        var result = await service.GroupFilesAsync(_fileDirectoryWithFiles, profile);
+        var result = await _groupingService.GroupFilesAsync(_fileDirectoryWithFiles, profile);
         
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -146,10 +148,8 @@ public class GroupingServiceTest
             FileOperationType = FileOperationType.Copy
         };
         
-        var service = new GroupingService();
-        
         // Act
-        var result = await service.GroupFilesAsync(_fileDirectoryWithFiles, profile);
+        var result = await _groupingService.GroupFilesAsync(_fileDirectoryWithFiles, profile);
         
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -175,10 +175,8 @@ public class GroupingServiceTest
             FileOperationType = FileOperationType.Copy
         };
         
-        var service = new GroupingService();
-        
         // Act
-        var result = await service.GroupFilesAsync(_fileDirectoryWithFiles, profile);
+        var result = await _groupingService.GroupFilesAsync(_fileDirectoryWithFiles, profile);
         
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -187,7 +185,7 @@ public class GroupingServiceTest
         Assert.That(result.DestinationPathDict["primary"].Any(dir => Path.GetFileName(dir) == "documents"));
         Assert.That(result.DestinationPathDict["primary"].Any(dir => Path.GetFileName(dir) == "images"));
         
-        //Cleanup
+        // Cleanup
         foreach (var dir in result.DestinationPathDict["primary"])
         {
             Directory.Delete(dir, true);

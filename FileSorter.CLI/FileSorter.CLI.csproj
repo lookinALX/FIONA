@@ -13,6 +13,22 @@
         <PackageVersion>1.0.0</PackageVersion>
         <Authors>YourName</Authors>
         <Description>File sorting tool with AI-powered face recognition</Description>
+
+        <!-- single-file deployment -->
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <PublishTrimmed>true</PublishTrimmed>
+        
+        <!-- Info -->
+        <AssemblyTitle>FIONA</AssemblyTitle>
+        <AssemblyDescription>File Intelligence Organization and Navigation Assistant</AssemblyDescription>
+        <AssemblyCompany>lad</AssemblyCompany>
+        <AssemblyProduct>FIONA</AssemblyProduct>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+        <Copyright>Copyright © 2025</Copyright>
     </PropertyGroup>
 
     <ItemGroup>
