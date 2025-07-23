@@ -11,8 +11,8 @@
         <ToolCommandName>fiona</ToolCommandName>
         <PackageId>FileSorter.CLI</PackageId>
         <PackageVersion>1.0.0</PackageVersion>
-        <Authors>YourName</Authors>
-        <Description>File sorting tool with AI-powered face recognition</Description>
+        <Authors>lookinALX</Authors>
+        <Description>File Intelligence Organization and Navigation Assistant</Description>
 
         <!-- single-file deployment -->
         <PublishSingleFile>true</PublishSingleFile>
