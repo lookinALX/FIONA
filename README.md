@@ -1,4 +1,7 @@
-# FIONA - File Intelligence Organization and Navigation Assistant
+![alt text](FIONA_logo.png)
+# File Intelligence Organization and Navigation Assistant
+
+You can group your files by different options, such as category or extension.
 
 ## Installation
 
@@ -15,6 +18,8 @@
    - **Linux/Mac**: Copy to `/usr/local/bin/` or `~/bin/`
 
 ## Usage
+For now, only the CLI application is available.
+
 ```bash
 fiona              # Interactive mode
 fiona group --by extension
