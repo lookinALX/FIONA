@@ -10,7 +10,6 @@
         "dependencies": {
           "FileSorter.CLI": "1.0.0",
           "FileSorter.Core": "1.0.0",
-          "FileSorter.Platform": "1.0.0",
           "FileSorter.UI": "1.0.0",
           "Microsoft.NET.Test.Sdk": "17.8.0",
           "NUnit": "3.14.0",
@@ -1117,7 +1116,6 @@
         "dependencies": {
           "CommandLineParser": "2.9.1",
           "FileSorter.Core": "1.0.0",
-          "FileSorter.Platform": "1.0.0",
           "Microsoft.Extensions.DependencyInjection": "8.0.0",
           "Microsoft.Extensions.Hosting": "8.0.0"
         },
@@ -1131,14 +1129,6 @@
       "FileSorter.Core/1.0.0": {
         "runtime": {
           "FileSorter.Core.dll": {
-            "assemblyVersion": "1.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "FileSorter.Platform/1.0.0": {
-        "runtime": {
-          "FileSorter.Platform.dll": {
             "assemblyVersion": "1.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1684,11 +1674,6 @@
       "sha512": ""
     },
     "FileSorter.Core/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "FileSorter.Platform/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -24,7 +24,7 @@ class Program
 
     private static async Task<int> RunInteractiveMode()
     {
-        Console.WriteLine("FileSorter CLI - Enter command to start:");
+        Console.WriteLine("FIONA - CLI - Enter command to start:");
         Console.WriteLine("Type 'fiona' for help or 'exit' to quit");
         
         while (true)

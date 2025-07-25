@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "AGKYuqoua/k=",
+  "dgSpecHash": "yLESiTqdt5c=",
   "success": true,
   "projectFilePath": "F:\\projects\\FIONA\\FileSorter.UI\\FileSorter.UI.csproj",
   "expectedPackageFiles": [
@@ -25,17 +25,13 @@
     "C:\\Users\\looki\\.nuget\\packages\\harfbuzzsharp.nativeassets.webassembly\\7.3.0.3\\harfbuzzsharp.nativeassets.webassembly.7.3.0.3.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\harfbuzzsharp.nativeassets.win32\\7.3.0.3\\harfbuzzsharp.nativeassets.win32.7.3.0.3.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\microcom.runtime\\0.11.0\\microcom.runtime.0.11.0.nupkg.sha512",
-    "C:\\Users\\looki\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.12\\microsoft.net.illink.tasks.8.0.12.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\skiasharp\\2.88.9\\skiasharp.2.88.9.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\skiasharp.nativeassets.linux\\2.88.9\\skiasharp.nativeassets.linux.2.88.9.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\skiasharp.nativeassets.macos\\2.88.9\\skiasharp.nativeassets.macos.2.88.9.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\skiasharp.nativeassets.webassembly\\2.88.9\\skiasharp.nativeassets.webassembly.2.88.9.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\skiasharp.nativeassets.win32\\2.88.9\\skiasharp.nativeassets.win32.2.88.9.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512",
-    "C:\\Users\\looki\\.nuget\\packages\\tmds.dbus.protocol\\0.21.2\\tmds.dbus.protocol.0.21.2.nupkg.sha512",
-    "C:\\Users\\looki\\.nuget\\packages\\microsoft.netcore.app.runtime.osx-x64\\8.0.12\\microsoft.netcore.app.runtime.osx-x64.8.0.12.nupkg.sha512",
-    "C:\\Users\\looki\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.osx-x64\\8.0.12\\microsoft.aspnetcore.app.runtime.osx-x64.8.0.12.nupkg.sha512",
-    "C:\\Users\\looki\\.nuget\\packages\\microsoft.netcore.app.host.osx-x64\\8.0.12\\microsoft.netcore.app.host.osx-x64.8.0.12.nupkg.sha512"
+    "C:\\Users\\looki\\.nuget\\packages\\tmds.dbus.protocol\\0.21.2\\tmds.dbus.protocol.0.21.2.nupkg.sha512"
   ],
   "logs": []
 }

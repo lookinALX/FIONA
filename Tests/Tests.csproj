@@ -24,7 +24,6 @@
     <ItemGroup>
       <ProjectReference Include="..\FileSorter.CLI\FileSorter.CLI.csproj" />
       <ProjectReference Include="..\FileSorter.Core\FileSorter.Core.csproj" />
-      <ProjectReference Include="..\FileSorter.Platform\FileSorter.Platform.csproj" />
       <ProjectReference Include="..\FileSorter.UI\FileSorter.UI.csproj" />
     </ItemGroup>
 

@@ -10,12 +10,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("YourName")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("lookinALX")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © 2025")]
-[assembly: System.Reflection.AssemblyDescriptionAttribute("File sorting tool with AI-powered face recognition")]
+[assembly: System.Reflection.AssemblyDescriptionAttribute("File Intelligence Organization and Navigation Assistant")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+63a932db38fb236473c9fcaae0049fa9365394eb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aab06f0b8bc2bfe0b43d3f652ce7ff426250ffaa")]
 [assembly: System.Reflection.AssemblyProductAttribute("FileSorter.CLI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FIONA")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

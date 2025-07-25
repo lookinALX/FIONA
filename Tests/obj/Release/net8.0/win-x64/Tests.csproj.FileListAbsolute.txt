@@ -336,11 +336,9 @@ F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\mscorrc.dll
 F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\msquic.dll
 F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\FileSorter.CLI.dll
 F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\FileSorter.Core.dll
-F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\FileSorter.Platform.dll
 F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\FileSorter.UI.dll
 F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\FileSorter.CLI.pdb
 F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\FileSorter.Core.pdb
-F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\FileSorter.Platform.pdb
 F:\projects\FIONA\Tests\bin\Release\net8.0\win-x64\FileSorter.UI.pdb
 F:\projects\FIONA\Tests\obj\Release\net8.0\win-x64\Tests.csproj.AssemblyReference.cache
 F:\projects\FIONA\Tests\obj\Release\net8.0\win-x64\Avalonia\Resources.Inputs.cache

@@ -144,11 +144,9 @@ F:\projects\FIONA\Tests\bin\Debug\net8.0\runtimes\win-x64\native\libSkiaSharp.dl
 F:\projects\FIONA\Tests\bin\Debug\net8.0\runtimes\win-x86\native\libSkiaSharp.dll
 F:\projects\FIONA\Tests\bin\Debug\net8.0\FileSorter.CLI.dll
 F:\projects\FIONA\Tests\bin\Debug\net8.0\FileSorter.Core.dll
-F:\projects\FIONA\Tests\bin\Debug\net8.0\FileSorter.Platform.dll
 F:\projects\FIONA\Tests\bin\Debug\net8.0\FileSorter.UI.dll
 F:\projects\FIONA\Tests\bin\Debug\net8.0\FileSorter.CLI.pdb
 F:\projects\FIONA\Tests\bin\Debug\net8.0\FileSorter.Core.pdb
-F:\projects\FIONA\Tests\bin\Debug\net8.0\FileSorter.Platform.pdb
 F:\projects\FIONA\Tests\bin\Debug\net8.0\FileSorter.UI.pdb
 F:\projects\FIONA\Tests\obj\Debug\net8.0\Tests.csproj.AssemblyReference.cache
 F:\projects\FIONA\Tests\obj\Debug\net8.0\Avalonia\Resources.Inputs.cache

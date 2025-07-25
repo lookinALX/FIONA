@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "4DzbE1XkoPM=",
+  "dgSpecHash": "kUIDbHOsB2s=",
   "success": true,
   "projectFilePath": "F:\\projects\\FIONA\\FileSorter.CLI\\FileSorter.CLI.csproj",
   "expectedPackageFiles": [
@@ -37,10 +37,10 @@
     "C:\\Users\\looki\\.nuget\\packages\\system.diagnostics.eventlog\\8.0.0\\system.diagnostics.eventlog.8.0.0.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
     "C:\\Users\\looki\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512",
-    "C:\\Users\\looki\\.nuget\\packages\\microsoft.netcore.app.runtime.osx-x64\\8.0.12\\microsoft.netcore.app.runtime.osx-x64.8.0.12.nupkg.sha512",
-    "C:\\Users\\looki\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.osx-x64\\8.0.12\\microsoft.aspnetcore.app.runtime.osx-x64.8.0.12.nupkg.sha512",
-    "C:\\Users\\looki\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\8.0.12\\microsoft.netcore.app.crossgen2.win-x64.8.0.12.nupkg.sha512",
-    "C:\\Users\\looki\\.nuget\\packages\\microsoft.netcore.app.host.osx-x64\\8.0.12\\microsoft.netcore.app.host.osx-x64.8.0.12.nupkg.sha512"
+    "C:\\Users\\looki\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.12\\microsoft.netcore.app.runtime.win-x64.8.0.12.nupkg.sha512",
+    "C:\\Users\\looki\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.12\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.12.nupkg.sha512",
+    "C:\\Users\\looki\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.12\\microsoft.aspnetcore.app.runtime.win-x64.8.0.12.nupkg.sha512",
+    "C:\\Users\\looki\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\8.0.12\\microsoft.netcore.app.crossgen2.win-x64.8.0.12.nupkg.sha512"
   ],
   "logs": []
 }

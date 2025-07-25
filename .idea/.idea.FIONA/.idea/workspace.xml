@@ -10,6 +10,1193 @@
   <component name="ChangeListManager">
     <list default="true" id="4eeb05db-6b40-467b-aa56-e14f9aa94ec5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.FIONA/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.FIONA/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FIONA.sln" beforeDir="false" afterPath="$PROJECT_DIR$/FIONA.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/FileSorter.CLI.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/FileSorter.CLI.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/publish/FileSorter.CLI" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/publish/FileSorter.CLI" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/publish/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/publish/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/publish/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/linux-x64/publish/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/publish/FileSorter.CLI" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/publish/FileSorter.CLI" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/publish/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/publish/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/publish/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/osx-x64/publish/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.CLI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/publish/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/publish/FileSorter.CLI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/publish/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/publish/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x64/publish/FileSorter.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.CLI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/publish/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/publish/FileSorter.CLI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/publish/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/publish/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/publish/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Release/net8.0/win-x86/publish/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/apphost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/ref/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/ref/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/refint/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/refint/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/FileSorter.CLI.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/FileSorter.CLI.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/FileSorter.CLI.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/R2R/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/R2R/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/R2R/FileSorter.CLI.r2r.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/R2R/FileSorter.CLI.r2r.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/R2R/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/R2R/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/linked/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/linked/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/linked/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/linked/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/linked/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/linked/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/linked/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/linked/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/ref/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/ref/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/refint/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/linux-x64/refint/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/FileSorter.CLI.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/R2R/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/R2R/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/R2R/FileSorter.CLI.r2r.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/R2R/FileSorter.CLI.r2r.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/R2R/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/R2R/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/linked/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/linked/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/linked/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/linked/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/linked/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/linked/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/linked/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/linked/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/ref/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/ref/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/refint/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/osx-x64/refint/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/FileSorter.CLI.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/PublishOutputs.1c5c5020d5.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/PublishOutputs.1c5c5020d5.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/R2R/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/R2R/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/R2R/FileSorter.CLI.r2r.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/R2R/FileSorter.CLI.r2r.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/R2R/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/R2R/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/apphost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/linked/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/linked/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/linked/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/linked/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/linked/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/linked/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/linked/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/linked/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/ref/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/ref/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/refint/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/refint/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/singlefilehost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x64/singlefilehost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/FileSorter.CLI.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/R2R/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/R2R/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/R2R/FileSorter.CLI.r2r.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/R2R/FileSorter.CLI.r2r.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/R2R/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/R2R/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/apphost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/linked/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/linked/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/linked/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/linked/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/linked/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/linked/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/linked/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/linked/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/ref/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/ref/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/refint/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/refint/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/singlefilehost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Release/net8.0/win-x86/singlefilehost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/project.packagespec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/rider.project.model.nuget.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/rider.project.restore.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Release/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Release/net8.0/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Release/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Release/net8.0/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Release/net8.0/win-x64/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Release/net8.0/win-x64/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Release/net8.0/win-x64/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Release/net8.0/win-x64/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/ref/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/ref/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/refint/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/refint/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/FileSorter.Core.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/FileSorter.Core.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/FileSorter.Core.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/FileSorter.Core.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/FileSorter.Core.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/ref/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/ref/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/refint/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/refint/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/FileSorter.Core.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/ref/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/ref/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/refint/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Release/net8.0/win-x64/refint/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/rider.project.model.nuget.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/rider.project.restore.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/Class1.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/bin/Debug/net8.0/FileSorter.Platform.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/bin/Debug/net8.0/FileSorter.Platform.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/bin/Debug/net8.0/FileSorter.Platform.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/bin/Debug/net8.0/FileSorter.Platform.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/FileSorter.Platform.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/ref/FileSorter.Platform.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/ref/FileSorter.Platform.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/refint/FileSorter.Platform.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/Debug/net8.0/refint/FileSorter.Platform.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/FileSorter.Platform.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/FileSorter.Platform.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/FileSorter.Platform.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/FileSorter.Platform.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.Platform/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Platform/obj/rider.project.restore.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/FileSorter.UI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/FileSorter.UI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/FileSorter.UI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/FileSorter.UI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/publish/FileSorter.UI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/publish/FileSorter.UI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/publish/FileSorter.UI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Release/net8.0/win-x64/publish/FileSorter.UI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/FileSorter.UI.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/apphost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/ref/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/ref/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/refint/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/refint/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/FileSorter.UI.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/FileSorter.UI.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/FileSorter.UI.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/FileSorter.UI.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/FileSorter.UI.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/apphost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/ref/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/ref/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/refint/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/refint/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/singlefilehost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Release/net8.0/win-x64/singlefilehost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/rider.project.model.nuget.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/rider.project.restore.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/CoverletSourceRootsMapping_Tests" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/CoverletSourceRootsMapping_Tests" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/CoverletSourceRootsMapping_Tests" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/CoverletSourceRootsMapping_Tests" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.CLI.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.CLI.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.CLI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.UI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.UI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.UI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/FileSorter.UI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/Tests.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/Tests.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/Tests.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Release/net8.0/win-x64/Tests.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/ref/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/ref/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/refint/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/refint/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/Tests.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/ref/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/ref/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/refint/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Release/net8.0/win-x64/refint/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Tests.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Tests.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Tests.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Tests.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/project.packagespec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/rider.project.model.nuget.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/rider.project.restore.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/CommandLine.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/FileSorter.CLI" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/FileSorter.CLI.deps.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/FileSorter.CLI.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/FileSorter.CLI.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/FileSorter.CLI.runtimeconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/FileSorter.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/FileSorter.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.CSharp.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Configuration.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Configuration.Binder.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Configuration.CommandLine.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Configuration.EnvironmentVariables.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Configuration.FileExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Configuration.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Configuration.UserSecrets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.DependencyInjection.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.DependencyInjection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Diagnostics.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Diagnostics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.FileProviders.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.FileProviders.Physical.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.FileSystemGlobbing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Hosting.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Hosting.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Logging.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Logging.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Logging.Console.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Logging.Debug.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Logging.EventLog.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Logging.EventSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Logging.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Options.ConfigurationExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Options.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Extensions.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.VisualBasic.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.VisualBasic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Win32.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/Microsoft.Win32.Registry.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.AppContext.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Buffers.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Collections.Concurrent.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Collections.Immutable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Collections.NonGeneric.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Collections.Specialized.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Collections.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ComponentModel.Annotations.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ComponentModel.DataAnnotations.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ComponentModel.EventBasedAsync.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ComponentModel.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ComponentModel.TypeConverter.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ComponentModel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Console.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Data.Common.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Data.DataSetExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Data.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.Contracts.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.Debug.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.DiagnosticSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.EventLog.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.FileVersionInfo.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.Process.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.StackTrace.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.TextWriterTraceListener.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.Tools.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.TraceSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Diagnostics.Tracing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Drawing.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Drawing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Dynamic.Runtime.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Formats.Asn1.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Formats.Tar.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Globalization.Calendars.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Globalization.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Globalization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.Compression.Brotli.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.Compression.FileSystem.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.Compression.ZipFile.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.Compression.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.FileSystem.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.FileSystem.DriveInfo.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.FileSystem.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.FileSystem.Watcher.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.FileSystem.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.IsolatedStorage.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.MemoryMappedFiles.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.Pipes.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.Pipes.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.UnmanagedMemoryStream.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.IO.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Linq.Expressions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Linq.Parallel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Linq.Queryable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Memory.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.Http.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.Http.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.HttpListener.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.Mail.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.NameResolution.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.NetworkInformation.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.Ping.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.Quic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.Requests.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.Security.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.ServicePoint.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.Sockets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.WebClient.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.WebHeaderCollection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.WebProxy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.WebSockets.Client.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.WebSockets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Net.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Numerics.Vectors.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Numerics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ObjectModel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Private.CoreLib.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Private.DataContractSerialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Private.Uri.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Private.Xml.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Private.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Reflection.DispatchProxy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Reflection.Emit.ILGeneration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Reflection.Emit.Lightweight.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Reflection.Emit.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Reflection.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Reflection.Metadata.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Reflection.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Reflection.TypeExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Reflection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Resources.Reader.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Resources.ResourceManager.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Resources.Writer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.CompilerServices.Unsafe.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.CompilerServices.VisualC.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Handles.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.InteropServices.JavaScript.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.InteropServices.RuntimeInformation.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.InteropServices.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Intrinsics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Loader.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Numerics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Serialization.Formatters.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Serialization.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Serialization.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Serialization.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.Serialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Runtime.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Claims.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Cryptography.Algorithms.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Cryptography.Cng.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Cryptography.Csp.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Cryptography.Encoding.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Cryptography.OpenSsl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Cryptography.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Cryptography.X509Certificates.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Cryptography.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Principal.Windows.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.Principal.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.SecureString.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Security.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ServiceModel.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ServiceProcess.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Text.Encoding.CodePages.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Text.Encoding.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Text.Encoding.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Text.Encodings.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Text.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Text.RegularExpressions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.Channels.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.Overlapped.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.Tasks.Dataflow.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.Tasks.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.Tasks.Parallel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.Tasks.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.Thread.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.ThreadPool.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.Timer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Threading.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Transactions.Local.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Transactions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.ValueTuple.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Web.HttpUtility.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Windows.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Xml.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Xml.ReaderWriter.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Xml.Serialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Xml.XDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Xml.XPath.XDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Xml.XPath.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Xml.XmlDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Xml.XmlSerializer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/System.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/WindowsBase.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/createdump" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libSystem.Globalization.Native.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libSystem.IO.Compression.Native.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libSystem.Native.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libSystem.Net.Security.Native.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libSystem.Security.Cryptography.Native.OpenSsl.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libclrgc.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libclrjit.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libcoreclr.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libcoreclrtraceptprovider.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libhostfxr.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libhostpolicy.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libmscordaccore.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/libmscordbi.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/mscorlib.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/netstandard.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/publish/FileSorter.CLI" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/publish/FileSorter.CLI.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/linux-x64/publish/FileSorter.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/CommandLine.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/FileSorter.CLI" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/FileSorter.CLI.deps.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/FileSorter.CLI.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/FileSorter.CLI.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/FileSorter.CLI.runtimeconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/FileSorter.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/FileSorter.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.CSharp.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Configuration.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Configuration.Binder.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Configuration.CommandLine.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Configuration.EnvironmentVariables.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Configuration.FileExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Configuration.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Configuration.UserSecrets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.DependencyInjection.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.DependencyInjection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Diagnostics.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Diagnostics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.FileProviders.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.FileProviders.Physical.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.FileSystemGlobbing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Hosting.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Hosting.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Logging.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Logging.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Logging.Console.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Logging.Debug.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Logging.EventLog.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Logging.EventSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Logging.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Options.ConfigurationExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Options.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Extensions.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.VisualBasic.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.VisualBasic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Win32.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/Microsoft.Win32.Registry.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.AppContext.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Buffers.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Collections.Concurrent.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Collections.Immutable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Collections.NonGeneric.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Collections.Specialized.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Collections.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ComponentModel.Annotations.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ComponentModel.DataAnnotations.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ComponentModel.EventBasedAsync.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ComponentModel.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ComponentModel.TypeConverter.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ComponentModel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Console.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Data.Common.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Data.DataSetExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Data.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.Contracts.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.Debug.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.DiagnosticSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.EventLog.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.FileVersionInfo.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.Process.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.StackTrace.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.TextWriterTraceListener.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.Tools.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.TraceSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Diagnostics.Tracing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Drawing.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Drawing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Dynamic.Runtime.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Formats.Asn1.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Formats.Tar.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Globalization.Calendars.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Globalization.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Globalization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.Compression.Brotli.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.Compression.FileSystem.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.Compression.ZipFile.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.Compression.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.FileSystem.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.FileSystem.DriveInfo.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.FileSystem.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.FileSystem.Watcher.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.FileSystem.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.IsolatedStorage.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.MemoryMappedFiles.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.Pipes.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.Pipes.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.UnmanagedMemoryStream.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.IO.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Linq.Expressions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Linq.Parallel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Linq.Queryable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Memory.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.Http.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.Http.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.HttpListener.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.Mail.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.NameResolution.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.NetworkInformation.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.Ping.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.Quic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.Requests.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.Security.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.ServicePoint.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.Sockets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.WebClient.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.WebHeaderCollection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.WebProxy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.WebSockets.Client.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.WebSockets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Net.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Numerics.Vectors.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Numerics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ObjectModel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Private.CoreLib.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Private.DataContractSerialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Private.Uri.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Private.Xml.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Private.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Reflection.DispatchProxy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Reflection.Emit.ILGeneration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Reflection.Emit.Lightweight.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Reflection.Emit.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Reflection.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Reflection.Metadata.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Reflection.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Reflection.TypeExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Reflection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Resources.Reader.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Resources.ResourceManager.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Resources.Writer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.CompilerServices.Unsafe.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.CompilerServices.VisualC.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Handles.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.InteropServices.JavaScript.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.InteropServices.RuntimeInformation.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.InteropServices.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Intrinsics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Loader.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Numerics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Serialization.Formatters.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Serialization.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Serialization.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Serialization.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.Serialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Runtime.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Claims.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Cryptography.Algorithms.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Cryptography.Cng.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Cryptography.Csp.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Cryptography.Encoding.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Cryptography.OpenSsl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Cryptography.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Cryptography.X509Certificates.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Cryptography.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Principal.Windows.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.Principal.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.SecureString.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Security.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ServiceModel.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ServiceProcess.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Text.Encoding.CodePages.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Text.Encoding.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Text.Encoding.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Text.Encodings.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Text.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Text.RegularExpressions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.Channels.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.Overlapped.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.Tasks.Dataflow.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.Tasks.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.Tasks.Parallel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.Tasks.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.Thread.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.ThreadPool.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.Timer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Threading.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Transactions.Local.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Transactions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.ValueTuple.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Web.HttpUtility.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Windows.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Xml.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Xml.ReaderWriter.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Xml.Serialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Xml.XDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Xml.XPath.XDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Xml.XPath.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Xml.XmlDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Xml.XmlSerializer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/System.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/WindowsBase.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/createdump" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libSystem.Globalization.Native.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libSystem.IO.Compression.Native.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libSystem.Native.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libSystem.Net.Security.Native.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libSystem.Security.Cryptography.Native.Apple.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libSystem.Security.Cryptography.Native.OpenSsl.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libclrgc.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libclrjit.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libcoreclr.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libhostfxr.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libhostpolicy.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libmscordaccore.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/libmscordbi.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/mscorlib.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/netstandard.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/publish/FileSorter.CLI" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/publish/FileSorter.CLI.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/osx-x64/publish/FileSorter.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/CommandLine.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/FileSorter.CLI.deps.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/FileSorter.CLI.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/FileSorter.CLI.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/FileSorter.CLI.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/FileSorter.CLI.runtimeconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/FileSorter.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/FileSorter.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.CSharp.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.DiaSymReader.Native.amd64.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Configuration.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Configuration.Binder.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Configuration.CommandLine.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Configuration.EnvironmentVariables.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Configuration.FileExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Configuration.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Configuration.UserSecrets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.DependencyInjection.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.DependencyInjection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Diagnostics.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Diagnostics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.FileProviders.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.FileProviders.Physical.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.FileSystemGlobbing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Hosting.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Hosting.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Logging.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Logging.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Logging.Console.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Logging.Debug.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Logging.EventLog.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Logging.EventSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Logging.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Options.ConfigurationExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Options.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Extensions.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.VisualBasic.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.VisualBasic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Win32.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/Microsoft.Win32.Registry.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.AppContext.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Buffers.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Collections.Concurrent.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Collections.Immutable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Collections.NonGeneric.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Collections.Specialized.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Collections.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ComponentModel.Annotations.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ComponentModel.DataAnnotations.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ComponentModel.EventBasedAsync.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ComponentModel.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ComponentModel.TypeConverter.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ComponentModel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Console.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Data.Common.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Data.DataSetExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Data.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.Contracts.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.Debug.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.DiagnosticSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.EventLog.Messages.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.EventLog.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.FileVersionInfo.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.Process.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.StackTrace.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.TextWriterTraceListener.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.Tools.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.TraceSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Diagnostics.Tracing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Drawing.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Drawing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Dynamic.Runtime.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Formats.Asn1.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Formats.Tar.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Globalization.Calendars.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Globalization.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Globalization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.Compression.Brotli.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.Compression.FileSystem.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.Compression.Native.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.Compression.ZipFile.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.Compression.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.FileSystem.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.FileSystem.DriveInfo.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.FileSystem.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.FileSystem.Watcher.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.FileSystem.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.IsolatedStorage.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.MemoryMappedFiles.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.Pipes.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.Pipes.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.UnmanagedMemoryStream.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.IO.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Linq.Expressions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Linq.Parallel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Linq.Queryable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Memory.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.Http.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.Http.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.HttpListener.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.Mail.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.NameResolution.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.NetworkInformation.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.Ping.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.Quic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.Requests.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.Security.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.ServicePoint.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.Sockets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.WebClient.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.WebHeaderCollection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.WebProxy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.WebSockets.Client.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.WebSockets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Net.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Numerics.Vectors.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Numerics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ObjectModel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Private.CoreLib.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Private.DataContractSerialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Private.Uri.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Private.Xml.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Private.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Reflection.DispatchProxy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Reflection.Emit.ILGeneration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Reflection.Emit.Lightweight.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Reflection.Emit.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Reflection.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Reflection.Metadata.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Reflection.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Reflection.TypeExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Reflection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Resources.Reader.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Resources.ResourceManager.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Resources.Writer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.CompilerServices.Unsafe.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.CompilerServices.VisualC.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Handles.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.InteropServices.JavaScript.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.InteropServices.RuntimeInformation.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.InteropServices.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Intrinsics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Loader.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Numerics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Serialization.Formatters.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Serialization.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Serialization.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Serialization.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.Serialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Runtime.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Claims.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Cryptography.Algorithms.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Cryptography.Cng.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Cryptography.Csp.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Cryptography.Encoding.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Cryptography.OpenSsl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Cryptography.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Cryptography.X509Certificates.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Cryptography.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Principal.Windows.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.Principal.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.SecureString.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Security.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ServiceModel.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ServiceProcess.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Text.Encoding.CodePages.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Text.Encoding.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Text.Encoding.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Text.Encodings.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Text.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Text.RegularExpressions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.Channels.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.Overlapped.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.Tasks.Dataflow.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.Tasks.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.Tasks.Parallel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.Tasks.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.Thread.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.ThreadPool.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.Timer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Threading.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Transactions.Local.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Transactions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.ValueTuple.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Web.HttpUtility.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Windows.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Xml.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Xml.ReaderWriter.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Xml.Serialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Xml.XDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Xml.XPath.XDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Xml.XPath.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Xml.XmlDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Xml.XmlSerializer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/System.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/WindowsBase.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/clretwrc.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/clrgc.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/clrjit.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/coreclr.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/createdump.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/hostfxr.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/hostpolicy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/mscordaccore.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/mscordaccore_amd64_amd64_8.0.1224.60305.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/mscordbi.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/mscorlib.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/mscorrc.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/msquic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/netstandard.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/publish/FileSorter.CLI.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/publish/FileSorter.CLI.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x64/publish/FileSorter.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/CommandLine.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/FileSorter.CLI.deps.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/FileSorter.CLI.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/FileSorter.CLI.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/FileSorter.CLI.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/FileSorter.CLI.runtimeconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/FileSorter.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/FileSorter.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/FileSorter.Platform.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/FileSorter.Platform.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.CSharp.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.DiaSymReader.Native.x86.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Configuration.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Configuration.Binder.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Configuration.CommandLine.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Configuration.EnvironmentVariables.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Configuration.FileExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Configuration.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Configuration.UserSecrets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.DependencyInjection.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.DependencyInjection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Diagnostics.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Diagnostics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.FileProviders.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.FileProviders.Physical.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.FileSystemGlobbing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Hosting.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Hosting.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Logging.Abstractions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Logging.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Logging.Console.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Logging.Debug.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Logging.EventLog.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Logging.EventSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Logging.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Options.ConfigurationExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Options.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Extensions.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.VisualBasic.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.VisualBasic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Win32.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/Microsoft.Win32.Registry.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.AppContext.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Buffers.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Collections.Concurrent.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Collections.Immutable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Collections.NonGeneric.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Collections.Specialized.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Collections.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ComponentModel.Annotations.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ComponentModel.DataAnnotations.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ComponentModel.EventBasedAsync.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ComponentModel.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ComponentModel.TypeConverter.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ComponentModel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Configuration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Console.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Data.Common.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Data.DataSetExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Data.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.Contracts.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.Debug.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.DiagnosticSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.EventLog.Messages.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.EventLog.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.FileVersionInfo.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.Process.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.StackTrace.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.TextWriterTraceListener.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.Tools.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.TraceSource.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Diagnostics.Tracing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Drawing.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Drawing.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Dynamic.Runtime.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Formats.Asn1.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Formats.Tar.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Globalization.Calendars.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Globalization.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Globalization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.Compression.Brotli.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.Compression.FileSystem.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.Compression.Native.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.Compression.ZipFile.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.Compression.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.FileSystem.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.FileSystem.DriveInfo.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.FileSystem.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.FileSystem.Watcher.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.FileSystem.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.IsolatedStorage.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.MemoryMappedFiles.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.Pipes.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.Pipes.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.UnmanagedMemoryStream.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.IO.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Linq.Expressions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Linq.Parallel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Linq.Queryable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Memory.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.Http.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.Http.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.HttpListener.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.Mail.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.NameResolution.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.NetworkInformation.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.Ping.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.Quic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.Requests.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.Security.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.ServicePoint.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.Sockets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.WebClient.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.WebHeaderCollection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.WebProxy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.WebSockets.Client.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.WebSockets.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Net.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Numerics.Vectors.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Numerics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ObjectModel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Private.CoreLib.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Private.DataContractSerialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Private.Uri.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Private.Xml.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Private.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Reflection.DispatchProxy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Reflection.Emit.ILGeneration.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Reflection.Emit.Lightweight.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Reflection.Emit.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Reflection.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Reflection.Metadata.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Reflection.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Reflection.TypeExtensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Reflection.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Resources.Reader.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Resources.ResourceManager.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Resources.Writer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.CompilerServices.Unsafe.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.CompilerServices.VisualC.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Handles.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.InteropServices.JavaScript.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.InteropServices.RuntimeInformation.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.InteropServices.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Intrinsics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Loader.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Numerics.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Serialization.Formatters.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Serialization.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Serialization.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Serialization.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.Serialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Runtime.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.AccessControl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Claims.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Cryptography.Algorithms.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Cryptography.Cng.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Cryptography.Csp.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Cryptography.Encoding.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Cryptography.OpenSsl.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Cryptography.Primitives.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Cryptography.X509Certificates.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Cryptography.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Principal.Windows.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.Principal.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.SecureString.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Security.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ServiceModel.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ServiceProcess.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Text.Encoding.CodePages.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Text.Encoding.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Text.Encoding.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Text.Encodings.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Text.Json.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Text.RegularExpressions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.Channels.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.Overlapped.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.Tasks.Dataflow.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.Tasks.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.Tasks.Parallel.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.Tasks.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.Thread.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.ThreadPool.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.Timer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Threading.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Transactions.Local.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Transactions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.ValueTuple.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Web.HttpUtility.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Web.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Windows.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Xml.Linq.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Xml.ReaderWriter.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Xml.Serialization.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Xml.XDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Xml.XPath.XDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Xml.XPath.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Xml.XmlDocument.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Xml.XmlSerializer.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.Xml.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/System.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/WindowsBase.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/clretwrc.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/clrgc.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/clrjit.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/coreclr.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/createdump.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/hostfxr.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/hostpolicy.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/mscordaccore.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/mscordaccore_x86_x86_8.0.1224.60305.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/mscordbi.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/mscorlib.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/mscorrc.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/msquic.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/netstandard.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/publish/FileSorter.CLI.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/publish/FileSorter.CLI.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fiona-v1.0.0/win-x86/publish/FileSorter.Core.pdb" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +1238,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected=".NET Project.FileSorter.CLI">
+  <component name="RunManager" selected=".NET Project.FileSorter.UI">
     <configuration name="FileSorter.CLI" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.exe" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -124,6 +1311,7 @@
       <workItem from="1752606627815" duration="1219000" />
       <workItem from="1752694680386" duration="2898000" />
       <workItem from="1753291507306" duration="10359000" />
+      <workItem from="1753459849588" duration="868000" />
     </task>
     <servers />
   </component>

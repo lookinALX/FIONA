@@ -215,9 +215,7 @@ F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\osx-x64\libhostpolicy.dylib
 F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\osx-x64\libmscordaccore.dylib
 F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\osx-x64\libmscordbi.dylib
 F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\osx-x64\FileSorter.Core.dll
-F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\osx-x64\FileSorter.Platform.dll
 F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\osx-x64\FileSorter.Core.pdb
-F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\osx-x64\FileSorter.Platform.pdb
 F:\projects\FIONA\FileSorter.CLI\obj\Release\net8.0\osx-x64\FileSorter.CLI.csproj.AssemblyReference.cache
 F:\projects\FIONA\FileSorter.CLI\obj\Release\net8.0\osx-x64\FileSorter.CLI.GeneratedMSBuildEditorConfig.editorconfig
 F:\projects\FIONA\FileSorter.CLI\obj\Release\net8.0\osx-x64\FileSorter.CLI.AssemblyInfoInputs.cache
