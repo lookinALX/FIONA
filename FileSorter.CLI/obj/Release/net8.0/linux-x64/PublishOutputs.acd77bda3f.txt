@@ -1,3 +1,0 @@
-F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\linux-x64\publish\FileSorter.CLI.pdb
-F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\linux-x64\publish\FileSorter.Core.pdb
-F:\projects\FIONA\FileSorter.CLI\bin\Release\net8.0\linux-x64\publish\FileSorter.CLI
