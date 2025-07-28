@@ -1,4 +1,0 @@
-F:\projects\FIONA\FileSorter.UI\bin\Release\net8.0\linux-x64\publish\FileSorter.UI.pdb
-F:\projects\FIONA\FileSorter.UI\bin\Release\net8.0\linux-x64\publish\libHarfBuzzSharp.so
-F:\projects\FIONA\FileSorter.UI\bin\Release\net8.0\linux-x64\publish\libSkiaSharp.so
-F:\projects\FIONA\FileSorter.UI\bin\Release\net8.0\linux-x64\publish\FileSorter.UI
