@@ -1,1 +1,0 @@
-group --source "F:\projects\FIONA\FileSorter.CLI\testDir" --by extension --how copy
