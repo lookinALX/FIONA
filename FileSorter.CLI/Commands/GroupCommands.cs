@@ -65,7 +65,7 @@ public class GroupCommands
                     Console.WriteLine($"Failed to process {result.FailedFiles} files");
                 }
                 
-                Console.WriteLine($"⏱ Duration: {result.Duration.TotalSeconds:F2} seconds");
+                Console.WriteLine($"Duration: {result.Duration.TotalSeconds:F2} seconds");
                 
                 if (result.Errors.Any())
                 {
@@ -215,7 +215,9 @@ public class RollbackCommands
     {
         try
         {
+            Console.WriteLine($"[DEBUG] RollbackService instance: {_rollbackService.GetHashCode()}");
             var history = _rollbackService.GetOperationHistory();
+            Console.WriteLine($"[DEBUG] History count: {history.Count}");
             
             if (!history.Any())
             {

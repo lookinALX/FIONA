@@ -337,6 +337,9 @@ public sealed class GroupingService : IGroupingService
                 operationRecord.Success = true;
                 _rollbackService.RecordOperation(operationRecord);
                 
+                Console.WriteLine($"[DEBUG] Recorded operation: {operationRecord.SourcePath} -> {operationRecord.DestinationPath}");
+                Console.WriteLine($"[DEBUG] Total operations in history: {_rollbackService.GetOperationHistory().Count}");
+                
                 processedFiles++;
                 onProgress(1);
             }

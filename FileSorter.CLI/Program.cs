@@ -9,6 +9,8 @@ namespace FileSorter.CLI;
 
 class Program
 {
+    private static IHost? _host; // Глобальный host для интерактивного режима
+
     static async Task<int> Main(string[] args)
     {
         // If no arguments are provided, run interactive mode
@@ -27,42 +29,52 @@ class Program
         Console.WriteLine("FIONA - CLI - Enter command to start:");
         Console.WriteLine("Type 'fiona' for help or 'exit' to quit");
         
-        while (true)
+        // Создаем один host для всей интерактивной сессии
+        _host = CreateHostBuilder(Array.Empty<string>()).Build();
+        
+        try
         {
-            Console.Write("> ");
-            var input = Console.ReadLine()?.Trim();
-            
-            if (string.IsNullOrEmpty(input))
-                continue;
+            while (true)
+            {
+                Console.Write("> ");
+                var input = Console.ReadLine()?.Trim();
                 
-            if (input.Equals("exit", StringComparison.OrdinalIgnoreCase) || 
-                input.Equals("quit", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine("Goodbye!");
-                return 0;
-            }
-            
-            if (input.Equals("fiona", StringComparison.OrdinalIgnoreCase) ||
-                input.Equals("help", StringComparison.OrdinalIgnoreCase))
-            {
-                ShowCommands();
-                continue;
-            }
-            
-            // Parse the entered command into arguments
-            var commandArgs = ParseCommandLine(input);
-            if (commandArgs.Length > 0)
-            {
-                var result = await ProcessArguments(commandArgs);
-                if (result != 0)
+                if (string.IsNullOrEmpty(input))
+                    continue;
+                    
+                if (input.Equals("exit", StringComparison.OrdinalIgnoreCase) || 
+                    input.Equals("quit", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine($"Command finished with code: {result}");
+                    Console.WriteLine("Goodbye!");
+                    return 0;
+                }
+                
+                if (input.Equals("fiona", StringComparison.OrdinalIgnoreCase) ||
+                    input.Equals("help", StringComparison.OrdinalIgnoreCase))
+                {
+                    ShowCommands();
+                    continue;
+                }
+                
+                // Parse the entered command into arguments
+                var commandArgs = ParseCommandLine(input);
+                if (commandArgs.Length > 0)
+                {
+                    var result = await ProcessArgumentsWithHost(commandArgs, _host);
+                    if (result != 0)
+                    {
+                        Console.WriteLine($"Command finished with code: {result}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Unknown command. Type 'fiona' for command list or 'exit' to quit.");
                 }
             }
-            else
-            {
-                Console.WriteLine("Unknown command. Type 'fiona' for command list or 'exit' to quit.");
-            }
+        }
+        finally
+        {
+            _host?.Dispose();
         }
     }
 
@@ -158,9 +170,13 @@ class Program
 
     private static async Task<int> ProcessArguments(string[] args)
     {
-        // Create host with DI container
+        // Create host with DI container for non-interactive mode
         var host = CreateHostBuilder(args).Build();
-        
+        return await ProcessArgumentsWithHost(args, host);
+    }
+
+    private static async Task<int> ProcessArgumentsWithHost(string[] args, IHost host)
+    {
         var result = await Parser.Default.ParseArguments<GroupOptions, RollbackOptions>(args)
             .MapResult(
                 (GroupOptions opts) => {
@@ -191,10 +207,10 @@ class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureServices((context, services) =>
             {
-                // Register core services
+                // Register core services as Singletons to maintain state
                 services.AddSingleton<IRollbackService, RollbackService>();
                 services.AddSingleton<IConflictResolver, ConflictResolver>();
-                services.AddTransient<IGroupingService, GroupingService>();
+                services.AddSingleton<IGroupingService, GroupingService>();
                 
                 // Register command handlers
                 services.AddTransient<GroupCommands>();
