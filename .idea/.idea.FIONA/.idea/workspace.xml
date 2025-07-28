@@ -10,33 +10,17 @@
   <component name="ChangeListManager">
     <list default="true" id="4eeb05db-6b40-467b-aa56-e14f9aa94ec5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.FIONA/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.FIONA/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FIONA.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/FIONA.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/Commands/GroupCommands.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/Commands/GroupCommands.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Core.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.Core.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.csproj.AssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/FileSorter.CLI.sourcelink.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/apphost.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/ref/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/ref/FileSorter.CLI.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/refint/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.CLI/obj/Debug/net8.0/win-x64/refint/FileSorter.CLI.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/Services/GroupingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/Services/GroupingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/bin/Debug/net8.0/FileSorter.Core.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/FileSorter.Core.sourcelink.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/ref/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/ref/FileSorter.Core.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/refint/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.Core/obj/Debug/net8.0/refint/FileSorter.Core.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/bin/Debug/net8.0/FileSorter.UI.pdb" afterDir="false" />
@@ -48,9 +32,24 @@
       <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/apphost.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/ref/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/ref/FileSorter.UI.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/refint/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/FileSorter.UI/obj/Debug/net8.0/refint/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.CLI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Core.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.Core.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/FileSorter.UI.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/bin/Debug/net8.0/Tests.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.AssemblyInfoInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/Tests.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/ref/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/ref/Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/refint/Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/obj/Debug/net8.0/refint/Tests.dll" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,22 +80,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Project.FileSorter.CLI.executor&quot;: &quot;Debug&quot;,
-    &quot;.NET Project.FileSorter.UI.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Project.FileSorter.CLI.executor": "Run",
+    ".NET Project.FileSorter.UI.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "GitIgnore"
+    ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Project.FileSorter.CLI">
     <configuration name="FileSorter.CLI" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="$PROJECT_DIR$/FileSorter.CLI/bin/Debug/net8.0/win-x64/FileSorter.CLI.exe" />
@@ -172,7 +176,7 @@
       <workItem from="1753291507306" duration="10359000" />
       <workItem from="1753459849588" duration="1098000" />
       <workItem from="1753470899652" duration="2282000" />
-      <workItem from="1753723248769" duration="2589000" />
+      <workItem from="1753723248769" duration="3539000" />
     </task>
     <servers />
   </component>
@@ -192,45 +196,6 @@
           </properties>
           <option name="timeStamp" value="1" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/FileSorter.CLI/Program.cs</url>
-          <line>29</line>
-          <properties documentPath="F:\projects\FIONA\FileSorter.CLI\Program.cs" containingFunctionPresentation="Method 'RunInteractiveMode'">
-            <startOffsets>
-              <option value="862" />
-            </startOffsets>
-            <endOffsets>
-              <option value="874" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/FileSorter.CLI/Program.cs</url>
-          <line>169</line>
-          <properties documentPath="F:\projects\FIONA\FileSorter.CLI\Program.cs" containingFunctionPresentation="Lambda expression inside Method 'ProcessArguments'">
-            <startOffsets>
-              <option value="6358" />
-            </startOffsets>
-            <endOffsets>
-              <option value="6428" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/FileSorter.CLI/Program.cs</url>
-          <line>173</line>
-          <properties documentPath="F:\projects\FIONA\FileSorter.CLI\Program.cs" containingFunctionPresentation="Lambda expression inside Method 'ProcessArguments'">
-            <startOffsets>
-              <option value="6573" />
-            </startOffsets>
-            <endOffsets>
-              <option value="6649" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/FileSorter.CLI/Commands/GroupCommands.cs</url>
           <line>217</line>

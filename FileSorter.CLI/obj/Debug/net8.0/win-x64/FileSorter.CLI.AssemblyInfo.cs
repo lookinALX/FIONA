@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © 2025")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("File Intelligence Organization and Navigation Assistant")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+669bcdd3438b571f5797cd0a4c73ba79a8d8d044")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+60e9c8a0ee3574ae2ee13efae4a7e8f109b1cf58")]
 [assembly: System.Reflection.AssemblyProductAttribute("FileSorter.CLI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FIONA")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
