@@ -192,6 +192,12 @@ public sealed class GroupingService : IGroupingService
     private static Dictionary<string, List<FileItem>> GroupFilesByDate(
         List<FileItem> files, GroupingCriteria criteria, DateGroupingOption option)
     {
+        if (option == DateGroupingOption.None)
+        {
+            Console.WriteLine("ℹ️  Date grouping option not specified, defaulting to grouping by Year");
+            option = DateGroupingOption.Year;
+        }
+        
         return files
             .GroupBy(file =>
             {
@@ -207,7 +213,7 @@ public sealed class GroupingService : IGroupingService
                     DateGroupingOption.Year => date.ToString("yyyy"),
                     DateGroupingOption.Month => date.ToString("MMMM", CultureInfo.CreateSpecificCulture("en-US")),
                     DateGroupingOption.YearMonth => date.ToString("yyyy-MM"),
-                    DateGroupingOption.None => throw new ArgumentException("The grouping option has not been set."),
+                    DateGroupingOption.None => throw new ArgumentException("Something went wrong. The grouping option has not been set."),
                     _ => throw new NotImplementedException($"Unsupported DateGroupingOption: {option}")
                 };
             })
@@ -217,12 +223,17 @@ public sealed class GroupingService : IGroupingService
     private static Dictionary<string, List<FileItem>> GroupFilesByOldestDate(
         List<FileItem> files, DateGroupingOption option)
     {
+        if (option == DateGroupingOption.None)
+        {
+            Console.WriteLine("ℹ️  Date grouping option not specified, defaulting to grouping by Year");
+            option = DateGroupingOption.Year;
+        }
+        
         var result = new Dictionary<string, List<FileItem>>();
-        var keyForOption = "";
         
         foreach (var fileItem in files)
         {
-            keyForOption = GetKeyForOption(option
+            var keyForOption = GetKeyForOption(option
                 , fileItem.CreationDate <= fileItem.LastModifiedDate ? fileItem.CreationDate : fileItem.LastModifiedDate);
 
             if (result.TryGetValue(keyForOption, out var fileItems))
@@ -247,7 +258,7 @@ public sealed class GroupingService : IGroupingService
             
             DateGroupingOption.YearMonth => $"{date:yyyy-MM}",
             
-            DateGroupingOption.None => throw new ArgumentException("The grouping option has not been set."),
+            DateGroupingOption.None => date.ToString("yyyy"), // default year
             
             _ => throw new NotImplementedException($"Unsupported DateGroupingOption: {option}")
         };
