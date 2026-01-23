@@ -1,3 +1,3 @@
-module github.com/lookinALX/FIONA
+module FIONA
 
 go 1.22.2
