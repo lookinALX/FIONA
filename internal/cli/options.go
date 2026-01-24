@@ -8,7 +8,7 @@ import (
 
 const (
 	CritMIMEType  = "mimetype"
-	CritExtention = "extension"
+	CritExtension = "extension"
 	CritYear      = "year"
 	CritMonth     = "month"
 	CritSize      = "size"
@@ -32,7 +32,7 @@ type Opts struct {
 
 var validPrimaryCriteria = map[string]struct{}{
 	CritMIMEType:  {},
-	CritExtention: {},
+	CritExtension: {},
 	CritSize:      {},
 	CritYear:      {},
 	CritMonth:     {},
@@ -43,7 +43,7 @@ var validPrimaryCriteria = map[string]struct{}{
 var validSecondaryCriteria = map[string]struct{}{
 	CritEmpty:     {},
 	CritMIMEType:  {},
-	CritExtention: {},
+	CritExtension: {},
 	CritSize:      {},
 	CritYear:      {},
 	CritMonth:     {},
@@ -62,31 +62,53 @@ func (opts *Opts) ParseFlags() error {
 		return fmt.Errorf("cannot get work directory: %w", err)
 	}
 
-	addFlag(&opts.Sort.Primary, "c", "criteria", "mimetype", "Criteria to group by firstly")
-	addFlag(&opts.Sort.Secondary, "t", "then", "", "Secondary grouping criteria")
-	addFlag(&opts.Source, "s", "source", cwd, "Source directory to take files to sort")
-	addFlag(&opts.Dest, "d", "dest", cwd, "Destination directory to move or copy files from source directory and sort after")
-	addFlag(&opts.Action, "a", "action", "copy", "How to handle files (copy, move)")
-	addFlag(&opts.DryRun, "n", "dry-run", false, "Preview without changes")
+	Must(addFlag(&opts.Sort.Primary, "c", "criteria", "mimetype", "Criteria to group by firstly"))
+	Must(addFlag(&opts.Sort.Secondary, "t", "then", "", "Secondary grouping criteria"))
+	Must(addFlag(&opts.Source, "s", "source", cwd, "Source directory to take files to sort"))
+	Must(addFlag(&opts.Dest, "d", "dest", cwd, "Destination directory to move or copy files from source directory and sort after"))
+	Must(addFlag(&opts.Action, "a", "action", "copy", "How to handle files (copy, move)"))
+	Must(addFlag(&opts.DryRun, "n", "dry-run", false, "Preview without changes"))
 
 	flag.Parse()
 
 	err = opts.validateOptions()
-	if err != nil {
+
+	switch err {
+	case nil:
+		return nil
+	case ErrDestNotExists:
+		if nestedErr := os.MkdirAll(opts.Dest, 0755); nestedErr != nil {
+			return fmt.Errorf("destination directory is not exists, cannot create one: %w", nestedErr)
+		}
+		return nil
+	default:
 		return fmt.Errorf("invalid options:\n    %w", err)
 	}
-	return nil
 }
 
 func (opts *Opts) validateOptions() error {
-	var err error = nil
-
-	err = validatePrimaryCriteriaFlag(opts.Sort.Primary)
+	err := validatePrimaryCriteriaFlag(opts.Sort.Primary)
+	if err != nil {
+		return err
+	}
 	err = validateSecondaryCriteriaFlag(opts.Sort.Secondary)
+	if err != nil {
+		return err
+	}
 	err = validateActionFlag(opts.Action)
+	if err != nil {
+		return err
+	}
 	err = validateSourceFlag(opts.Source)
+	if err != nil {
+		return err
+	}
+	err = validateDestFlag(opts.Dest)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }
 
 func addFlag(p any, short, long string, defVal any, usage string) error {
@@ -146,9 +168,12 @@ func validateSourceFlag(crit string) error {
 	if crit == "" {
 		return ErrEmptySource
 	}
-	exists, err := pathExists(crit)
+	isDir, exists, err := pathExists(crit)
 	if !exists {
 		return ErrSourceNotExists
+	}
+	if !isDir {
+		return ErrSourceIsNotDir
 	}
 	if err != nil {
 		return fmt.Errorf("cannot access source directory: %w", err)
@@ -156,13 +181,30 @@ func validateSourceFlag(crit string) error {
 	return nil
 }
 
-func pathExists(path string) (bool, error) {
-	_, err := os.Stat(path)
+func validateDestFlag(crit string) error {
+	if crit == "" {
+		return ErrEmptyDest
+	}
+	isDir, exists, err := pathExists(crit)
+	if !exists {
+		return ErrDestNotExists
+	}
+	if !isDir {
+		return ErrDestIsNotDir
+	}
+	if err != nil {
+		return fmt.Errorf("cannot access destination directory: %w", err)
+	}
+	return nil
+}
+
+func pathExists(path string) (bool, bool, error) {
+	info, err := os.Stat(path)
 	if err == nil {
-		return true, err
+		return true, true, err
 	}
 	if os.IsNotExist(err) {
-		return false, nil
+		return info.IsDir(), false, nil
 	}
-	return false, err
+	return info.IsDir(), false, err
 }
