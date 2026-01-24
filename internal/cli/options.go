@@ -1,9 +1,20 @@
 package cli
 
 import (
-	"errors"
 	"flag"
 	"fmt"
+	"os"
+)
+
+const (
+	CritMIMEType  = "mimetype"
+	CritExtention = "extension"
+	CritYear      = "year"
+	CritMonth     = "month"
+	CritSize      = "size"
+	CritModDate   = "moddate"
+	CritCrDate    = "createdate"
+	CritEmpty     = ""
 )
 
 type SortOption struct {
@@ -19,44 +30,63 @@ type Opts struct {
 	DryRun bool
 }
 
-var validPrimaryCriteria = [5]string{"mimetype", "extention", "year", "month", "size"}
-var validSecondaryCriteria = [6]string{"", "mimetype", "extention", "year", "month", "size"}
-var validActions = [2]string{"move", "copy"}
+var validPrimaryCriteria = map[string]struct{}{
+	CritMIMEType:  {},
+	CritExtention: {},
+	CritSize:      {},
+	CritYear:      {},
+	CritMonth:     {},
+	CritModDate:   {},
+	CritCrDate:    {},
+}
+
+var validSecondaryCriteria = map[string]struct{}{
+	CritEmpty:     {},
+	CritMIMEType:  {},
+	CritExtention: {},
+	CritSize:      {},
+	CritYear:      {},
+	CritMonth:     {},
+	CritModDate:   {},
+	CritCrDate:    {},
+}
+
+var validActions = map[string]struct{}{
+	"move": {},
+	"copy": {},
+}
 
 func (opts *Opts) ParseFlags() error {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("cannot get work directory: %w", err)
+	}
+
 	addFlag(&opts.Sort.Primary, "c", "criteria", "mimetype", "Criteria to group by firstly")
 	addFlag(&opts.Sort.Secondary, "t", "then", "", "Secondary grouping criteria")
-	addFlag(&opts.Source, "s", "source", "", "Source directory to take files to sort")
-	addFlag(&opts.Dest, "d", "dest", "", "Destination directory to move or copy files from source directory and sort after")
+	addFlag(&opts.Source, "s", "source", cwd, "Source directory to take files to sort")
+	addFlag(&opts.Dest, "d", "dest", cwd, "Destination directory to move or copy files from source directory and sort after")
 	addFlag(&opts.Action, "a", "action", "copy", "How to handle files (copy, move)")
 	addFlag(&opts.DryRun, "n", "dry-run", false, "Preview without changes")
 
-	err := opts.ValidateOptions()
-	if err != nil {
-		return fmt.Errorf("invalid options")
-	}
+	flag.Parse()
 
+	err = opts.validateOptions()
+	if err != nil {
+		return fmt.Errorf("invalid options:\n    %w", err)
+	}
 	return nil
 }
 
-func (opts *Opts) ValidateOptions() error {
-	isError := true
+func (opts *Opts) validateOptions() error {
+	var err error = nil
 
-	for _, crit := range validPrimaryCriteria {
-		if crit == opts.Sort.Primary {
-			isError = false
-			break
-		}
-	}
-	if isError == false {
-		isError = true
-	} else {
-		return errors.New("Custom error")
-	}
+	err = validatePrimaryCriteriaFlag(opts.Sort.Primary)
+	err = validateSecondaryCriteriaFlag(opts.Sort.Secondary)
+	err = validateActionFlag(opts.Action)
+	err = validateSourceFlag(opts.Source)
 
-	// TODO: do for all valid options
-
-	return nil
+	return err
 }
 
 func addFlag(p any, short, long string, defVal any, usage string) error {
@@ -89,4 +119,50 @@ func addFlag(p any, short, long string, defVal any, usage string) error {
 		}
 	}
 	return nil
+}
+
+func validatePrimaryCriteriaFlag(crit string) error {
+	if _, exists := validPrimaryCriteria[crit]; !exists {
+		return ErrInvalidPrimaryCriteria
+	}
+	return nil
+}
+
+func validateSecondaryCriteriaFlag(crit string) error {
+	if _, exists := validSecondaryCriteria[crit]; !exists {
+		return ErrInvalidSecondaryCriteria
+	}
+	return nil
+}
+
+func validateActionFlag(crit string) error {
+	if _, exists := validActions[crit]; !exists {
+		return ErrInvalidAction
+	}
+	return nil
+}
+
+func validateSourceFlag(crit string) error {
+	if crit == "" {
+		return ErrEmptySource
+	}
+	exists, err := pathExists(crit)
+	if !exists {
+		return ErrSourceNotExists
+	}
+	if err != nil {
+		return fmt.Errorf("cannot access source directory: %w", err)
+	}
+	return nil
+}
+
+func pathExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, err
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }
