@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -73,10 +74,10 @@ func (opts *Opts) ParseFlags() error {
 
 	err = opts.validateOptions()
 
-	switch err {
-	case nil:
+	switch {
+	case err == nil:
 		return nil
-	case ErrDestNotExists:
+	case errors.Is(err, ErrDestNotExists):
 		if nestedErr := os.MkdirAll(opts.Dest, 0755); nestedErr != nil {
 			return fmt.Errorf("destination directory is not exists, cannot create one: %w", nestedErr)
 		}
@@ -145,6 +146,9 @@ func addFlag(p any, short, long string, defVal any, usage string) error {
 
 func validatePrimaryCriteriaFlag(crit string) error {
 	if _, exists := validPrimaryCriteria[crit]; !exists {
+		if crit == "" {
+			return ErrEmptyPrimaryCriteria
+		}
 		return ErrInvalidPrimaryCriteria
 	}
 	return nil

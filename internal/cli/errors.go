@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ErrInvalidPrimaryCriteria   = errors.New("invalid primary sort criteria")
+	ErrEmptyPrimaryCriteria     = errors.New("empty primary sort criteria")
 	ErrInvalidSecondaryCriteria = errors.New("invalid secondary sort criteria")
 	ErrInvalidAction            = errors.New("invalid action, must be 'copy' or 'move'")
 	ErrEmptySource              = errors.New("source directory is required")
