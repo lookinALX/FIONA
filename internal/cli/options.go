@@ -172,11 +172,11 @@ func validateSourceFlag(crit string) error {
 	if crit == "" {
 		return ErrEmptySource
 	}
-	isDir, exists, err := pathExists(crit)
+	info, exists, err := pathExists(crit)
 	if !exists {
 		return ErrSourceNotExists
 	}
-	if !isDir {
+	if !info.IsDir() {
 		return ErrSourceIsNotDir
 	}
 	if err != nil {
@@ -189,11 +189,11 @@ func validateDestFlag(crit string) error {
 	if crit == "" {
 		return ErrEmptyDest
 	}
-	isDir, exists, err := pathExists(crit)
+	info, exists, err := pathExists(crit)
 	if !exists {
 		return ErrDestNotExists
 	}
-	if !isDir {
+	if !info.IsDir() {
 		return ErrDestIsNotDir
 	}
 	if err != nil {
@@ -202,13 +202,13 @@ func validateDestFlag(crit string) error {
 	return nil
 }
 
-func pathExists(path string) (bool, bool, error) {
+func pathExists(path string) (os.FileInfo, bool, error) {
 	info, err := os.Stat(path)
 	if err == nil {
-		return true, true, err
+		return info, true, err
 	}
 	if os.IsNotExist(err) {
-		return info.IsDir(), false, nil
+		return info, false, nil
 	}
-	return info.IsDir(), false, err
+	return info, false, err
 }
