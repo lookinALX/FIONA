@@ -1,0 +1,75 @@
+package scanner
+
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
+
+func TestDefineMIMEtype(t *testing.T) {
+	tests := []struct {
+		ext      string
+		expected string
+	}{
+		{".jpg", "image"},
+		{"PNG", "image"},
+		{".pdf", "document"},
+		{"docx", "document"},
+		{".mp4", "video"},
+		{"wav", "audio"},
+		{"exe", "application"},
+		{"zip", "archive"},
+		{".unknown", "unknown"},
+	}
+
+	for _, test := range tests {
+		got := defineMIMEtype(test.ext)
+		if got != test.expected {
+			t.Errorf("defineMIMEtype(%q) = %q; want %q", test.ext, got, test.expected)
+		}
+	}
+}
+
+func TestNewFileInfo(t *testing.T) {
+	tmpFile := filepath.Join(os.TempDir(), "testfile.txt")
+	err := os.WriteFile(tmpFile, []byte("Hello"), 0644)
+	if err != nil {
+		t.Fatalf("faild to create temp file: %v", err)
+	}
+	defer os.Remove(tmpFile)
+
+	fi, err := NewFileInfo(tmpFile)
+	if err != nil {
+		t.Fatalf("NewFileInfo returned error: %v", err)
+	}
+
+	if fi.Name != "testfile.txt" {
+		t.Errorf("Name = %q; want %q", fi.Name, "testfile.txt")
+	}
+
+	if fi.Extension != ".txt" {
+		t.Errorf("Extension = %q; want %q", fi.Extension, ".txt")
+	}
+
+	if fi.Size != 5 {
+		t.Errorf("Size = %d; want %d", fi.Size, 5)
+	}
+
+	if fi.MIMEtype != "document" {
+		t.Errorf("MIMEtype = %q; want %q", fi.MIMEtype, "document")
+	}
+}
+
+func TestNewFileInfoDirError(t *testing.T) {
+	tmpDir := filepath.Join(os.TempDir(), "testdir")
+	err := os.Mkdir(tmpDir, 0755)
+	if err != nil {
+		t.Fatalf("failed to create temp dir: %v", err)
+	}
+	defer os.Remove(tmpDir)
+
+	_, err = NewFileInfo(tmpDir)
+	if err == nil {
+		t.Errorf("expected error for directory, got nil")
+	}
+}
