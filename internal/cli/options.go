@@ -13,8 +13,7 @@ const (
 	CritYear      = "year"
 	CritMonth     = "month"
 	CritSize      = "size"
-	CritModDate   = "moddate"
-	CritCrDate    = "createdate"
+	CritDate      = "date"
 	CritEmpty     = ""
 )
 
@@ -37,8 +36,7 @@ var validPrimaryCriteria = map[string]struct{}{
 	CritSize:      {},
 	CritYear:      {},
 	CritMonth:     {},
-	CritModDate:   {},
-	CritCrDate:    {},
+	CritDate:      {},
 }
 
 var validSecondaryCriteria = map[string]struct{}{
@@ -48,8 +46,7 @@ var validSecondaryCriteria = map[string]struct{}{
 	CritSize:      {},
 	CritYear:      {},
 	CritMonth:     {},
-	CritModDate:   {},
-	CritCrDate:    {},
+	CritDate:      {},
 }
 
 var validActions = map[string]struct{}{
@@ -211,4 +208,14 @@ func pathExists(path string) (os.FileInfo, bool, error) {
 		return info, false, nil
 	}
 	return info, false, err
+}
+
+func (opts *Opts) PrintOptions() {
+	fmt.Println("Parsed flags:")
+	fmt.Println("   Primary sorting option: ", opts.Sort.Primary)
+	fmt.Println("   Secondary sorting option: ", opts.Sort.Secondary)
+	fmt.Println("   Action with files option: ", opts.Action)
+	fmt.Println("   Source directory path: ", opts.Source)
+	fmt.Println("   Destination directory path: ", opts.Dest)
+	fmt.Println("   Is Dry Run: ", opts.DryRun)
 }

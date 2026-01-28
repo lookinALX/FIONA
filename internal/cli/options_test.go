@@ -18,8 +18,7 @@ func TestValidatePrimaryCriteriaFlag(t *testing.T) {
 		{"valid extension flag", CritExtension, nil},
 		{"valid year flag", CritYear, nil},
 		{"valid month flag", CritMonth, nil},
-		{"valid creation date flag", CritCrDate, nil},
-		{"valid modification date flag", CritModDate, nil},
+		{"valid date flag", CritDate, nil},
 		{"valid size flag", CritSize, nil},
 		// invalid cases
 		{"invalid criteria", "invalid", ErrInvalidPrimaryCriteria},
@@ -48,8 +47,7 @@ func TestValidateSecondaryCriteriaFlag(t *testing.T) {
 		{"valid extension flag", CritExtension, nil},
 		{"valid year flag", CritYear, nil},
 		{"valid month flag", CritMonth, nil},
-		{"valid creation date flag", CritCrDate, nil},
-		{"valid modification date flag", CritModDate, nil},
+		{"valid date flag", CritDate, nil},
 		{"valid size flag", CritSize, nil},
 		{"empty string", "", nil},
 		// invalid cases
