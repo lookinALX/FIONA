@@ -71,17 +71,17 @@ func defineType(extension string) string {
 
 	switch {
 	case images[ext]:
-		return "image"
+		return "images"
 	case documents[ext]:
-		return "document"
+		return "documents"
 	case videos[ext]:
-		return "video"
+		return "videos"
 	case audio[ext]:
-		return "audio"
+		return "audios"
 	case apps[ext]:
-		return "application"
+		return "applications"
 	case archives[ext]:
-		return "archive"
+		return "archives"
 	default:
 		return "unknown"
 	}

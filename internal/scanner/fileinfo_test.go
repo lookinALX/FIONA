@@ -11,14 +11,14 @@ func TestDefineType(t *testing.T) {
 		ext      string
 		expected string
 	}{
-		{".jpg", "image"},
-		{"PNG", "image"},
-		{".pdf", "document"},
-		{"docx", "document"},
-		{".mp4", "video"},
-		{"wav", "audio"},
-		{"exe", "application"},
-		{"zip", "archive"},
+		{".jpg", "images"},
+		{"PNG", "images"},
+		{".pdf", "documents"},
+		{"docx", "documents"},
+		{".mp4", "videos"},
+		{"wav", "audios"},
+		{"exe", "applications"},
+		{"zip", "archives"},
 		{".unknown", "unknown"},
 	}
 
@@ -34,7 +34,7 @@ func TestNewFileInfo(t *testing.T) {
 	tmpFile := filepath.Join(os.TempDir(), "testfile.txt")
 	err := os.WriteFile(tmpFile, []byte("Hello"), 0644)
 	if err != nil {
-		t.Fatalf("faild to create temp file: %v", err)
+		t.Fatalf("failed to create temp file: %v", err)
 	}
 	defer os.Remove(tmpFile)
 
@@ -55,8 +55,8 @@ func TestNewFileInfo(t *testing.T) {
 		t.Errorf("Size = %d; want %d", fi.Size, 5)
 	}
 
-	if fi.Type != "document" {
-		t.Errorf("Type = %q; want %q", fi.Type, "document")
+	if fi.Type != "documents" {
+		t.Errorf("Type = %q; want %q", fi.Type, "documents")
 	}
 }
 
