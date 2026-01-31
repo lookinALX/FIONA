@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"FIONA/internal/rules"
 	"errors"
 	"flag"
 	"fmt"
@@ -52,6 +53,29 @@ var validSecondaryCriteria = map[string]struct{}{
 var validActions = map[string]struct{}{
 	"move": {},
 	"copy": {},
+}
+
+type ruleFactory func(isPrimary bool) rules.Rule
+
+var ruleFactories = map[string]ruleFactory{
+	CritMIMEType: func(isPrimary bool) rules.Rule {
+		return &rules.ByTypeRule{IsPrimary: isPrimary}
+	},
+	CritDate: func(isPrimary bool) rules.Rule {
+		return &rules.ByDateRule{IsPrimary: isPrimary}
+	},
+	CritMonth: func(isPrimary bool) rules.Rule {
+		return &rules.ByMonthRule{IsPrimary: isPrimary}
+	},
+	CritYear: func(isPrimary bool) rules.Rule {
+		return &rules.ByYearRule{IsPrimary: isPrimary}
+	},
+	CritSize: func(isPrimary bool) rules.Rule {
+		return &rules.BySizeRule{IsPrimary: isPrimary}
+	},
+	CritExtension: func(isPrimary bool) rules.Rule {
+		return &rules.ByExtensionRule{IsPrimary: isPrimary}
+	},
 }
 
 func (opts *Opts) ParseFlags() error {
@@ -218,4 +242,40 @@ func (opts *Opts) PrintOptions() {
 	fmt.Println("   Source directory path: ", opts.Source)
 	fmt.Println("   Destination directory path: ", opts.Dest)
 	fmt.Println("   Is Dry Run: ", opts.DryRun)
+}
+
+func (opts *Opts) ParseToRules() ([]rules.Rule, error) {
+	var result []rules.Rule
+
+	if rule, err := makeRule(opts.Sort.Primary, true); err != nil {
+		return nil, err
+	} else {
+		result = append(result, rule)
+	}
+
+	if rule, err := makeRule(opts.Sort.Secondary, false); err != nil {
+		return nil, err
+	} else {
+		result = append(result, rule)
+	}
+
+	resultRules := result[:0]
+	for _, rule := range result {
+		if rule != nil {
+			resultRules = append(resultRules, rule)
+		}
+	}
+
+	return resultRules, nil
+}
+
+func makeRule(name string, isPrimary bool) (rules.Rule, error) {
+	if CritEmpty == name && !isPrimary {
+		return nil, nil
+	}
+	factory, ok := ruleFactories[name]
+	if !ok {
+		return nil, ErrUnknownRuleName
+	}
+	return factory(isPrimary), nil
 }

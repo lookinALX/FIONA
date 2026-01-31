@@ -1,9 +1,11 @@
 package cli
 
 import (
+	"FIONA/internal/rules"
 	"errors"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 )
 
@@ -240,6 +242,66 @@ func TestValidateOptions(t *testing.T) {
 			err := tt.input.validateOptions()
 			if !errors.Is(err, tt.wantErr) {
 				t.Errorf("validateOptions() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestOpts_ParseToRules(t *testing.T) {
+	tests := []struct {
+		name      string
+		input     Opts
+		wantErr   error
+		wantRules []rules.Rule
+	}{
+		{
+			name: "invalid rule",
+			input: Opts{
+				Sort: SortOption{
+					Primary:   CritEmpty,
+					Secondary: CritEmpty,
+				},
+			},
+			wantErr:   ErrUnknownRuleName,
+			wantRules: nil,
+		},
+		{
+			name: "valid rule without secondary",
+			input: Opts{
+				Sort: SortOption{
+					Primary:   CritMIMEType,
+					Secondary: CritEmpty,
+				},
+			},
+			wantErr: nil,
+			wantRules: []rules.Rule{
+				&rules.ByTypeRule{IsPrimary: true},
+			},
+		},
+		{
+			name: "valid rule with secondary",
+			input: Opts{
+				Sort: SortOption{
+					Primary:   CritMIMEType,
+					Secondary: CritYear,
+				},
+			},
+			wantErr: nil,
+			wantRules: []rules.Rule{
+				&rules.ByTypeRule{IsPrimary: true},
+				&rules.ByYearRule{IsPrimary: false},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotRules, err := tt.input.ParseToRules()
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("ParseToRules() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !reflect.DeepEqual(gotRules, tt.wantRules) {
+				t.Errorf("ParseToRules() gotRules = %v, want %v", gotRules, tt.wantRules)
 			}
 		})
 	}

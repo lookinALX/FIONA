@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestDefineMIMEtype(t *testing.T) {
+func TestDefineType(t *testing.T) {
 	tests := []struct {
 		ext      string
 		expected string
@@ -23,7 +23,7 @@ func TestDefineMIMEtype(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := defineMIMEtype(test.ext)
+		got := defineType(test.ext)
 		if got != test.expected {
 			t.Errorf("defineMIMEtype(%q) = %q; want %q", test.ext, got, test.expected)
 		}
@@ -55,8 +55,8 @@ func TestNewFileInfo(t *testing.T) {
 		t.Errorf("Size = %d; want %d", fi.Size, 5)
 	}
 
-	if fi.MIMEtype != "document" {
-		t.Errorf("MIMEtype = %q; want %q", fi.MIMEtype, "document")
+	if fi.Type != "document" {
+		t.Errorf("Type = %q; want %q", fi.Type, "document")
 	}
 }
 

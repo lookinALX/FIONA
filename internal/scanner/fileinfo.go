@@ -34,13 +34,13 @@ type FileInfo struct {
 	Extension string
 	Size      int64
 	Date      string
-	MIMEtype  string
+	Type      string
 }
 
 func NewFileInfo(path string) (*FileInfo, error) {
 	info, err := os.Stat(path)
 	if err != nil {
-		return nil, fmt.Errorf("faild to stat file: %w", err)
+		return nil, fmt.Errorf("failed to stat file: %w", err)
 	}
 
 	if info.IsDir() {
@@ -51,7 +51,7 @@ func NewFileInfo(path string) (*FileInfo, error) {
 	extension := filepath.Ext(name)
 	size := info.Size()
 	date := info.ModTime().Format("January 2006")
-	mimeType := defineMIMEtype(extension)
+	mimeType := defineType(extension)
 
 	return &FileInfo{
 		Path:      path,
@@ -59,11 +59,11 @@ func NewFileInfo(path string) (*FileInfo, error) {
 		Extension: extension,
 		Size:      size,
 		Date:      date,
-		MIMEtype:  mimeType,
+		Type:      mimeType,
 	}, nil
 }
 
-func defineMIMEtype(extension string) string {
+func defineType(extension string) string {
 	ext := strings.ToLower(extension)
 	if len(ext) > 0 && ext[0] == '.' {
 		ext = ext[1:]

@@ -29,7 +29,7 @@ func (s *Scanner) Scan(dir string) ([]*FileInfo, error) {
 
 		file, err := NewFileInfo(path)
 		if err != nil {
-			return fmt.Errorf("faild to create FileInfo for %s: %w", path, err)
+			return fmt.Errorf("failed to create FileInfo for %s: %w", path, err)
 		}
 
 		files = append(files, file)
@@ -39,7 +39,7 @@ func (s *Scanner) Scan(dir string) ([]*FileInfo, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("Scanner: can not scan directory: %w", err)
+		return nil, fmt.Errorf("scanner: can not scan directory: %w", err)
 	}
 
 	return files, nil
