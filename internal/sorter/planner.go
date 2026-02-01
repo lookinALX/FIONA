@@ -66,11 +66,32 @@ func (p *Plan) defineBaseDir(newAction *Action) {
 		return
 	}
 
-	if countSeparators(actionSourceDir) < countSeparators(p.BaseDir) {
+	actionSourceSeparatorsCount := countSeparators(actionSourceDir)
+	baseDirSeparatorsCount := countSeparators(p.BaseDir)
+
+	if actionSourceSeparatorsCount < baseDirSeparatorsCount {
 		p.BaseDir = actionSourceDir
+	}
+
+	if actionSourceSeparatorsCount == baseDirSeparatorsCount {
+		p.BaseDir = getFirstCommonDir(actionSourceDir, p.BaseDir)
 	}
 }
 
 func countSeparators(path string) int {
 	return strings.Count(filepath.Clean(path), string(filepath.Separator))
+}
+
+func getFirstCommonDir(path1, path2 string) string {
+	path1 = filepath.Clean(path1)
+	path2 = filepath.Clean(path2)
+	if path1 == path2 {
+		return path1
+	}
+
+	if filepath.Dir(path1) == path1 || filepath.Dir(path2) == path2 {
+		return "" // no common root
+	}
+
+	return getFirstCommonDir(filepath.Dir(path1), filepath.Dir(path2))
 }
