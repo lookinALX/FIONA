@@ -54,8 +54,8 @@ func TestPlanner_AddAction(t *testing.T) {
 			plan:   Plan{},
 			action: action0,
 			want: Plan{
-				Actions: []Action{action0},
-				BaseDir: sourceFolder,
+				Actions:       []Action{action0},
+				BaseDirSource: sourceFolder,
 				DirCounts: map[string]int{
 					"documents": 1,
 				},
@@ -67,8 +67,8 @@ func TestPlanner_AddAction(t *testing.T) {
 		{
 			name: "add action to plan with action same source",
 			plan: Plan{
-				Actions: []Action{action0},
-				BaseDir: sourceFolder,
+				Actions:       []Action{action0},
+				BaseDirSource: sourceFolder,
 				DirCounts: map[string]int{
 					"documents": 1,
 				},
@@ -78,8 +78,8 @@ func TestPlanner_AddAction(t *testing.T) {
 			},
 			action: action1,
 			want: Plan{
-				Actions: []Action{action0, action1},
-				BaseDir: sourceFolder,
+				Actions:       []Action{action0, action1},
+				BaseDirSource: sourceFolder,
 				DirCounts: map[string]int{
 					"documents": 2,
 				},
@@ -91,8 +91,8 @@ func TestPlanner_AddAction(t *testing.T) {
 		{
 			name: "add action with base dir",
 			plan: Plan{
-				Actions: []Action{action2},
-				BaseDir: filepath.Join(sourceFolder, "nestedFolder"),
+				Actions:       []Action{action2},
+				BaseDirSource: filepath.Join(sourceFolder, "nestedFolder"),
 				DirCounts: map[string]int{
 					"documents": 1,
 				},
@@ -102,8 +102,8 @@ func TestPlanner_AddAction(t *testing.T) {
 			},
 			action: action0,
 			want: Plan{
-				Actions: []Action{action2, action0},
-				BaseDir: filepath.Join(sourceFolder),
+				Actions:       []Action{action2, action0},
+				BaseDirSource: filepath.Join(sourceFolder),
 				DirCounts: map[string]int{
 					"documents": 2,
 				},
@@ -115,8 +115,8 @@ func TestPlanner_AddAction(t *testing.T) {
 		{
 			name: "add action from another nested folder in the same base dir",
 			plan: Plan{
-				Actions: []Action{action2},
-				BaseDir: filepath.Join(sourceFolder, "nestedFolder"),
+				Actions:       []Action{action2},
+				BaseDirSource: filepath.Join(sourceFolder, "nestedFolder"),
 				DirCounts: map[string]int{
 					"documents": 1,
 				},
@@ -126,8 +126,8 @@ func TestPlanner_AddAction(t *testing.T) {
 			},
 			action: action3,
 			want: Plan{
-				Actions: []Action{action2, action3},
-				BaseDir: sourceFolder,
+				Actions:       []Action{action2, action3},
+				BaseDirSource: sourceFolder,
 				DirCounts: map[string]int{
 					"documents": 2,
 				},
@@ -139,8 +139,8 @@ func TestPlanner_AddAction(t *testing.T) {
 		{
 			name: "add action with no common base dir",
 			plan: Plan{
-				Actions: []Action{action0},
-				BaseDir: filepath.Join("user", "source"),
+				Actions:       []Action{action0},
+				BaseDirSource: filepath.Join("user", "source"),
 				DirCounts: map[string]int{
 					"documents": 1,
 				},
@@ -164,7 +164,7 @@ func TestPlanner_AddAction(t *testing.T) {
 						FileSize:   128,
 					},
 				},
-				BaseDir: ".",
+				BaseDirSource: ".",
 				DirCounts: map[string]int{
 					"documents": 2,
 				},
@@ -176,13 +176,13 @@ func TestPlanner_AddAction(t *testing.T) {
 		{
 			name: "add deeply nested action",
 			plan: Plan{
-				Actions: []Action{action0},
-				BaseDir: sourceFolder,
+				Actions:       []Action{action0},
+				BaseDirSource: sourceFolder,
 			},
 			action: deepAction,
 			want: Plan{
-				Actions: []Action{action0, deepAction},
-				BaseDir: sourceFolder,
+				Actions:       []Action{action0, deepAction},
+				BaseDirSource: sourceFolder,
 				DirCounts: map[string]int{
 					"documents": 1,
 				},

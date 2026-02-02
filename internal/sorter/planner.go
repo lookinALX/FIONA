@@ -3,6 +3,7 @@ package sorter
 import (
 	"FIONA/internal/rules"
 	"FIONA/internal/scanner"
+	"fmt"
 	"path/filepath"
 	"strings"
 )
@@ -15,10 +16,12 @@ type Action struct {
 }
 
 type Plan struct {
-	Actions   []Action
-	BaseDir   string
-	DirCounts map[string]int
-	DirSizes  map[string]int64
+	Actions       []Action
+	BaseDirSource string
+	BaseDirDest   string
+	isCopy        bool
+	DirCounts     map[string]int
+	DirSizes      map[string]int64
 }
 
 func NewAction(fi *scanner.FileInfo, rule rules.Rule, destFullPath string) Action {
@@ -55,26 +58,38 @@ func (p *Plan) Summary() string {
 	return ""
 }
 
-func (p *Plan) Print() {
-
+func (p *Plan) Print(isFull bool) {
+	fmt.Println("##################### DRY-RUN PLAN ####################")
+	fmt.Println()
+	fmt.Printf("Sort and move (copy) files from directory %s to directory %s\n", p.BaseDirSource, p.BaseDirDest)
+	fmt.Println()
+	fmt.Println("The following directories will be created or used if they already exist:")
+	for key, value := range p.DirCounts {
+		fmt.Printf("  - %s --> files: %d ; final size: %d\n", key, value, p.DirSizes[key])
+	}
+	fmt.Println()
+	if isFull {
+		fmt.Println("The following actions are planed and will be executed:")
+		fmt.Println()
+	}
 }
 
 func (p *Plan) defineBaseDir(newAction *Action) {
 	actionSourceDir := filepath.Dir(newAction.SourcePath)
-	if p.BaseDir == "" {
-		p.BaseDir = actionSourceDir
+	if p.BaseDirSource == "" {
+		p.BaseDirSource = actionSourceDir
 		return
 	}
 
 	actionSourceSeparatorsCount := countSeparators(actionSourceDir)
-	baseDirSeparatorsCount := countSeparators(p.BaseDir)
+	baseDirSeparatorsCount := countSeparators(p.BaseDirSource)
 
 	if actionSourceSeparatorsCount < baseDirSeparatorsCount {
-		p.BaseDir = actionSourceDir
+		p.BaseDirSource = actionSourceDir
 	}
 
 	if actionSourceSeparatorsCount == baseDirSeparatorsCount {
-		p.BaseDir = getFirstCommonDir(actionSourceDir, p.BaseDir)
+		p.BaseDirSource = getFirstCommonDir(actionSourceDir, p.BaseDirSource)
 	}
 }
 
