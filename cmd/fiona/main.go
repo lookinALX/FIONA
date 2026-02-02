@@ -29,7 +29,7 @@ func main() {
 
 	pl := sorter.NewPlan(&opts)
 	for _, f := range files {
-		action := sorter.NewAction(f, rls[0], opts.Dest)
+		action := sorter.NewAction(f, rls, opts.Dest)
 		pl.AddAction(action)
 	}
 
