@@ -1,11 +1,11 @@
 package sorter
 
 import (
+	"FIONA/internal/cli"
 	"FIONA/internal/rules"
 	"FIONA/internal/scanner"
 	"fmt"
 	"path/filepath"
-	"strings"
 )
 
 type Action struct {
@@ -19,7 +19,7 @@ type Plan struct {
 	Actions       []Action
 	BaseDirSource string
 	BaseDirDest   string
-	isCopy        bool
+	fileAction    string
 	DirCounts     map[string]int
 	DirSizes      map[string]int64
 }
@@ -35,12 +35,18 @@ func NewAction(fi *scanner.FileInfo, rule rules.Rule, destFullPath string) Actio
 	}
 }
 
-func NewPlan() Plan {
-	return Plan{}
+func NewPlan(opt *cli.Opts) Plan {
+	return Plan{
+		Actions:       []Action{},
+		BaseDirDest:   opt.Dest,
+		BaseDirSource: opt.Source,
+		fileAction:    opt.Action,
+		DirCounts:     map[string]int{},
+		DirSizes:      map[string]int64{},
+	}
 }
 
 func (p *Plan) AddAction(action Action) {
-	p.defineBaseDir(&action)
 	p.Actions = append(p.Actions, action)
 
 	if p.DirCounts == nil {
@@ -54,59 +60,33 @@ func (p *Plan) AddAction(action Action) {
 	p.DirSizes[action.DestDir] += action.FileSize
 }
 
-func (p *Plan) Summary() string {
-	return ""
+func (p *Plan) Summary() map[string][]string {
+	dirForFile := make(map[string][]string)
+	for _, action := range p.Actions {
+		dirForFile[action.DestPath] = append(dirForFile[action.DestPath], action.SourcePath)
+	}
+	return dirForFile
 }
 
-func (p *Plan) Print(isFull bool) {
+func (p *Plan) Print(LongPrint bool) {
 	fmt.Println("##################### DRY-RUN PLAN ####################")
 	fmt.Println()
-	fmt.Printf("Sort and move (copy) files from directory %s to directory %s\n", p.BaseDirSource, p.BaseDirDest)
+	fmt.Printf("Sort and %s files from directory %s to directory %s\n", p.fileAction, p.BaseDirSource, p.BaseDirDest)
 	fmt.Println()
 	fmt.Println("The following directories will be created or used if they already exist:")
 	for key, value := range p.DirCounts {
 		fmt.Printf("  - %s --> files: %d ; final size: %d\n", key, value, p.DirSizes[key])
 	}
 	fmt.Println()
-	if isFull {
+	if LongPrint {
+		dirForFile := p.Summary()
 		fmt.Println("The following actions are planed and will be executed:")
 		fmt.Println()
+		for key, value := range dirForFile {
+			fmt.Printf("Folder: %s\n", key)
+			for _, file := range value {
+				fmt.Printf("  - %s\n", file)
+			}
+		}
 	}
-}
-
-func (p *Plan) defineBaseDir(newAction *Action) {
-	actionSourceDir := filepath.Dir(newAction.SourcePath)
-	if p.BaseDirSource == "" {
-		p.BaseDirSource = actionSourceDir
-		return
-	}
-
-	actionSourceSeparatorsCount := countSeparators(actionSourceDir)
-	baseDirSeparatorsCount := countSeparators(p.BaseDirSource)
-
-	if actionSourceSeparatorsCount < baseDirSeparatorsCount {
-		p.BaseDirSource = actionSourceDir
-	}
-
-	if actionSourceSeparatorsCount == baseDirSeparatorsCount {
-		p.BaseDirSource = getFirstCommonDir(actionSourceDir, p.BaseDirSource)
-	}
-}
-
-func countSeparators(path string) int {
-	return strings.Count(filepath.Clean(path), string(filepath.Separator))
-}
-
-func getFirstCommonDir(path1, path2 string) string {
-	path1 = filepath.Clean(path1)
-	path2 = filepath.Clean(path2)
-	if path1 == path2 {
-		return path1
-	}
-
-	if filepath.Dir(path1) == path1 || filepath.Dir(path2) == path2 {
-		return "" // no common root
-	}
-
-	return getFirstCommonDir(filepath.Dir(path1), filepath.Dir(path2))
 }

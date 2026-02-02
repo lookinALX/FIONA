@@ -1,6 +1,7 @@
 package sorter
 
 import (
+	"FIONA/internal/cli"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -8,6 +9,10 @@ import (
 
 func TestPlanner_AddAction(t *testing.T) {
 	sourceFolder := filepath.Join("user", "source")
+
+	opt := cli.Opts{
+		Source: sourceFolder,
+	}
 
 	action0 := Action{
 		SourcePath: filepath.Join(sourceFolder, "file.txt"),
@@ -30,13 +35,6 @@ func TestPlanner_AddAction(t *testing.T) {
 		FileSize:   128,
 	}
 
-	action3 := Action{
-		SourcePath: filepath.Join(sourceFolder, "anotherNestedFolder", "file3.txt"),
-		DestDir:    "documents",
-		DestPath:   filepath.Join("home", "dest", "documents"),
-		FileSize:   128,
-	}
-
 	deepAction := Action{
 		SourcePath: filepath.Join(sourceFolder, "a", "b", "c", "d", "file.txt"),
 		FileSize:   128,
@@ -51,7 +49,7 @@ func TestPlanner_AddAction(t *testing.T) {
 	}{
 		{
 			name:   "add action to empty plan",
-			plan:   Plan{},
+			plan:   NewPlan(&opt),
 			action: action0,
 			want: Plan{
 				Actions:       []Action{action0},
@@ -92,7 +90,7 @@ func TestPlanner_AddAction(t *testing.T) {
 			name: "add action with base dir",
 			plan: Plan{
 				Actions:       []Action{action2},
-				BaseDirSource: filepath.Join(sourceFolder, "nestedFolder"),
+				BaseDirSource: filepath.Join(sourceFolder),
 				DirCounts: map[string]int{
 					"documents": 1,
 				},
@@ -104,67 +102,6 @@ func TestPlanner_AddAction(t *testing.T) {
 			want: Plan{
 				Actions:       []Action{action2, action0},
 				BaseDirSource: filepath.Join(sourceFolder),
-				DirCounts: map[string]int{
-					"documents": 2,
-				},
-				DirSizes: map[string]int64{
-					"documents": 128 * 2,
-				},
-			},
-		},
-		{
-			name: "add action from another nested folder in the same base dir",
-			plan: Plan{
-				Actions:       []Action{action2},
-				BaseDirSource: filepath.Join(sourceFolder, "nestedFolder"),
-				DirCounts: map[string]int{
-					"documents": 1,
-				},
-				DirSizes: map[string]int64{
-					"documents": 128,
-				},
-			},
-			action: action3,
-			want: Plan{
-				Actions:       []Action{action2, action3},
-				BaseDirSource: sourceFolder,
-				DirCounts: map[string]int{
-					"documents": 2,
-				},
-				DirSizes: map[string]int64{
-					"documents": 128 * 2,
-				},
-			},
-		},
-		{
-			name: "add action with no common base dir",
-			plan: Plan{
-				Actions:       []Action{action0},
-				BaseDirSource: filepath.Join("user", "source"),
-				DirCounts: map[string]int{
-					"documents": 1,
-				},
-				DirSizes: map[string]int64{
-					"documents": 128,
-				},
-			},
-			action: Action{
-				SourcePath: filepath.Join("another", "root", "file2.txt"),
-				DestDir:    "documents",
-				DestPath:   filepath.Join("home", "dest", "documents"),
-				FileSize:   128,
-			},
-			want: Plan{
-				Actions: []Action{
-					action0,
-					{
-						SourcePath: filepath.Join("another", "root", "file2.txt"),
-						DestDir:    "documents",
-						DestPath:   filepath.Join("home", "dest", "documents"),
-						FileSize:   128,
-					},
-				},
-				BaseDirSource: ".",
 				DirCounts: map[string]int{
 					"documents": 2,
 				},
