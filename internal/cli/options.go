@@ -89,7 +89,7 @@ func (opts *Opts) ParseFlags() error {
 	Must(addFlag(&opts.Source, "s", "source", cwd, "Source directory to take files to sort"))
 	Must(addFlag(&opts.Dest, "d", "dest", cwd, "Destination directory to move or copy files from source directory and sort after"))
 	Must(addFlag(&opts.Action, "a", "action", "copy", "How to handle files (copy, move)"))
-	Must(addFlag(&opts.DryRun, "n", "dry-run", false, "Preview without changes"))
+	Must(addFlag(&opts.DryRun, "n", "dry-run", true, "Preview without changes"))
 
 	flag.Parse()
 
@@ -232,16 +232,6 @@ func pathExists(path string) (os.FileInfo, bool, error) {
 		return info, false, nil
 	}
 	return info, false, err
-}
-
-func (opts *Opts) PrintOptions() {
-	fmt.Println("Parsed flags:")
-	fmt.Println("   Primary sorting option: ", opts.Sort.Primary)
-	fmt.Println("   Secondary sorting option: ", opts.Sort.Secondary)
-	fmt.Println("   Action with files option: ", opts.Action)
-	fmt.Println("   Source directory path: ", opts.Source)
-	fmt.Println("   Destination directory path: ", opts.Dest)
-	fmt.Println("   Is Dry Run: ", opts.DryRun)
 }
 
 func (opts *Opts) ParseToRules() ([]rules.Rule, error) {

@@ -144,7 +144,7 @@ func (p *Plan) Print(longPrint bool) {
 	fmt.Println(separator)
 	fmt.Println()
 
-	// ── group и sort ─────────────────────────────────────────────────────────
+	// ── group and sort ─────────────────────────────────────────────────────────
 	groups := primaryGroups(p.DirCounts)
 
 	primaries := make([]string, 0, len(groups))
@@ -153,7 +153,7 @@ func (p *Plan) Print(longPrint bool) {
 	}
 	sort.Strings(primaries)
 
-	// summary только если нужен longPrint
+	// summary for longPrint
 	var summary map[string][]string
 	if longPrint {
 		summary = p.Summary()
@@ -162,7 +162,7 @@ func (p *Plan) Print(longPrint bool) {
 		}
 	}
 
-	// ── дерево ───────────────────────────────────────────────────────────────
+	// ── tree ─────────────────────────────────────────────────────────────────
 	for i, primary := range primaries {
 		isLastPrimary := i == len(primaries)-1
 		secondaries := groups[primary]
