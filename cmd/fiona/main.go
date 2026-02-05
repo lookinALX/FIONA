@@ -33,5 +33,6 @@ func main() {
 		pl.AddAction(action)
 	}
 
-	pl.Print(true)
+	executor := sorter.NewExecutor(&pl, &opts)
+	executor.Execute()
 }
