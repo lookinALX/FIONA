@@ -153,6 +153,30 @@ func TestValidateDestFlag(t *testing.T) {
 	}
 }
 
+func TestValidateOnConflictFlag(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		wantErr error
+	}{
+		// valid cases
+		{"valid replace", "replace", nil},
+		{"valid rename", "rename", nil},
+		{"valid skip", "skip", nil},
+		//invalid cases
+		{"invalid on-conflict", "invalid", ErrInvalidOnConflict},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateOnConflictFlag(tt.input)
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("validateOnConflictFlag() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func TestPathExists(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -204,6 +228,7 @@ func TestValidateOptions(t *testing.T) {
 		tmpDir,
 		tmpDir,
 		"move",
+		"replace",
 		true,
 	}
 
@@ -222,6 +247,9 @@ func TestValidateOptions(t *testing.T) {
 	optDestInvalid := optValid
 	optDestInvalid.Dest = ""
 
+	optOnConflictInvalid := optValid
+	optOnConflictInvalid.ConflictStrategy = ""
+
 	tests := []struct {
 		name    string
 		input   Opts
@@ -235,6 +263,7 @@ func TestValidateOptions(t *testing.T) {
 		{"action invalid", optActionInvalid, ErrInvalidAction},
 		{"source invalid", optSourceInvalid, ErrEmptySource},
 		{"destination invalid", optDestInvalid, ErrEmptyDest},
+		{"on conflict invalid", optOnConflictInvalid, ErrInvalidOnConflict},
 	}
 
 	for _, tt := range tests {

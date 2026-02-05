@@ -18,17 +18,24 @@ const (
 	CritEmpty     = ""
 )
 
+const (
+	ConflictReplace = "replace"
+	ConflictSkip    = "skip"
+	ConflictRename  = "rename"
+)
+
 type SortOption struct {
 	Primary   string
 	Secondary string
 }
 
 type Opts struct {
-	Sort   SortOption
-	Source string
-	Dest   string
-	Action string
-	DryRun bool
+	Sort             SortOption
+	Source           string
+	Dest             string
+	Action           string
+	ConflictStrategy string
+	DryRun           bool
 }
 
 var validPrimaryCriteria = map[string]struct{}{
@@ -53,6 +60,12 @@ var validSecondaryCriteria = map[string]struct{}{
 var validActions = map[string]struct{}{
 	"move": {},
 	"copy": {},
+}
+
+var validOnConflictFlag = map[string]struct{}{
+	ConflictReplace: {},
+	ConflictSkip:    {},
+	ConflictRename:  {},
 }
 
 type ruleFactory func(isPrimary bool) rules.Rule
@@ -89,6 +102,7 @@ func (opts *Opts) ParseFlags() error {
 	Must(addFlag(&opts.Source, "s", "source", cwd, "Source directory to take files to sort"))
 	Must(addFlag(&opts.Dest, "d", "dest", cwd, "Destination directory to move or copy files from source directory and sort after"))
 	Must(addFlag(&opts.Action, "a", "action", "copy", "How to handle files (copy, move)"))
+	Must(addFlag(&opts.ConflictStrategy, "", "on-conflict", ConflictReplace, "How to handle conflicts"))
 	Must(addFlag(&opts.DryRun, "n", "dry-run", true, "Preview without changes"))
 
 	flag.Parse()
@@ -126,6 +140,10 @@ func (opts *Opts) validateOptions() error {
 		return err
 	}
 	err = validateDestFlag(opts.Dest)
+	if err != nil {
+		return err
+	}
+	err = validateOnConflictFlag(opts.ConflictStrategy)
 	if err != nil {
 		return err
 	}
@@ -185,6 +203,13 @@ func validateSecondaryCriteriaFlag(crit string) error {
 func validateActionFlag(crit string) error {
 	if _, exists := validActions[crit]; !exists {
 		return ErrInvalidAction
+	}
+	return nil
+}
+
+func validateOnConflictFlag(onConflict string) error {
+	if _, exists := validOnConflictFlag[onConflict]; !exists {
+		return ErrInvalidOnConflict
 	}
 	return nil
 }

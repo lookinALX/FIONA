@@ -14,6 +14,7 @@ var (
 	ErrSourceIsNotDir           = errors.New("source path is not a path to a directory")
 	ErrDestIsNotDir             = errors.New("destination path is not a path to a directory")
 	ErrUnknownRuleName          = errors.New("unknown rule name")
+	ErrInvalidOnConflict        = errors.New("invalid on-conflict, valid on-conflict values are 'replace', 'skip' or 'rename'")
 )
 
 func Must(err error) {
