@@ -44,7 +44,6 @@ func (ex *Executor) Execute() {
 			}
 		}
 	}
-	return
 }
 
 func isContinue() bool {
@@ -63,11 +62,12 @@ func (ex *Executor) executeAction(action Action) error {
 	if err != nil {
 		return err
 	}
-	err = HandleFile(action.SourcePath, filepath.Join(action.DestPath, filepath.Base(action.SourcePath)), ex.onConflict, ex.fileAction)
+	fmt.Printf("Processing file --> %s\n", action.SourcePath)
+	err = ProcessFile(action.SourcePath, filepath.Join(action.DestPath, filepath.Base(action.SourcePath)), ex.onConflict, ex.fileAction)
 	return err
 }
 
-func HandleFile(source, destination, onConflict, fileAction string) error {
+func ProcessFile(source, destination, onConflict, fileAction string) error {
 	_, err := os.Stat(destination)
 	fileExists := (err == nil)
 

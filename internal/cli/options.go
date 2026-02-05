@@ -35,6 +35,7 @@ type Opts struct {
 	Dest             string
 	Action           string
 	ConflictStrategy string
+	Force            string
 	DryRun           bool
 }
 
@@ -104,7 +105,7 @@ func (opts *Opts) ParseFlags() error {
 	Must(addFlag(&opts.Action, "a", "action", "copy", "How to handle files (copy, move)"))
 	Must(addFlag(&opts.ConflictStrategy, "", "on-conflict", ConflictReplace, "How to handle conflicts"))
 	Must(addFlag(&opts.DryRun, "n", "dry-run", true, "Preview without changes"))
-
+	Must(addFlag(&opts.Force, "", "force", "N", "Force execute without conformation if 'yes'"))
 	flag.Parse()
 
 	err = opts.validateOptions()

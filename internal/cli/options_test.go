@@ -229,7 +229,8 @@ func TestValidateOptions(t *testing.T) {
 		tmpDir,
 		"move",
 		"replace",
-		true,
+		"N",
+		false,
 	}
 
 	optPrimaryInvalid := optValid
