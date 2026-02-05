@@ -3,9 +3,13 @@ package sorter
 import (
 	"FIONA/internal/cli"
 	"bufio"
+	"errors"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 	"strings"
+	"syscall"
 )
 
 const separator = "================================================"
@@ -34,7 +38,10 @@ func (ex *Executor) Execute() {
 		fmt.Println(separator)
 		fmt.Println("Starting execution...")
 		for _, action := range ex.plan.Actions {
-			executeAction(action, ex.onConflict)
+			err := ex.executeAction(action)
+			if err != nil {
+				fmt.Println("Error executing action:", err)
+			}
 		}
 	}
 	return
@@ -51,6 +58,120 @@ func isContinue() bool {
 	return false
 }
 
-func executeAction(action Action, onConflict string) {
+func (ex *Executor) executeAction(action Action) error {
+	err := os.MkdirAll(action.DestPath, 0755)
+	if err != nil {
+		return err
+	}
+	err = HandleFile(action.SourcePath, filepath.Join(action.DestPath, filepath.Base(action.SourcePath)), ex.onConflict, ex.fileAction)
+	return err
+}
 
+func HandleFile(source, destination, onConflict, fileAction string) error {
+	_, err := os.Stat(destination)
+	fileExists := (err == nil)
+
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("cannot stat destination: %w", err)
+	}
+
+	finalDest := destination
+
+	if fileExists {
+		switch onConflict {
+		case cli.ConflictReplace:
+			if err := os.Remove(destination); err != nil {
+				return fmt.Errorf("cannot remove existing file: %w", err)
+			}
+
+		case cli.ConflictSkip:
+			fmt.Printf("⊘ Skipping (already exists): %s\n", filepath.Base(destination))
+			return nil
+
+		case cli.ConflictRename:
+			finalDest = generateNewName(destination)
+			fmt.Printf("⚠ Conflict resolved: saving as %s\n", filepath.Base(finalDest))
+
+		default:
+			return fmt.Errorf("invalid onConflict strategy: %s", onConflict)
+		}
+	}
+
+	if fileAction == "copy" {
+		return copyWithMetadata(source, finalDest)
+	}
+	return smartMoveFile(source, finalDest)
+}
+
+func generateNewName(path string) string {
+	dir := filepath.Dir(path)
+	ext := filepath.Ext(path)
+	nameWithoutExt := strings.TrimSuffix(filepath.Base(path), ext)
+
+	// photo.jpg → photo_1.jpg, photo_2.jpg, ...
+	for i := 1; ; i++ {
+		newName := fmt.Sprintf("%s_%d%s", nameWithoutExt, i, ext)
+		newPath := filepath.Join(dir, newName)
+
+		if _, err := os.Stat(newPath); errors.Is(err, os.ErrNotExist) {
+			return newPath
+		}
+	}
+}
+
+func smartMoveFile(source, destination string) error {
+	err := os.Rename(source, destination)
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, syscall.EXDEV) {
+		if err = copyWithMetadata(source, destination); err != nil {
+			return err
+		}
+		return os.Remove(source)
+	}
+	return err
+}
+
+func copyWithMetadata(source, destination string) error {
+	srcFile, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	srcInfo, err := srcFile.Stat()
+	if err != nil {
+		return err
+	}
+
+	dstFile, err := os.Create(destination)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	_, err = io.Copy(dstFile, srcFile)
+	if err != nil {
+		os.Remove(destination)
+		return err
+	}
+
+	err = dstFile.Sync()
+	if err != nil {
+		os.Remove(destination)
+		return err
+	}
+
+	err = os.Chmod(destination, srcInfo.Mode())
+	if err != nil {
+		return err
+	}
+
+	err = os.Chtimes(destination, srcInfo.ModTime(), srcInfo.ModTime())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
