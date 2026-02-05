@@ -19,6 +19,7 @@ type Executor struct {
 	fileAction string
 	onConflict string
 	dryRun     bool
+	force      string
 }
 
 func NewExecutor(plan *Plan, opt *cli.Opts) Executor {
@@ -27,6 +28,7 @@ func NewExecutor(plan *Plan, opt *cli.Opts) Executor {
 		fileAction: opt.Action,
 		onConflict: opt.ConflictStrategy,
 		dryRun:     opt.DryRun,
+		force:      opt.Force,
 	}
 }
 
@@ -34,14 +36,23 @@ func (ex *Executor) Execute() {
 	if ex.dryRun {
 		ex.plan.Print(true)
 	}
-	if isContinue() {
-		fmt.Println(separator)
-		fmt.Println("Starting execution...")
-		for _, action := range ex.plan.Actions {
-			err := ex.executeAction(action)
-			if err != nil {
-				fmt.Println("Error executing action:", err)
-			}
+	switch ex.force {
+	case "yes":
+		ex.start()
+	default:
+		if isContinue() {
+			ex.start()
+		}
+	}
+}
+
+func (ex *Executor) start() {
+	fmt.Println(separator)
+	fmt.Println("Starting execution...")
+	for _, action := range ex.plan.Actions {
+		err := ex.executeAction(action)
+		if err != nil {
+			fmt.Println("Error executing action:", err)
 		}
 	}
 }
