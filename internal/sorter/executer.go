@@ -13,6 +13,7 @@ const separator = "================================================"
 type Executor struct {
 	plan       *Plan
 	fileAction string
+	onConflict string
 	dryRun     bool
 }
 
@@ -20,6 +21,7 @@ func NewExecutor(plan *Plan, opt *cli.Opts) Executor {
 	return Executor{
 		plan:       plan,
 		fileAction: opt.Action,
+		onConflict: opt.ConflictStrategy,
 		dryRun:     opt.DryRun,
 	}
 }
@@ -31,6 +33,9 @@ func (ex *Executor) Execute() {
 	if isContinue() {
 		fmt.Println(separator)
 		fmt.Println("Starting execution...")
+		for _, action := range ex.plan.Actions {
+			executeAction(action, ex.onConflict)
+		}
 	}
 	return
 }
@@ -44,4 +49,8 @@ func isContinue() bool {
 		return true
 	}
 	return false
+}
+
+func executeAction(action Action, onConflict string) {
+
 }
