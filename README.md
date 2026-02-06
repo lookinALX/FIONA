@@ -1,7 +1,7 @@
 # FIONA
 
 <p align="center">
-  <img src="assets/FIONA_logo.png" alt="FIONA Logo" width="300"/>
+  <img src="assets/FIONA_logo.png" alt="FIONA Logo" width="600"/>
 </p>
 
 <p align="center">
