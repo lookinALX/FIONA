@@ -22,6 +22,12 @@ type Executor struct {
 	force      string
 }
 
+type ExecutionResult struct {
+	successCount int
+	errorCount   int
+	errors       []error
+}
+
 func NewExecutor(plan *Plan, opt *cli.Opts) Executor {
 	return Executor{
 		plan:       plan,
@@ -49,10 +55,27 @@ func (ex *Executor) Execute() {
 func (ex *Executor) start() {
 	fmt.Println(separator)
 	fmt.Println("Starting execution...")
+
+	exres := ExecutionResult{0, 0, []error{}}
+
 	for _, action := range ex.plan.Actions {
 		err := ex.executeAction(action)
 		if err != nil {
-			fmt.Println("Error executing action:", err)
+			exres.errorCount++
+			exres.errors = append(exres.errors, fmt.Errorf("cannot process %s: %w", action.SourcePath, err))
+		} else {
+			exres.successCount++
+		}
+	}
+
+	fmt.Println("Execution is ended.")
+	fmt.Printf("✓ Succeded operations: %d\n", exres.successCount)
+	fmt.Printf("⊘ Failed operations: %d\n", exres.errorCount)
+
+	if len(exres.errors) > 0 {
+		fmt.Println("⚠ Errors encountered: ")
+		for _, err := range exres.errors {
+			fmt.Println("   --> ", err)
 		}
 	}
 }

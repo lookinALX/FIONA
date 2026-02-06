@@ -1,7 +1,7 @@
 package main
 
 import (
-	cli "FIONA/internal/cli"
+	"FIONA/internal/cli"
 	"FIONA/internal/scanner"
 	"FIONA/internal/sorter"
 	"fmt"
@@ -11,6 +11,13 @@ import (
 var opts cli.Opts
 
 func main() {
+	for _, arg := range os.Args[1:] {
+		if arg == "--version" || arg == "-version" || arg == "-v" {
+			fmt.Printf("FIONA %s\n", Version)
+			os.Exit(0)
+		}
+	}
+
 	err := opts.ParseFlags()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
