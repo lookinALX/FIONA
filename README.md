@@ -69,21 +69,10 @@
 
 ### Pre-built Binaries
 
-Download the latest release for your platform:
+TBD
 
 ```bash
-# Linux
-wget https://github.com/yourusername/fiona/releases/latest/download/fiona-linux-amd64
-chmod +x fiona-linux-amd64
-sudo mv fiona-linux-amd64 /usr/local/bin/fiona
-
-# macOS
-wget https://github.com/yourusername/fiona/releases/latest/download/fiona-darwin-amd64
-chmod +x fiona-darwin-amd64
-sudo mv fiona-darwin-amd64 /usr/local/bin/fiona
-
-# Windows
-# Download fiona-windows-amd64.exe and add to PATH
+See build from source
 ```
 
 ### Build from Source
