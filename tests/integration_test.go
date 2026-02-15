@@ -6,6 +6,7 @@ import (
 	"FIONA/internal/sorter"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"testing"
 )
@@ -47,6 +48,7 @@ func TestEndToEnd_CopyByTypeThenExtension(t *testing.T) {
 		Force:            "yes",
 		DryRun:           false,
 		ConflictStrategy: cli.ConflictSkip,
+		Workers:          runtime.NumCPU(),
 	}
 
 	rls, err := opts.ParseToRules()

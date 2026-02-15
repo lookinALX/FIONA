@@ -15,6 +15,7 @@ var (
 	ErrDestIsNotDir             = errors.New("destination path is not a path to a directory")
 	ErrUnknownRuleName          = errors.New("unknown rule name")
 	ErrInvalidOnConflict        = errors.New("invalid on-conflict, valid on-conflict values are 'replace', 'skip' or 'rename'")
+	ErrInvalidWorkers           = errors.New("invalud number of workers, must be positiv int")
 )
 
 func Must(err error) {

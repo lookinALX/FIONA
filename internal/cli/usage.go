@@ -47,6 +47,9 @@ OPTIONS:
   --force <yes|N>
         Force execution without confirmation (default: N)
 
+  -w, --workers <int>
+        Number of workers for the current run (default: max availible)
+
 EXAMPLES:
   # Preview sorting by file extension
   fiona -c extension

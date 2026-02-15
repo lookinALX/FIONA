@@ -6,7 +6,10 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
 )
+
+var maxWorkers = runtime.NumCPU() * 2
 
 const (
 	CritMIMEType  = "mimetype"
@@ -37,6 +40,7 @@ type Opts struct {
 	ConflictStrategy string
 	Force            string
 	DryRun           bool
+	Workers          int
 }
 
 var validPrimaryCriteria = map[string]struct{}{
@@ -106,6 +110,7 @@ func (opts *Opts) ParseFlags() error {
 	Must(addFlag(&opts.ConflictStrategy, "", "on-conflict", ConflictReplace, "How to handle conflicts"))
 	Must(addFlag(&opts.DryRun, "n", "dry-run", true, "Preview without changes"))
 	Must(addFlag(&opts.Force, "", "force", "N", "Force execute without conformation if 'yes'"))
+	Must(addFlag(&opts.Workers, "w", "workers", maxWorkers, "Number of workers for the current run"))
 	flag.Parse()
 
 	err = opts.validateOptions()
@@ -124,31 +129,27 @@ func (opts *Opts) ParseFlags() error {
 }
 
 func (opts *Opts) validateOptions() error {
-	err := validatePrimaryCriteriaFlag(opts.Sort.Primary)
-	if err != nil {
+	if err := validatePrimaryCriteriaFlag(opts.Sort.Primary); err != nil {
 		return err
 	}
-	err = validateSecondaryCriteriaFlag(opts.Sort.Secondary)
-	if err != nil {
+	if err := validateSecondaryCriteriaFlag(opts.Sort.Secondary); err != nil {
 		return err
 	}
-	err = validateActionFlag(opts.Action)
-	if err != nil {
+	if err := validateActionFlag(opts.Action); err != nil {
 		return err
 	}
-	err = validateSourceFlag(opts.Source)
-	if err != nil {
+	if err := validateSourceFlag(opts.Source); err != nil {
 		return err
 	}
-	err = validateDestFlag(opts.Dest)
-	if err != nil {
+	if err := validateDestFlag(opts.Dest); err != nil {
 		return err
 	}
-	err = validateOnConflictFlag(opts.ConflictStrategy)
-	if err != nil {
+	if err := validateOnConflictFlag(opts.ConflictStrategy); err != nil {
 		return err
 	}
-
+	if err := validateWorkersFlag(&opts.Workers); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -168,6 +169,17 @@ func addFlag(p any, short, long string, defVal any, usage string) error {
 		}
 		if long != "" {
 			flag.StringVar(v, long, dv, usage)
+		}
+	case *int:
+		dv, ok := defVal.(int)
+		if !ok {
+			return fmt.Errorf("for int flag it is expected default value bool, given %T", defVal)
+		}
+		if short != "" {
+			flag.IntVar(v, short, dv, usage)
+		}
+		if long != "" {
+			flag.IntVar(v, long, dv, usage)
 		}
 	case *bool:
 		dv, ok := defVal.(bool)
@@ -211,6 +223,22 @@ func validateActionFlag(crit string) error {
 func validateOnConflictFlag(onConflict string) error {
 	if _, exists := validOnConflictFlag[onConflict]; !exists {
 		return ErrInvalidOnConflict
+	}
+	return nil
+}
+
+func validateWorkersFlag(workers *int) error {
+	var i any = *workers
+	value, ok := i.(int)
+	if !ok {
+		return ErrInvalidWorkers
+	}
+	if value < 0 {
+		return ErrInvalidWorkers
+	}
+	if value > maxWorkers {
+		*workers = maxWorkers
+		fmt.Printf("The number of workers given is greater than the number available. Workers are set to %d\n", maxWorkers)
 	}
 	return nil
 }

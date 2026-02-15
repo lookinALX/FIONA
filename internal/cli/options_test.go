@@ -231,6 +231,7 @@ func TestValidateOptions(t *testing.T) {
 		"replace",
 		"N",
 		false,
+		1,
 	}
 
 	optPrimaryInvalid := optValid
@@ -251,6 +252,9 @@ func TestValidateOptions(t *testing.T) {
 	optOnConflictInvalid := optValid
 	optOnConflictInvalid.ConflictStrategy = ""
 
+	optWorkersInvalid := optValid
+	optWorkersInvalid.Workers = -1
+
 	tests := []struct {
 		name    string
 		input   Opts
@@ -265,6 +269,7 @@ func TestValidateOptions(t *testing.T) {
 		{"source invalid", optSourceInvalid, ErrEmptySource},
 		{"destination invalid", optDestInvalid, ErrEmptyDest},
 		{"on conflict invalid", optOnConflictInvalid, ErrInvalidOnConflict},
+		{"workers invalid", optWorkersInvalid, ErrInvalidWorkers},
 	}
 
 	for _, tt := range tests {

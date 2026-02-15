@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"syscall"
 )
 
@@ -20,9 +21,12 @@ type Executor struct {
 	onConflict string
 	dryRun     bool
 	force      string
+	workers    int
+	logMutex   sync.Mutex
 }
 
 type ExecutionResult struct {
+	mu           sync.Mutex
 	successCount int
 	errorCount   int
 	errors       []error
@@ -35,6 +39,7 @@ func NewExecutor(plan *Plan, opt *cli.Opts) Executor {
 		onConflict: opt.ConflictStrategy,
 		dryRun:     opt.DryRun,
 		force:      opt.Force,
+		workers:    opt.Workers,
 	}
 }
 
@@ -56,17 +61,33 @@ func (ex *Executor) start() {
 	fmt.Println(separator)
 	fmt.Println("Starting execution...")
 
-	exres := ExecutionResult{0, 0, []error{}}
+	jobs := make(chan Action, len(ex.plan.Actions))
+	var wg sync.WaitGroup
+
+	exres := ExecutionResult{sync.Mutex{}, 0, 0, []error{}}
+
+	for i := 0; i < ex.workers; i++ {
+		wg.Add(1)
+		go func(workerID int) {
+			defer wg.Done()
+
+			for action := range jobs {
+				err := ex.executeAction(action)
+				if err != nil {
+					exres.AddError(fmt.Errorf("cannot process %s: %w", action.SourcePath, err))
+				} else {
+					exres.IncrementSuccess()
+				}
+			}
+		}(i)
+	}
 
 	for _, action := range ex.plan.Actions {
-		err := ex.executeAction(action)
-		if err != nil {
-			exres.errorCount++
-			exres.errors = append(exres.errors, fmt.Errorf("cannot process %s: %w", action.SourcePath, err))
-		} else {
-			exres.successCount++
-		}
+		jobs <- action
 	}
+	close(jobs)
+
+	wg.Wait()
 
 	fmt.Println("Execution is ended.")
 	fmt.Printf("✓ Succeded operations: %d\n", exres.successCount)
@@ -96,12 +117,12 @@ func (ex *Executor) executeAction(action Action) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Processing file --> %s\n", action.SourcePath)
-	err = ProcessFile(action.SourcePath, filepath.Join(action.DestPath, filepath.Base(action.SourcePath)), ex.onConflict, ex.fileAction)
+	ex.log("Processing file --> %s\n", action.SourcePath)
+	err = ex.ProcessFile(action.SourcePath, filepath.Join(action.DestPath, filepath.Base(action.SourcePath)))
 	return err
 }
 
-func ProcessFile(source, destination, onConflict, fileAction string) error {
+func (ex *Executor) ProcessFile(source, destination string) error {
 	_, err := os.Stat(destination)
 	fileExists := (err == nil)
 
@@ -112,26 +133,27 @@ func ProcessFile(source, destination, onConflict, fileAction string) error {
 	finalDest := destination
 
 	if fileExists {
-		switch onConflict {
+		switch ex.onConflict {
 		case cli.ConflictReplace:
-			if err := os.Remove(destination); err != nil {
+			err := os.Remove(destination)
+			if err != nil && errors.Is(err, os.ErrNotExist) {
 				return fmt.Errorf("cannot remove existing file: %w", err)
 			}
 
 		case cli.ConflictSkip:
-			fmt.Printf("⊘ Skipping (already exists): %s\n", filepath.Base(destination))
+			ex.log("⊘ Skipping (already exists): %s\n", filepath.Base(destination))
 			return nil
 
 		case cli.ConflictRename:
 			finalDest = generateNewName(destination)
-			fmt.Printf("⚠ Conflict resolved: saving as %s\n", filepath.Base(finalDest))
+			ex.log("⚠ Conflict resolved: saving as %s\n", filepath.Base(finalDest))
 
 		default:
-			return fmt.Errorf("invalid onConflict strategy: %s", onConflict)
+			return fmt.Errorf("invalid onConflict strategy: %s", ex.onConflict)
 		}
 	}
 
-	if fileAction == "copy" {
+	if ex.fileAction == "copy" {
 		return copyWithMetadata(source, finalDest)
 	}
 	return smartMoveFile(source, finalDest)
@@ -147,7 +169,10 @@ func generateNewName(path string) string {
 		newName := fmt.Sprintf("%s_%d%s", nameWithoutExt, i, ext)
 		newPath := filepath.Join(dir, newName)
 
-		if _, err := os.Stat(newPath); errors.Is(err, os.ErrNotExist) {
+		f, err := os.OpenFile(newPath, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0644)
+		if err == nil {
+			f.Close()
+			os.Remove(newPath)
 			return newPath
 		}
 	}
@@ -208,4 +233,25 @@ func copyWithMetadata(source, destination string) error {
 	}
 
 	return nil
+}
+
+func (ex *Executor) log(format string, args ...interface{}) {
+	ex.logMutex.Lock()
+	defer ex.logMutex.Unlock()
+	fmt.Printf(format, args...)
+}
+
+func (exres *ExecutionResult) AddError(err error) {
+	exres.mu.Lock()
+	defer exres.mu.Unlock()
+
+	exres.errorCount++
+	exres.errors = append(exres.errors, err)
+}
+
+func (exres *ExecutionResult) IncrementSuccess() {
+	exres.mu.Lock()
+	defer exres.mu.Unlock()
+
+	exres.successCount++
 }

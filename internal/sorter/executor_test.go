@@ -261,7 +261,19 @@ func TestProcessFile_Copy_NoConflict(t *testing.T) {
 	content := []byte("test content")
 	createTestFile(t, src, content, 0644)
 
-	err := ProcessFile(src, dst, cli.ConflictReplace, "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: cli.ConflictReplace,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
@@ -278,7 +290,19 @@ func TestProcessFile_Move_NoConflict(t *testing.T) {
 	content := []byte("test content")
 	createTestFile(t, src, content, 0644)
 
-	err := ProcessFile(src, dst, cli.ConflictReplace, "move")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "move",
+			ConflictStrategy: cli.ConflictReplace,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
@@ -298,7 +322,19 @@ func TestProcessFile_Copy_ConflictReplace(t *testing.T) {
 	createTestFile(t, src, srcContent, 0644)
 	createTestFile(t, dst, dstContent, 0644)
 
-	err := ProcessFile(src, dst, cli.ConflictReplace, "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: cli.ConflictReplace,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
@@ -318,7 +354,19 @@ func TestProcessFile_Copy_ConflictSkip(t *testing.T) {
 	createTestFile(t, src, srcContent, 0644)
 	createTestFile(t, dst, dstContent, 0644)
 
-	err := ProcessFile(src, dst, cli.ConflictSkip, "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: cli.ConflictSkip,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
@@ -338,7 +386,19 @@ func TestProcessFile_Copy_ConflictRename(t *testing.T) {
 	createTestFile(t, src, srcContent, 0644)
 	createTestFile(t, dst, dstContent, 0644)
 
-	err := ProcessFile(src, dst, cli.ConflictRename, "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: cli.ConflictRename,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
@@ -363,7 +423,19 @@ func TestProcessFile_Move_ConflictRename(t *testing.T) {
 	createTestFile(t, src, srcContent, 0644)
 	createTestFile(t, dst, dstContent, 0644)
 
-	err := ProcessFile(src, dst, cli.ConflictRename, "move")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "move",
+			ConflictStrategy: cli.ConflictRename,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
@@ -383,7 +455,19 @@ func TestProcessFile_InvalidConflictStrategy(t *testing.T) {
 	createTestFile(t, src, []byte("content"), 0644)
 	createTestFile(t, dst, []byte("existing"), 0644)
 
-	err := ProcessFile(src, dst, "invalid_strategy", "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: "invalid_strategy",
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err == nil {
 		t.Error("ProcessFile() should error for invalid conflict strategy")
 	}
@@ -394,7 +478,19 @@ func TestProcessFile_SourceNotExists(t *testing.T) {
 	src := filepath.Join(tmpDir, "nonexistent.txt")
 	dst := filepath.Join(tmpDir, "dest.txt")
 
-	err := ProcessFile(src, dst, cli.ConflictReplace, "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: cli.ConflictReplace,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err == nil {
 		t.Error("ProcessFile() should error for non-existent source")
 	}
@@ -412,7 +508,19 @@ func TestProcessFile_Copy_PreservesMetadata(t *testing.T) {
 		t.Fatalf("failed to set mod time: %v", err)
 	}
 
-	err := ProcessFile(src, dst, cli.ConflictReplace, "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: cli.ConflictReplace,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
@@ -544,7 +652,19 @@ func TestProcessFile_EmptyFile(t *testing.T) {
 
 	createTestFile(t, src, []byte{}, 0644)
 
-	err := ProcessFile(src, dst, cli.ConflictReplace, "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: cli.ConflictReplace,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
@@ -560,7 +680,19 @@ func TestProcessFile_BinaryFile(t *testing.T) {
 	binaryContent := []byte{0x00, 0xFF, 0x42, 0xAA, 0xBB, 0xCC}
 	createTestFile(t, src, binaryContent, 0644)
 
-	err := ProcessFile(src, dst, cli.ConflictReplace, "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: cli.ConflictReplace,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
@@ -576,7 +708,19 @@ func TestProcessFile_UnicodeFilename(t *testing.T) {
 	content := []byte("unicode content")
 	createTestFile(t, src, content, 0644)
 
-	err := ProcessFile(src, dst, cli.ConflictReplace, "copy")
+	ex := NewExecutor(nil,
+		&cli.Opts{
+			Sort:             cli.SortOption{Primary: "", Secondary: ""},
+			Source:           "",
+			Dest:             "",
+			Action:           "copy",
+			ConflictStrategy: cli.ConflictReplace,
+			Force:            "",
+			DryRun:           true,
+			Workers:          10},
+	)
+
+	err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
 	}
