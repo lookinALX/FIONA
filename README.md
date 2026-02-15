@@ -53,10 +53,10 @@
 - **Metadata Preservation**: Maintains file permissions and modification times
 - **Cross-Platform**: Single binary for Windows, Linux, and macOS
 - **Beautiful CLI Output**: Tree-view visualization of planned operations
+- **Parallel Processing**: Multi-threaded file operations for speed
 
 ### Planned Features
 
-- **Parallel Processing** (M2): Multi-threaded file operations for speed
 - **ML Image Classification** (M3): Automatic categorization using deep learning
 - **Web Interface** (M4): Browser-based UI for non-CLI users
 - **Watch Mode**: Continuously monitor directories and auto-sort new files
