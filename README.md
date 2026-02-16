@@ -40,7 +40,7 @@
 
 ## ✨ Features
 
-### Current (Milestone 1 - Complete)
+### Current (Milestone 1 - Complete / Milestone 2 - in Progress)
 
 - **Smart File Sorting**: Organize files by type, extension, or date
 - **Hierarchical Organization**: Primary + secondary sorting criteria (e.g., type/extension → `images/jpg/`)
