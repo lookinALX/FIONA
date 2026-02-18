@@ -44,8 +44,8 @@ func NewAction(fi *scanner.FileInfo, rules []rules.Rule, destFullPath string) Ac
 func NewPlan(opt *cli.Opts) Plan {
 	return Plan{
 		Actions:       []Action{},
-		BaseDirDest:   opt.Dest,
-		BaseDirSource: opt.Source,
+		BaseDirDest:   opt.DestPath,
+		BaseDirSource: opt.SourcePath,
 		fileAction:    opt.Action,
 		DirCounts:     map[string]int{},
 		DirSizes:      map[string]int64{},

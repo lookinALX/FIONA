@@ -90,7 +90,7 @@ func (ex *Executor) start() {
 	wg.Wait()
 
 	fmt.Println("Execution is ended.")
-	fmt.Printf("✓ Succeded operations: %d\n", exres.successCount)
+	fmt.Printf("✓ Succeeded operations: %d\n", exres.successCount)
 	fmt.Printf("⊘ Failed operations: %d\n", exres.errorCount)
 
 	if len(exres.errors) > 0 {

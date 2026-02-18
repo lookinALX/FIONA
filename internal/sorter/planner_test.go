@@ -24,8 +24,8 @@ func makeFileInfo(name string, ext string, fileType string, size int64) *scanner
 
 func defaultOpts() *cli.Opts {
 	return &cli.Opts{
-		Source: filepath.Join("user", "source"),
-		Dest:   filepath.Join("user", "dest"),
+		SourcePath: filepath.Join("user", "source"),
+		DestPath:   filepath.Join("user", "dest"),
 	}
 }
 

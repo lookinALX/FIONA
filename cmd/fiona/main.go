@@ -29,14 +29,14 @@ func main() {
 	}
 
 	sc := scanner.NewScanner()
-	files, err := sc.Scan(opts.Source)
+	files, err := sc.Scan(opts.SourcePath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
 	}
 
 	pl := sorter.NewPlan(&opts)
 	for _, f := range files {
-		action := sorter.NewAction(f, rls, opts.Dest)
+		action := sorter.NewAction(f, rls, opts.DestPath)
 		pl.AddAction(action)
 	}
 

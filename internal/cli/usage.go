@@ -50,6 +50,9 @@ OPTIONS:
   -w, --workers <int>
         Number of workers for the current run (default: max availible)
 
+  --log <string>
+		Log directory to write log files to (default: current directory)
+
 EXAMPLES:
   # Preview sorting by file extension
   fiona -c extension

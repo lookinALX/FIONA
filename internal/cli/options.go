@@ -34,8 +34,9 @@ type SortOption struct {
 
 type Opts struct {
 	Sort             SortOption
-	Source           string
-	Dest             string
+	SourcePath       string
+	DestPath         string
+	LogPath          string
 	Action           string
 	ConflictStrategy string
 	Force            string
@@ -104,8 +105,9 @@ func (opts *Opts) ParseFlags() error {
 
 	Must(addFlag(&opts.Sort.Primary, "c", "criteria", "mimetype", "Criteria to group by firstly"))
 	Must(addFlag(&opts.Sort.Secondary, "t", "then", "", "Secondary grouping criteria"))
-	Must(addFlag(&opts.Source, "s", "source", cwd, "Source directory to take files to sort"))
-	Must(addFlag(&opts.Dest, "d", "dest", cwd, "Destination directory to move or copy files from source directory and sort after"))
+	Must(addFlag(&opts.SourcePath, "s", "source", cwd, "Source directory to take files to sort"))
+	Must(addFlag(&opts.DestPath, "d", "dest", cwd, "Destination directory to move or copy files from source directory and sort after"))
+	Must(addFlag(&opts.LogPath, "", "log", cwd, "Log directory to write log files to"))
 	Must(addFlag(&opts.Action, "a", "action", "copy", "How to handle files (copy, move)"))
 	Must(addFlag(&opts.ConflictStrategy, "", "on-conflict", ConflictReplace, "How to handle conflicts"))
 	Must(addFlag(&opts.DryRun, "n", "dry-run", true, "Preview without changes"))
@@ -119,7 +121,7 @@ func (opts *Opts) ParseFlags() error {
 	case err == nil:
 		return nil
 	case errors.Is(err, ErrDestNotExists):
-		if nestedErr := os.MkdirAll(opts.Dest, 0755); nestedErr != nil {
+		if nestedErr := os.MkdirAll(opts.DestPath, 0755); nestedErr != nil {
 			return fmt.Errorf("destination directory is not exists, cannot create one: %w", nestedErr)
 		}
 		return nil
@@ -138,16 +140,19 @@ func (opts *Opts) validateOptions() error {
 	if err := validateActionFlag(opts.Action); err != nil {
 		return err
 	}
-	if err := validateSourceFlag(opts.Source); err != nil {
+	if err := validateSourceFlag(opts.SourcePath); err != nil {
 		return err
 	}
-	if err := validateDestFlag(opts.Dest); err != nil {
+	if err := validateDestFlag(opts.DestPath); err != nil {
 		return err
 	}
 	if err := validateOnConflictFlag(opts.ConflictStrategy); err != nil {
 		return err
 	}
 	if err := validateWorkersFlag(&opts.Workers); err != nil {
+		return err
+	}
+	if err := validateLogFlag(opts.LogPath); err != nil {
 		return err
 	}
 	return nil
@@ -273,6 +278,23 @@ func validateDestFlag(crit string) error {
 	}
 	if err != nil {
 		return fmt.Errorf("cannot access destination directory: %w", err)
+	}
+	return nil
+}
+
+func validateLogFlag(crit string) error {
+	if crit == "" {
+		return ErrLogPathIsEmpty
+	}
+	info, exists, err := pathExists(crit)
+	if !exists {
+		return ErrLogPathNotExists
+	}
+	if !info.IsDir() {
+		return ErrLogPathIsNotDir
+	}
+	if err != nil {
+		return fmt.Errorf("cannot access log directory: %w", err)
 	}
 	return nil
 }

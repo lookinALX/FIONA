@@ -153,6 +153,36 @@ func TestValidateDestFlag(t *testing.T) {
 	}
 }
 
+func TestValidateLogPathFlag(t *testing.T) {
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "testfile.txt")
+	if err := os.WriteFile(tmpFile, []byte("test"), 0644); err != nil {
+		t.Fatalf("faild to create temp file: %v", err)
+	}
+
+	tests := []struct {
+		name    string
+		input   string
+		wantErr error
+	}{
+		// valid cases
+		{"valid directory", tmpDir, nil},
+		// invalid cases
+		{"empty path", "", ErrLogPathIsEmpty},
+		{"non-existent path", "/path/that/does/not/exist", ErrLogPathNotExists},
+		{"file instead of directory", tmpFile, ErrLogPathIsNotDir},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateLogFlag(tt.input)
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("validateLogFlag() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func TestValidateOnConflictFlag(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -227,6 +257,7 @@ func TestValidateOptions(t *testing.T) {
 		SortOption{CritMIMEType, CritEmpty},
 		tmpDir,
 		tmpDir,
+		tmpDir,
 		"move",
 		"replace",
 		"N",
@@ -244,10 +275,13 @@ func TestValidateOptions(t *testing.T) {
 	optActionInvalid.Action = invalidOption
 
 	optSourceInvalid := optValid
-	optSourceInvalid.Source = ""
+	optSourceInvalid.SourcePath = ""
 
 	optDestInvalid := optValid
-	optDestInvalid.Dest = ""
+	optDestInvalid.DestPath = ""
+
+	optLogPathInvalid := optValid
+	optLogPathInvalid.LogPath = ""
 
 	optOnConflictInvalid := optValid
 	optOnConflictInvalid.ConflictStrategy = ""
@@ -268,6 +302,7 @@ func TestValidateOptions(t *testing.T) {
 		{"action invalid", optActionInvalid, ErrInvalidAction},
 		{"source invalid", optSourceInvalid, ErrEmptySource},
 		{"destination invalid", optDestInvalid, ErrEmptyDest},
+		{"log path invalid", optLogPathInvalid, ErrLogPathIsEmpty},
 		{"on conflict invalid", optOnConflictInvalid, ErrInvalidOnConflict},
 		{"workers invalid", optWorkersInvalid, ErrInvalidWorkers},
 	}

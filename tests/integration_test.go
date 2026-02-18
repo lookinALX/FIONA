@@ -41,8 +41,8 @@ func TestEndToEnd_CopyByTypeThenExtension(t *testing.T) {
 	}
 
 	opts := cli.Opts{
-		Source:           srcDir,
-		Dest:             destDir,
+		SourcePath:       srcDir,
+		DestPath:         destDir,
 		Sort:             cli.SortOption{Primary: cli.CritMIMEType, Secondary: cli.CritExtension},
 		Action:           "copy",
 		Force:            "yes",
@@ -57,14 +57,14 @@ func TestEndToEnd_CopyByTypeThenExtension(t *testing.T) {
 	}
 
 	sc := scanner.NewScanner()
-	files, err := sc.Scan(opts.Source)
+	files, err := sc.Scan(opts.SourcePath)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	plan := sorter.NewPlan(&opts)
 	for _, f := range files {
-		action := sorter.NewAction(f, rls, opts.Dest)
+		action := sorter.NewAction(f, rls, opts.DestPath)
 		plan.AddAction(action)
 	}
 
