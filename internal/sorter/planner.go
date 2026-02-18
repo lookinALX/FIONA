@@ -2,23 +2,15 @@ package sorter
 
 import (
 	"FIONA/internal/cli"
-	"FIONA/internal/rules"
-	"FIONA/internal/scanner"
+	"FIONA/internal/types"
 	"fmt"
 	"path/filepath"
 	"sort"
 	"strings"
 )
 
-type Action struct {
-	SourcePath string
-	DestDir    string
-	DestPath   string
-	FileSize   int64
-}
-
 type Plan struct {
-	Actions       []Action
+	Actions       []types.Action
 	BaseDirSource string
 	BaseDirDest   string
 	fileAction    string
@@ -26,24 +18,9 @@ type Plan struct {
 	DirSizes      map[string]int64
 }
 
-func NewAction(fi *scanner.FileInfo, rules []rules.Rule, destFullPath string) Action {
-	destDirPrimary := rules[0].GetDestination(fi)
-	destDirSecondary := ""
-	if len(rules) > 1 {
-		destDirSecondary = rules[1].GetDestination(fi)
-	}
-	destPath := filepath.Join(destFullPath, destDirPrimary, destDirSecondary)
-	return Action{
-		SourcePath: fi.Path,
-		DestDir:    filepath.Join(destDirPrimary, destDirSecondary),
-		DestPath:   destPath,
-		FileSize:   fi.Size,
-	}
-}
-
 func NewPlan(opt *cli.Opts) Plan {
 	return Plan{
-		Actions:       []Action{},
+		Actions:       []types.Action{},
 		BaseDirDest:   opt.DestPath,
 		BaseDirSource: opt.SourcePath,
 		fileAction:    opt.Action,
@@ -52,7 +29,7 @@ func NewPlan(opt *cli.Opts) Plan {
 	}
 }
 
-func (p *Plan) AddAction(action Action) {
+func (p *Plan) AddAction(action types.Action) {
 	p.Actions = append(p.Actions, action)
 
 	if p.DirCounts == nil {

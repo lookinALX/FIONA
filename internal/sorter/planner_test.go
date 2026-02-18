@@ -4,6 +4,7 @@ import (
 	"FIONA/internal/cli"
 	"FIONA/internal/rules"
 	"FIONA/internal/scanner"
+	"FIONA/internal/types"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -39,7 +40,7 @@ func TestNewAction_PrimaryOnly(t *testing.T) {
 		&rules.ByTypeRule{IsPrimary: true},
 	}
 
-	action := NewAction(fi, ruleSet, destFullPath)
+	action := types.NewAction(fi, ruleSet, destFullPath)
 
 	wantDestDir := "images"
 	wantDestPath := filepath.Join("user", "dest", "images")
@@ -67,7 +68,7 @@ func TestNewAction_PrimaryAndSecondary(t *testing.T) {
 		&rules.ByExtensionRule{IsPrimary: false},
 	}
 
-	action := NewAction(fi, ruleSet, destFullPath)
+	action := types.NewAction(fi, ruleSet, destFullPath)
 
 	wantDestDir := filepath.Join("images", "jpg")
 	wantDestPath := filepath.Join("user", "dest", "images", "jpg")
@@ -90,7 +91,7 @@ func TestNewAction_SecondaryPrimary(t *testing.T) {
 		&rules.ByTypeRule{IsPrimary: false},
 	}
 
-	action := NewAction(fi, ruleSet, destFullPath)
+	action := types.NewAction(fi, ruleSet, destFullPath)
 
 	wantDestDir := filepath.Join("pdf", "documents")
 	wantDestPath := filepath.Join("user", "dest", "pdf", "documents")
@@ -108,7 +109,7 @@ func TestNewAction_SecondaryPrimary(t *testing.T) {
 func TestAddAction_SingleAction(t *testing.T) {
 	plan := NewPlan(defaultOpts())
 
-	action := Action{
+	action := types.Action{
 		SourcePath: filepath.Join("user", "source", "photo.jpg"),
 		DestDir:    "images",
 		DestPath:   filepath.Join("user", "dest", "images"),
@@ -131,7 +132,7 @@ func TestAddAction_SingleAction(t *testing.T) {
 func TestAddAction_MultipleToSameDir(t *testing.T) {
 	plan := NewPlan(defaultOpts())
 
-	actions := []Action{
+	actions := []types.Action{
 		{SourcePath: filepath.Join("user", "source", "photo1.jpg"), DestDir: "images", DestPath: filepath.Join("user", "dest", "images"), FileSize: 1024},
 		{SourcePath: filepath.Join("user", "source", "photo2.jpg"), DestDir: "images", DestPath: filepath.Join("user", "dest", "images"), FileSize: 2048},
 		{SourcePath: filepath.Join("user", "source", "photo3.jpg"), DestDir: "images", DestPath: filepath.Join("user", "dest", "images"), FileSize: 512},
@@ -155,7 +156,7 @@ func TestAddAction_MultipleToSameDir(t *testing.T) {
 func TestAddAction_MultipleDirs_PrimaryOnly(t *testing.T) {
 	plan := NewPlan(defaultOpts())
 
-	actions := []Action{
+	actions := []types.Action{
 		{SourcePath: filepath.Join("user", "source", "photo.jpg"), DestDir: "images", DestPath: filepath.Join("user", "dest", "images"), FileSize: 1024},
 		{SourcePath: filepath.Join("user", "source", "report.pdf"), DestDir: "documents", DestPath: filepath.Join("user", "dest", "documents"), FileSize: 2048},
 		{SourcePath: filepath.Join("user", "source", "song.mp3"), DestDir: "audios", DestPath: filepath.Join("user", "dest", "audios"), FileSize: 4096},
@@ -189,7 +190,7 @@ func TestAddAction_MultipleDirs_PrimaryAndSecondary(t *testing.T) {
 	// images/jpg/, images/png/, documents/pdf/
 	plan := NewPlan(defaultOpts())
 
-	actions := []Action{
+	actions := []types.Action{
 		{SourcePath: filepath.Join("user", "source", "photo.jpg"), DestDir: filepath.Join("images", "jpg"), DestPath: filepath.Join("user", "dest", "images", "jpg"), FileSize: 1024},
 		{SourcePath: filepath.Join("user", "source", "logo.png"), DestDir: filepath.Join("images", "png"), DestPath: filepath.Join("user", "dest", "images", "png"), FileSize: 2048},
 		{SourcePath: filepath.Join("user", "source", "banner.jpg"), DestDir: filepath.Join("images", "jpg"), DestPath: filepath.Join("user", "dest", "images", "jpg"), FileSize: 512},
@@ -224,7 +225,7 @@ func TestAddAction_MultipleDirs_PrimaryAndSecondary(t *testing.T) {
 func TestSummary_PrimaryOnly(t *testing.T) {
 	plan := NewPlan(defaultOpts())
 
-	actions := []Action{
+	actions := []types.Action{
 		{SourcePath: filepath.Join("user", "source", "photo.jpg"), DestDir: "images", DestPath: filepath.Join("user", "dest", "images"), FileSize: 1024},
 		{SourcePath: filepath.Join("user", "source", "logo.png"), DestDir: "images", DestPath: filepath.Join("user", "dest", "images"), FileSize: 2048},
 		{SourcePath: filepath.Join("user", "source", "report.pdf"), DestDir: "documents", DestPath: filepath.Join("user", "dest", "documents"), FileSize: 4096},
@@ -250,7 +251,7 @@ func TestSummary_PrimaryOnly(t *testing.T) {
 func TestSummary_PrimaryAndSecondary(t *testing.T) {
 	plan := NewPlan(defaultOpts())
 
-	actions := []Action{
+	actions := []types.Action{
 		{SourcePath: filepath.Join("user", "source", "photo.jpg"), DestDir: filepath.Join("images", "jpg"), DestPath: filepath.Join("user", "dest", "images", "jpg"), FileSize: 1024},
 		{SourcePath: filepath.Join("user", "source", "banner.jpg"), DestDir: filepath.Join("images", "jpg"), DestPath: filepath.Join("user", "dest", "images", "jpg"), FileSize: 512},
 		{SourcePath: filepath.Join("user", "source", "logo.png"), DestDir: filepath.Join("images", "png"), DestPath: filepath.Join("user", "dest", "images", "png"), FileSize: 2048},
@@ -285,7 +286,7 @@ func TestNewAction_UnknownFileType(t *testing.T) {
 		&rules.ByExtensionRule{IsPrimary: false},
 	}
 
-	action := NewAction(fi, ruleSet, destFullPath)
+	action := types.NewAction(fi, ruleSet, destFullPath)
 
 	wantDestDir := filepath.Join("unknown", "xyz")
 	wantDestPath := filepath.Join("user", "dest", "unknown", "xyz")

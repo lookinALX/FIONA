@@ -1,0 +1,30 @@
+package types
+
+import (
+	"FIONA/internal/rules"
+	"FIONA/internal/scanner"
+	"path/filepath"
+)
+
+type Action struct {
+	SourcePath string
+	DestDir    string
+	DestPath   string
+	FileAction string
+	FileSize   int64
+}
+
+func NewAction(fi *scanner.FileInfo, rules []rules.Rule, destFullPath string) Action {
+	destDirPrimary := rules[0].GetDestination(fi)
+	destDirSecondary := ""
+	if len(rules) > 1 {
+		destDirSecondary = rules[1].GetDestination(fi)
+	}
+	destPath := filepath.Join(destFullPath, destDirPrimary, destDirSecondary)
+	return Action{
+		SourcePath: fi.Path,
+		DestDir:    filepath.Join(destDirPrimary, destDirSecondary),
+		DestPath:   destPath,
+		FileSize:   fi.Size,
+	}
+}

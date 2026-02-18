@@ -2,6 +2,7 @@ package sorter
 
 import (
 	"FIONA/internal/cli"
+	"FIONA/internal/types"
 	"bytes"
 	"os"
 	"path/filepath"
@@ -550,7 +551,7 @@ func TestExecuteAction_CreatesDestinationDirectory(t *testing.T) {
 	// Destination directory doesn't exist yet
 	destDir := filepath.Join(tmpDir, "dest", "nested", "deep")
 
-	action := Action{
+	action := types.Action{
 		SourcePath: srcFile,
 		DestPath:   destDir,
 	}
@@ -561,7 +562,7 @@ func TestExecuteAction_CreatesDestinationDirectory(t *testing.T) {
 	}
 
 	plan := &Plan{
-		Actions: []Action{action},
+		Actions: []types.Action{action},
 	}
 
 	executor := NewExecutor(plan, opts)
@@ -589,7 +590,7 @@ func TestExecuteAction_Copy(t *testing.T) {
 
 	createTestFile(t, srcFile, []byte("test"), 0644)
 
-	action := Action{
+	action := types.Action{
 		SourcePath: srcFile,
 		DestPath:   destDir,
 	}
@@ -599,7 +600,7 @@ func TestExecuteAction_Copy(t *testing.T) {
 		ConflictStrategy: cli.ConflictReplace,
 	}
 
-	plan := &Plan{Actions: []Action{action}}
+	plan := &Plan{Actions: []types.Action{action}}
 	executor := NewExecutor(plan, opts)
 
 	err := executor.executeAction(action)
@@ -620,7 +621,7 @@ func TestExecuteAction_Move(t *testing.T) {
 
 	createTestFile(t, srcFile, []byte("test"), 0644)
 
-	action := Action{
+	action := types.Action{
 		SourcePath: srcFile,
 		DestPath:   destDir,
 	}
@@ -630,7 +631,7 @@ func TestExecuteAction_Move(t *testing.T) {
 		ConflictStrategy: cli.ConflictReplace,
 	}
 
-	plan := &Plan{Actions: []Action{action}}
+	plan := &Plan{Actions: []types.Action{action}}
 	executor := NewExecutor(plan, opts)
 
 	err := executor.executeAction(action)

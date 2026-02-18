@@ -1,7 +1,7 @@
 package journal
 
 import (
-	"FIONA/internal/sorter"
+	"FIONA/internal/types"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -10,29 +10,20 @@ import (
 )
 
 type Journal struct {
-	mu   sync.Mutex
-	Logs []LogEntry
-}
-
-type LogEntry struct {
-	Timestamp  time.Time
+	mu         sync.Mutex
 	FileAction string // "move" or "copy"
-	SourcePath string
-	DestPath   string
-	Status     string // "success" or "failed"
-	Error      string
+	Logs       []types.LogEntry
 }
 
-func NewJournal() Journal {
-	return Journal{}
+func NewJournal(fileAction string) Journal {
+	return Journal{FileAction: fileAction}
 }
 
-func (jrn *Journal) AppendLogEntryFromAction(action sorter.Action, fileAction, status, actionError string) {
+func (jrn *Journal) AppendLogEntryFromAction(action types.Action, status, actionError string) {
 	jrn.mu.Lock()
 	defer jrn.mu.Unlock()
-	LogEntry := LogEntry{
+	LogEntry := types.LogEntry{
 		Timestamp:  time.Now(),
-		FileAction: fileAction,
 		SourcePath: action.SourcePath,
 		DestPath:   action.DestPath,
 		Status:     status,
@@ -41,7 +32,7 @@ func (jrn *Journal) AppendLogEntryFromAction(action sorter.Action, fileAction, s
 	jrn.Logs = append(jrn.Logs, LogEntry)
 }
 
-func (jrn *Journal) AppendLogEntry(entry LogEntry) {
+func (jrn *Journal) AppendLogEntry(entry types.LogEntry) {
 	jrn.mu.Lock()
 	defer jrn.mu.Unlock()
 	jrn.Logs = append(jrn.Logs, entry)
@@ -51,7 +42,7 @@ func (jrn *Journal) SaveAsJson(path string) error {
 	jrn.mu.Lock()
 	defer jrn.mu.Unlock()
 
-	data, err := json.MarshalIndent(jrn.Logs, "", "  ") // ← изменить тут
+	data, err := json.MarshalIndent(jrn.Logs, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal journal: %w", err)
 	}

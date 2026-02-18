@@ -2,6 +2,7 @@ package sorter
 
 import (
 	"FIONA/internal/cli"
+	"FIONA/internal/types"
 	"bufio"
 	"errors"
 	"fmt"
@@ -61,7 +62,7 @@ func (ex *Executor) start() {
 	fmt.Println(separator)
 	fmt.Println("Starting execution...")
 
-	jobs := make(chan Action, len(ex.plan.Actions))
+	jobs := make(chan types.Action, len(ex.plan.Actions))
 	var wg sync.WaitGroup
 
 	exres := ExecutionResult{sync.Mutex{}, 0, 0, []error{}}
@@ -112,7 +113,7 @@ func isContinue() bool {
 	return false
 }
 
-func (ex *Executor) executeAction(action Action) error {
+func (ex *Executor) executeAction(action types.Action) error {
 	err := os.MkdirAll(action.DestPath, 0755)
 	if err != nil {
 		return err
