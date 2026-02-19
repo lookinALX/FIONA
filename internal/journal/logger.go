@@ -11,34 +11,61 @@ import (
 
 type Journal struct {
 	mu         sync.Mutex
-	FileAction string // "move" or "copy"
-	Logs       []types.LogEntry
+	path       string
+	FileAction string                 // "move" or "copy"
+	Logs       map[int]types.LogEntry // key = operation ID, value = log entry
+	nextID     int                    // counter for auto-incrementing IDs
 }
 
-func NewJournal(fileAction string) Journal {
-	return Journal{FileAction: fileAction}
-}
-
-func (jrn *Journal) AppendLogEntryFromAction(action types.Action, status, actionError string) {
-	jrn.mu.Lock()
-	defer jrn.mu.Unlock()
-	LogEntry := types.LogEntry{
-		Timestamp:  time.Now(),
-		SourcePath: action.SourcePath,
-		DestPath:   action.DestPath,
-		Status:     status,
-		Error:      actionError,
+func NewJournal(path, fileAction string) Journal {
+	return Journal{
+		path:       path,
+		FileAction: fileAction,
+		Logs:       make(map[int]types.LogEntry),
+		nextID:     0,
 	}
-	jrn.Logs = append(jrn.Logs, LogEntry)
 }
 
-func (jrn *Journal) AppendLogEntry(entry types.LogEntry) {
+func (jrn *Journal) AppendLogEntryFromAction(action types.Action, status, conflictResolution, actionError string) int {
 	jrn.mu.Lock()
 	defer jrn.mu.Unlock()
-	jrn.Logs = append(jrn.Logs, entry)
+
+	entry := types.LogEntry{
+		Timestamp:          time.Now(),
+		SourcePath:         action.SourcePath,
+		DestPath:           action.DestPath,
+		Status:             status,
+		ConflictResolution: conflictResolution,
+		Error:              actionError,
+	}
+
+	id := jrn.nextID
+	jrn.Logs[id] = entry
+	jrn.nextID++
+
+	return id
 }
 
-func (jrn *Journal) SaveAsJson(path string) error {
+func (jrn *Journal) AppendLogEntry(entry types.LogEntry) int {
+	jrn.mu.Lock()
+	defer jrn.mu.Unlock()
+
+	id := jrn.nextID
+	jrn.Logs[id] = entry
+	jrn.nextID++
+
+	return id
+}
+
+func (jrn *Journal) GetEntry(id int) (types.LogEntry, bool) {
+	jrn.mu.Lock()
+	defer jrn.mu.Unlock()
+
+	entry, exists := jrn.Logs[id]
+	return entry, exists
+}
+
+func (jrn *Journal) SaveAsJson() error {
 	jrn.mu.Lock()
 	defer jrn.mu.Unlock()
 
@@ -47,7 +74,7 @@ func (jrn *Journal) SaveAsJson(path string) error {
 		return fmt.Errorf("failed to marshal journal: %w", err)
 	}
 
-	err = os.WriteFile(path, data, 0644)
+	err = os.WriteFile(jrn.path, data, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write journal file: %w", err)
 	}
@@ -61,10 +88,31 @@ func (jrn *Journal) LoadFromJson(path string) error {
 		return fmt.Errorf("failed to read journal file: %w", err)
 	}
 
+	jrn.mu.Lock()
+	defer jrn.mu.Unlock()
+
+	// clear existing logs
+	jrn.Logs = make(map[int]types.LogEntry)
+
 	err = json.Unmarshal(data, &jrn.Logs)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal journal: %w", err)
 	}
 
+	// update nextID to be max(keys) + 1
+	maxID := -1
+	for id := range jrn.Logs {
+		if id > maxID {
+			maxID = id
+		}
+	}
+	jrn.nextID = maxID + 1
+
 	return nil
+}
+
+func (jrn *Journal) Count() int {
+	jrn.mu.Lock()
+	defer jrn.mu.Unlock()
+	return len(jrn.Logs)
 }

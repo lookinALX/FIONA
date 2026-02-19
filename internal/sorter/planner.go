@@ -23,7 +23,7 @@ func NewPlan(opt *cli.Opts) Plan {
 		Actions:       []types.Action{},
 		BaseDirDest:   opt.DestPath,
 		BaseDirSource: opt.SourcePath,
-		fileAction:    opt.Action,
+		fileAction:    opt.FileAction,
 		DirCounts:     map[string]int{},
 		DirSizes:      map[string]int64{},
 	}
@@ -97,7 +97,7 @@ func (p *Plan) Print(longPrint bool) {
 	fmt.Println(separator)
 	fmt.Println("              DRY-RUN PLAN")
 	fmt.Println(separator)
-	fmt.Printf("\n  Action:      %s\n", p.fileAction)
+	fmt.Printf("\n  FileAction:      %s\n", p.fileAction)
 	fmt.Printf("  Source:      %s\n", p.BaseDirSource)
 	fmt.Printf("  Destination: %s\n\n", p.BaseDirDest)
 	fmt.Println(separator)

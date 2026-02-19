@@ -2,6 +2,7 @@ package sorter
 
 import (
 	"FIONA/internal/cli"
+	"FIONA/internal/journal"
 	"FIONA/internal/types"
 	"bufio"
 	"errors"
@@ -23,24 +24,24 @@ type Executor struct {
 	dryRun     bool
 	force      string
 	workers    int
-	logMutex   sync.Mutex
+	jrn        journal.Journal
 }
 
 type ExecutionResult struct {
 	mu           sync.Mutex
 	successCount int
 	errorCount   int
-	errors       []error
 }
 
 func NewExecutor(plan *Plan, opt *cli.Opts) Executor {
 	return Executor{
 		plan:       plan,
-		fileAction: opt.Action,
+		fileAction: opt.FileAction,
 		onConflict: opt.ConflictStrategy,
 		dryRun:     opt.DryRun,
 		force:      opt.Force,
 		workers:    opt.Workers,
+		jrn:        journal.NewJournal(filepath.Join(opt.LogPath, "fiona_logs.json"), opt.FileAction),
 	}
 }
 
@@ -65,7 +66,7 @@ func (ex *Executor) start() {
 	jobs := make(chan types.Action, len(ex.plan.Actions))
 	var wg sync.WaitGroup
 
-	exres := ExecutionResult{sync.Mutex{}, 0, 0, []error{}}
+	exres := ExecutionResult{sync.Mutex{}, 0, 0}
 
 	for i := 0; i < ex.workers; i++ {
 		wg.Add(1)
@@ -73,12 +74,20 @@ func (ex *Executor) start() {
 			defer wg.Done()
 
 			for action := range jobs {
-				err := ex.executeAction(action)
+				msg, err := ex.executeAction(action)
+
+				status := ""
+				errMsg := ""
+
 				if err != nil {
-					exres.AddError(fmt.Errorf("cannot process %s: %w", action.SourcePath, err))
+					exres.IncrementFail()
+					status = "failed"
+					errMsg = err.Error()
 				} else {
 					exres.IncrementSuccess()
+					status = "succeeded"
 				}
+				ex.jrn.AppendLogEntryFromAction(action, status, msg, errMsg)
 			}
 		}(i)
 	}
@@ -90,16 +99,13 @@ func (ex *Executor) start() {
 
 	wg.Wait()
 
+	if err := ex.jrn.SaveAsJson(); err != nil {
+		fmt.Println("!!! ⚠ !!! Failed to save as json:", err)
+	}
+
 	fmt.Println("Execution is ended.")
 	fmt.Printf("✓ Succeeded operations: %d\n", exres.successCount)
 	fmt.Printf("⊘ Failed operations: %d\n", exres.errorCount)
-
-	if len(exres.errors) > 0 {
-		fmt.Println("⚠ Errors encountered: ")
-		for _, err := range exres.errors {
-			fmt.Println("   --> ", err)
-		}
-	}
 }
 
 func isContinue() bool {
@@ -113,22 +119,23 @@ func isContinue() bool {
 	return false
 }
 
-func (ex *Executor) executeAction(action types.Action) error {
+func (ex *Executor) executeAction(action types.Action) (string, error) {
 	err := os.MkdirAll(action.DestPath, 0755)
+	msg := ""
 	if err != nil {
-		return err
+		return msg, err
 	}
-	ex.log("Processing file --> %s\n", action.SourcePath)
-	err = ex.ProcessFile(action.SourcePath, filepath.Join(action.DestPath, filepath.Base(action.SourcePath)))
-	return err
+	msg, err = ex.ProcessFile(action.SourcePath, filepath.Join(action.DestPath, filepath.Base(action.SourcePath)))
+	return msg, err
 }
 
-func (ex *Executor) ProcessFile(source, destination string) error {
+func (ex *Executor) ProcessFile(source, destination string) (string, error) {
 	_, err := os.Stat(destination)
 	fileExists := (err == nil)
+	msg := ""
 
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		return fmt.Errorf("cannot stat destination: %w", err)
+		return msg, fmt.Errorf("cannot stat destination: %w", err)
 	}
 
 	finalDest := destination
@@ -136,28 +143,29 @@ func (ex *Executor) ProcessFile(source, destination string) error {
 	if fileExists {
 		switch ex.onConflict {
 		case cli.ConflictReplace:
+			msg = fmt.Sprintf("⟲ Replaced: %s\n", filepath.Base(finalDest))
 			err := os.Remove(destination)
 			if err != nil && errors.Is(err, os.ErrNotExist) {
-				return fmt.Errorf("cannot remove existing file: %w", err)
+				return msg, fmt.Errorf("cannot remove existing file: %w", err)
 			}
 
 		case cli.ConflictSkip:
-			ex.log("⊘ Skipping (already exists): %s\n", filepath.Base(destination))
-			return nil
+			msg = fmt.Sprintf("⊘ Skipping (already exists): %s\n", filepath.Base(destination))
+			return msg, nil
 
 		case cli.ConflictRename:
 			finalDest = generateNewName(destination)
-			ex.log("⚠ Conflict resolved: saving as %s\n", filepath.Base(finalDest))
+			msg = fmt.Sprintf("⚠ Conflict resolved: saving as %s\n", filepath.Base(finalDest))
 
 		default:
-			return fmt.Errorf("invalid onConflict strategy: %s", ex.onConflict)
+			return msg, fmt.Errorf("invalid onConflict strategy: %s", ex.onConflict)
 		}
 	}
 
 	if ex.fileAction == "copy" {
-		return copyWithMetadata(source, finalDest)
+		return msg, copyWithMetadata(source, finalDest)
 	}
-	return smartMoveFile(source, finalDest)
+	return msg, smartMoveFile(source, finalDest)
 }
 
 func generateNewName(path string) string {
@@ -236,18 +244,11 @@ func copyWithMetadata(source, destination string) error {
 	return nil
 }
 
-func (ex *Executor) log(format string, args ...interface{}) {
-	ex.logMutex.Lock()
-	defer ex.logMutex.Unlock()
-	fmt.Printf(format, args...)
-}
-
-func (exres *ExecutionResult) AddError(err error) {
+func (exres *ExecutionResult) IncrementFail() {
 	exres.mu.Lock()
 	defer exres.mu.Unlock()
 
 	exres.errorCount++
-	exres.errors = append(exres.errors, err)
 }
 
 func (exres *ExecutionResult) IncrementSuccess() {

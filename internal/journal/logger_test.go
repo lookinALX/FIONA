@@ -20,30 +20,38 @@ func TestJournal_AppendLogEntry(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			jrn := NewJournal("move")
-			jrn.AppendLogEntry(tt.input)
-			if len(jrn.Logs) != tt.wantLogsLen {
-				t.Errorf("Journal.AppendLogEntry() len = %v, want %v", jrn.Logs, tt.wantLogsLen)
+			jrn := NewJournal("", "move")
+			id := jrn.AppendLogEntry(tt.input)
+
+			if id != 0 {
+				t.Errorf("first entry should have id 0, got %d", id)
+			}
+
+			if jrn.Count() != tt.wantLogsLen {
+				t.Errorf("Journal.AppendLogEntry() count = %v, want %v", jrn.Count(), tt.wantLogsLen)
 			}
 		})
 	}
 }
 
 func TestAppendLogEntryFromAction(t *testing.T) {
-	jrn := NewJournal("move")
+	jrn := NewJournal("", "move")
 
 	action := types.Action{
 		SourcePath: "/source/photo.jpg",
 		DestPath:   "/dest/photo.jpg",
 	}
 
-	jrn.AppendLogEntryFromAction(action, "success", "")
+	id := jrn.AppendLogEntryFromAction(action, "success", "", "")
 
-	if len(jrn.Logs) != 1 {
-		t.Fatalf("expected 1 entry, got %d", len(jrn.Logs))
+	if jrn.Count() != 1 {
+		t.Fatalf("expected 1 entry, got %d", jrn.Count())
 	}
 
-	entry := jrn.Logs[0]
+	entry, exists := jrn.GetEntry(id)
+	if !exists {
+		t.Fatalf("entry with id %d not found", id)
+	}
 
 	if entry.SourcePath != action.SourcePath {
 		t.Errorf("expected SourcePath %s, got %s", action.SourcePath, entry.SourcePath)
@@ -58,11 +66,47 @@ func TestAppendLogEntryFromAction(t *testing.T) {
 	}
 }
 
+func TestMultipleAppends(t *testing.T) {
+	jrn := NewJournal("", "copy")
+
+	id1 := jrn.AppendLogEntry(types.LogEntry{SourcePath: "/file1.txt"})
+	id2 := jrn.AppendLogEntry(types.LogEntry{SourcePath: "/file2.txt"})
+	id3 := jrn.AppendLogEntry(types.LogEntry{SourcePath: "/file3.txt"})
+
+	if id1 != 0 || id2 != 1 || id3 != 2 {
+		t.Errorf("expected sequential IDs 0,1,2 got %d,%d,%d", id1, id2, id3)
+	}
+
+	if jrn.Count() != 3 {
+		t.Errorf("expected 3 entries, got %d", jrn.Count())
+	}
+
+	// Check that we can retrieve by ID
+	entry1, exists := jrn.GetEntry(0)
+	if !exists || entry1.SourcePath != "/file1.txt" {
+		t.Error("failed to retrieve entry with id 0")
+	}
+
+	entry2, exists := jrn.GetEntry(1)
+	if !exists || entry2.SourcePath != "/file2.txt" {
+		t.Error("failed to retrieve entry with id 1")
+	}
+}
+
+func TestGetEntry_NonExistent(t *testing.T) {
+	jrn := NewJournal("", "move")
+
+	_, exists := jrn.GetEntry(999)
+	if exists {
+		t.Error("expected GetEntry to return false for non-existent ID")
+	}
+}
+
 func TestSaveAsJson(t *testing.T) {
 	tmpDir := t.TempDir()
 	journalPath := filepath.Join(tmpDir, "journal.json")
 
-	jrn := NewJournal("move")
+	jrn := NewJournal(journalPath, "move")
 	jrn.AppendLogEntry(types.LogEntry{
 		Timestamp:  time.Date(2026, 2, 18, 12, 0, 0, 0, time.UTC),
 		SourcePath: "/source/file.txt",
@@ -71,7 +115,7 @@ func TestSaveAsJson(t *testing.T) {
 		Error:      "",
 	})
 
-	err := jrn.SaveAsJson(journalPath)
+	err := jrn.SaveAsJson()
 	if err != nil {
 		t.Fatalf("failed to save journal: %v", err)
 	}
@@ -94,9 +138,9 @@ func TestLoadFromJson(t *testing.T) {
 	tmpDir := t.TempDir()
 	journalPath := filepath.Join(tmpDir, "journal.json")
 
-	// Создаём и сохраняем журнал
-	original := NewJournal("move")
-	original.AppendLogEntry(types.LogEntry{
+	// Create and save journal
+	original := NewJournal(journalPath, "move")
+	id := original.AppendLogEntry(types.LogEntry{
 		Timestamp:  time.Date(2026, 2, 18, 12, 0, 0, 0, time.UTC),
 		SourcePath: "/source/photo.jpg",
 		DestPath:   "/dest/photo.jpg",
@@ -104,30 +148,36 @@ func TestLoadFromJson(t *testing.T) {
 		Error:      "",
 	})
 
-	err := original.SaveAsJson(journalPath)
+	err := original.SaveAsJson()
 	if err != nil {
 		t.Fatalf("failed to save journal: %v", err)
 	}
 
-	// Загружаем журнал
-	loaded := NewJournal("move")
+	// Load journal
+	loaded := NewJournal(journalPath, "move")
 	err = loaded.LoadFromJson(journalPath)
 	if err != nil {
 		t.Fatalf("failed to load journal: %v", err)
 	}
 
-	// Проверяем что данные совпадают
-	if len(loaded.Logs) != len(original.Logs) {
-		t.Fatalf("expected %d entries, got %d", len(original.Logs), len(loaded.Logs))
+	// Check data matches
+	if loaded.Count() != original.Count() {
+		t.Fatalf("expected %d entries, got %d", original.Count(), loaded.Count())
 	}
 
-	if loaded.Logs[0].SourcePath != original.Logs[0].SourcePath {
-		t.Errorf("expected SourcePath %s, got %s", original.Logs[0].SourcePath, loaded.Logs[0].SourcePath)
+	loadedEntry, exists := loaded.GetEntry(id)
+	if !exists {
+		t.Fatalf("expected entry with id %d to exist after loading", id)
+	}
+
+	originalEntry, _ := original.GetEntry(id)
+	if loadedEntry.SourcePath != originalEntry.SourcePath {
+		t.Errorf("expected SourcePath %s, got %s", originalEntry.SourcePath, loadedEntry.SourcePath)
 	}
 }
 
 func TestLoadFromJsonNonExistent(t *testing.T) {
-	jrn := NewJournal("move")
+	jrn := NewJournal("", "move")
 
 	err := jrn.LoadFromJson("/path/that/does/not/exist.json")
 	if err == nil {
@@ -139,7 +189,7 @@ func TestSaveAndLoadMultipleEntries(t *testing.T) {
 	tmpDir := t.TempDir()
 	journalPath := filepath.Join(tmpDir, "journal.json")
 
-	original := NewJournal("move")
+	original := NewJournal(journalPath, "move")
 
 	entries := []types.LogEntry{
 		{
@@ -165,37 +215,44 @@ func TestSaveAndLoadMultipleEntries(t *testing.T) {
 		},
 	}
 
-	for _, entry := range entries {
-		original.AppendLogEntry(entry)
+	ids := make([]int, len(entries))
+	for i, entry := range entries {
+		ids[i] = original.AppendLogEntry(entry)
 	}
 
-	err := original.SaveAsJson(journalPath)
+	err := original.SaveAsJson()
 	if err != nil {
 		t.Fatalf("failed to save journal: %v", err)
 	}
 
-	loaded := NewJournal("move")
+	loaded := NewJournal("", "move")
 	err = loaded.LoadFromJson(journalPath)
 	if err != nil {
 		t.Fatalf("failed to load journal: %v", err)
 	}
 
-	if len(loaded.Logs) != 3 {
-		t.Fatalf("expected 3 entries, got %d", len(loaded.Logs))
+	if loaded.Count() != 3 {
+		t.Fatalf("expected 3 entries, got %d", loaded.Count())
 	}
 
-	for i, entry := range entries {
-		if loaded.Logs[i].Status != entry.Status {
-			t.Errorf("entry %d: expected Status %s, got %s", i, entry.Status, loaded.Logs[i].Status)
+	// Verify each entry by ID
+	for i, id := range ids {
+		loadedEntry, exists := loaded.GetEntry(id)
+		if !exists {
+			t.Fatalf("entry with id %d not found after loading", id)
 		}
-		if loaded.Logs[i].Error != entry.Error {
-			t.Errorf("entry %d: expected Error %s, got %s", i, entry.Error, loaded.Logs[i].Error)
+
+		if loadedEntry.Status != entries[i].Status {
+			t.Errorf("entry %d: expected Status %s, got %s", id, entries[i].Status, loadedEntry.Status)
+		}
+		if loadedEntry.Error != entries[i].Error {
+			t.Errorf("entry %d: expected Error %s, got %s", id, entries[i].Error, loadedEntry.Error)
 		}
 	}
 }
 
 func TestConcurrentAppend(t *testing.T) {
-	jrn := NewJournal("move")
+	jrn := NewJournal("", "move")
 
 	const numGoroutines = 10
 	const entriesPerGoroutine = 100
@@ -223,7 +280,59 @@ func TestConcurrentAppend(t *testing.T) {
 	}
 
 	expectedCount := numGoroutines * entriesPerGoroutine
-	if len(jrn.Logs) != expectedCount {
-		t.Errorf("expected %d entries, got %d", expectedCount, len(jrn.Logs))
+	if jrn.Count() != expectedCount {
+		t.Errorf("expected %d entries, got %d", expectedCount, jrn.Count())
+	}
+}
+
+func TestNextIDPersistence(t *testing.T) {
+	tmpDir := t.TempDir()
+	journalPath := filepath.Join(tmpDir, "journal.json")
+
+	// Create journal with 3 entries (IDs: 0, 1, 2)
+	original := NewJournal(journalPath, "move")
+	original.AppendLogEntry(types.LogEntry{SourcePath: "/file1.txt"})
+	original.AppendLogEntry(types.LogEntry{SourcePath: "/file2.txt"})
+	original.AppendLogEntry(types.LogEntry{SourcePath: "/file3.txt"})
+
+	err := original.SaveAsJson()
+	if err != nil {
+		t.Fatalf("failed to save: %v", err)
+	}
+
+	// Load and append new entry
+	loaded := NewJournal("", "move")
+	err = loaded.LoadFromJson(journalPath)
+	if err != nil {
+		t.Fatalf("failed to load: %v", err)
+	}
+
+	// Next entry should have ID 3
+	newID := loaded.AppendLogEntry(types.LogEntry{SourcePath: "/file4.txt"})
+	if newID != 3 {
+		t.Errorf("expected new entry to have ID 3, got %d", newID)
+	}
+
+	if loaded.Count() != 4 {
+		t.Errorf("expected 4 entries after append, got %d", loaded.Count())
+	}
+}
+
+func TestCount(t *testing.T) {
+	jrn := NewJournal("", "copy")
+
+	if jrn.Count() != 0 {
+		t.Errorf("new journal should have count 0, got %d", jrn.Count())
+	}
+
+	jrn.AppendLogEntry(types.LogEntry{})
+	if jrn.Count() != 1 {
+		t.Errorf("after one append, count should be 1, got %d", jrn.Count())
+	}
+
+	jrn.AppendLogEntry(types.LogEntry{})
+	jrn.AppendLogEntry(types.LogEntry{})
+	if jrn.Count() != 3 {
+		t.Errorf("after three appends, count should be 3, got %d", jrn.Count())
 	}
 }

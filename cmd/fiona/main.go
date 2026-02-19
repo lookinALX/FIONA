@@ -4,6 +4,7 @@ import (
 	"FIONA/internal/cli"
 	"FIONA/internal/scanner"
 	"FIONA/internal/sorter"
+	"FIONA/internal/types"
 	"fmt"
 	"os"
 )
@@ -36,7 +37,7 @@ func main() {
 
 	pl := sorter.NewPlan(&opts)
 	for _, f := range files {
-		action := sorter.NewAction(f, rls, opts.DestPath)
+		action := types.NewAction(f, rls, opts.DestPath)
 		pl.AddAction(action)
 	}
 

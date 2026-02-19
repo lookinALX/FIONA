@@ -2,12 +2,16 @@ package tests
 
 import (
 	"FIONA/internal/cli"
+	"FIONA/internal/journal"
 	"FIONA/internal/scanner"
 	"FIONA/internal/sorter"
+	"FIONA/internal/types"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -44,7 +48,7 @@ func TestEndToEnd_CopyByTypeThenExtension(t *testing.T) {
 		SourcePath:       srcDir,
 		DestPath:         destDir,
 		Sort:             cli.SortOption{Primary: cli.CritMIMEType, Secondary: cli.CritExtension},
-		Action:           "copy",
+		FileAction:       "copy",
 		Force:            "yes",
 		DryRun:           false,
 		ConflictStrategy: cli.ConflictSkip,
@@ -64,7 +68,7 @@ func TestEndToEnd_CopyByTypeThenExtension(t *testing.T) {
 
 	plan := sorter.NewPlan(&opts)
 	for _, f := range files {
-		action := sorter.NewAction(f, rls, opts.DestPath)
+		action := types.NewAction(f, rls, opts.DestPath)
 		plan.AddAction(action)
 	}
 
@@ -78,4 +82,366 @@ func TestEndToEnd_CopyByTypeThenExtension(t *testing.T) {
 	assertFileExists(t, filepath.Join(destDir, "documents", "txt", "file4.txt"))
 
 	assertFileExists(t, filepath.Join(srcDir, "file0.jpg"))
+}
+
+func TestEndToEnd_JournalAutoSave(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	journalPath := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "file1.txt"), []byte("content1"))
+	createTestFile(t, filepath.Join(srcDir, "file2.jpg"), []byte("content2"))
+	createTestFile(t, filepath.Join(srcDir, "file3.pdf"), []byte("content3"))
+
+	opts := cli.Opts{
+		SourcePath:       srcDir,
+		DestPath:         destDir,
+		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
+		FileAction:       "copy",
+		Force:            "yes",
+		DryRun:           false,
+		ConflictStrategy: cli.ConflictSkip,
+		Workers:          2,
+		LogPath:          journalPath,
+	}
+
+	rls, _ := opts.ParseToRules()
+	sc := scanner.NewScanner()
+	files, _ := sc.Scan(opts.SourcePath)
+
+	plan := sorter.NewPlan(&opts)
+	for _, f := range files {
+		action := types.NewAction(f, rls, opts.DestPath)
+		plan.AddAction(action)
+	}
+
+	executor := sorter.NewExecutor(&plan, &opts)
+	executor.Execute()
+
+	// verify journal file was created
+	if _, err := os.Stat(filepath.Join(journalPath, "fiona_logs.json")); os.IsNotExist(err) {
+		t.Fatal("journal file was not auto-saved")
+	}
+
+	// verify file is not empty
+	data, err := os.ReadFile(filepath.Join(journalPath, "fiona_logs.json"))
+	if err != nil {
+		t.Fatalf("failed to read journal file: %v", err)
+	}
+
+	if len(data) == 0 {
+		t.Error("journal file is empty")
+	}
+
+	// load and verify content
+	newJournal := journal.NewJournal(journalPath, "copy")
+	err = newJournal.LoadFromJson(filepath.Join(journalPath, "fiona_logs.json"))
+	if err != nil {
+		t.Fatalf("failed to load saved journal: %v", err)
+	}
+
+	if newJournal.Count() != 3 {
+		t.Errorf("expected 3 entries in saved journal, got %d", newJournal.Count())
+	}
+
+	// verify all entries are complete
+	for i := 0; i < 3; i++ {
+		entry, exists := newJournal.GetEntry(i)
+		if !exists {
+			t.Errorf("entry %d not found in saved journal", i)
+			continue
+		}
+
+		if entry.SourcePath == "" {
+			t.Errorf("entry %d: SourcePath is empty", i)
+		}
+
+		if entry.DestPath == "" {
+			t.Errorf("entry %d: DestPath is empty", i)
+		}
+
+		if entry.Status == "" {
+			t.Errorf("entry %d: Status is empty", i)
+		}
+
+		if entry.Timestamp.IsZero() {
+			t.Errorf("entry %d: Timestamp is zero", i)
+		}
+	}
+}
+
+func TestEndToEnd_JournalAutoSaveWithConflicts(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	journalPath := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "file1.txt"), []byte("new1"))
+	createTestFile(t, filepath.Join(srcDir, "file2.txt"), []byte("new2"))
+
+	os.MkdirAll(filepath.Join(destDir, "documents", "txt"), 0755)
+	createTestFile(t, filepath.Join(destDir, "documents", "txt", "file1.txt"), []byte("old1"))
+
+	opts := cli.Opts{
+		SourcePath:       srcDir,
+		DestPath:         destDir,
+		Sort:             cli.SortOption{Primary: cli.CritMIMEType, Secondary: cli.CritExtension},
+		FileAction:       "copy",
+		Force:            "yes",
+		DryRun:           false,
+		ConflictStrategy: cli.ConflictRename,
+		Workers:          1,
+		LogPath:          journalPath,
+	}
+
+	rls, _ := opts.ParseToRules()
+	sc := scanner.NewScanner()
+	files, _ := sc.Scan(opts.SourcePath)
+
+	plan := sorter.NewPlan(&opts)
+	for _, f := range files {
+		action := types.NewAction(f, rls, opts.DestPath)
+		plan.AddAction(action)
+	}
+
+	executor := sorter.NewExecutor(&plan, &opts)
+	executor.Execute()
+
+	// load saved journal
+	savedJournal := journal.NewJournal(filepath.Join(journalPath, "fiona_logs.json"), "copy")
+	err := savedJournal.LoadFromJson(filepath.Join(journalPath, "fiona_logs.json"))
+	if err != nil {
+		t.Fatalf("failed to load saved journal: %v", err)
+	}
+
+	// find entry with conflict resolution
+	foundConflict := false
+	for i := 0; i < savedJournal.Count(); i++ {
+		entry, exists := savedJournal.GetEntry(i)
+		if !exists {
+			continue
+		}
+
+		if strings.Contains(entry.ConflictResolution, "Conflict resolved") {
+			foundConflict = true
+
+			if entry.Status != "succeeded" {
+				t.Error("conflict resolution should result in success")
+			}
+
+			if !strings.Contains(entry.ConflictResolution, "file1_1.txt") {
+				t.Errorf("expected renamed file in message, got: %s", entry.ConflictResolution)
+			}
+			break
+		}
+	}
+
+	if !foundConflict {
+		t.Error("expected to find conflict resolution in saved journal")
+	}
+}
+
+func TestEndToEnd_JournalAutoSaveWithFailures(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	journalPath := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "valid.txt"), []byte("content"))
+
+	opts := cli.Opts{
+		SourcePath:       srcDir,
+		DestPath:         destDir,
+		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
+		FileAction:       "copy",
+		Force:            "yes",
+		DryRun:           false,
+		ConflictStrategy: cli.ConflictSkip,
+		Workers:          1,
+		LogPath:          journalPath,
+	}
+
+	rls, _ := opts.ParseToRules()
+	sc := scanner.NewScanner()
+	files, _ := sc.Scan(opts.SourcePath)
+
+	plan := sorter.NewPlan(&opts)
+	for _, f := range files {
+		action := types.NewAction(f, rls, opts.DestPath)
+		plan.AddAction(action)
+	}
+
+	plan.AddAction(types.Action{
+		SourcePath: "/nonexistent/missing.txt",
+		DestPath:   destDir,
+	})
+
+	executor := sorter.NewExecutor(&plan, &opts)
+	executor.Execute()
+
+	savedJournal := journal.NewJournal(journalPath, "copy")
+	err := savedJournal.LoadFromJson(filepath.Join(journalPath, "fiona_logs.json"))
+	if err != nil {
+		t.Fatalf("failed to load saved journal: %v", err)
+	}
+
+	if savedJournal.Count() != 2 {
+		t.Errorf("expected 2 entries in saved journal, got %d", savedJournal.Count())
+	}
+
+	// find failed entry
+	foundFailed := false
+	for i := 0; i < savedJournal.Count(); i++ {
+		entry, exists := savedJournal.GetEntry(i)
+		if !exists {
+			continue
+		}
+
+		if entry.Status == "failed" {
+			foundFailed = true
+
+			if entry.Error == "" {
+				t.Error("failed entry should have error message in saved journal")
+			}
+
+			if !strings.Contains(entry.Error, "no such file") &&
+				!strings.Contains(entry.Error, "does not exist") {
+				t.Errorf("expected file not found error, got: %s", entry.Error)
+			}
+			break
+		}
+	}
+
+	if !foundFailed {
+		t.Error("expected to find failed entry in saved journal")
+	}
+}
+
+func TestEndToEnd_JournalAutoSaveConcurrent(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	journalPath := t.TempDir()
+
+	// create many files
+	const numFiles = 50
+	for i := 0; i < numFiles; i++ {
+		ext := ".txt"
+		if i%3 == 0 {
+			ext = ".jpg"
+		} else if i%3 == 1 {
+			ext = ".pdf"
+		}
+
+		filename := fmt.Sprintf("file%d%s", i, ext)
+		createTestFile(t, filepath.Join(srcDir, filename), []byte(fmt.Sprintf("content%d", i)))
+	}
+
+	opts := cli.Opts{
+		SourcePath:       srcDir,
+		DestPath:         destDir,
+		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
+		FileAction:       "copy",
+		Force:            "yes",
+		DryRun:           false,
+		ConflictStrategy: cli.ConflictSkip,
+		Workers:          8,
+		LogPath:          journalPath,
+	}
+
+	rls, _ := opts.ParseToRules()
+	sc := scanner.NewScanner()
+	files, _ := sc.Scan(opts.SourcePath)
+
+	plan := sorter.NewPlan(&opts)
+	for _, f := range files {
+		action := types.NewAction(f, rls, opts.DestPath)
+		plan.AddAction(action)
+	}
+
+	executor := sorter.NewExecutor(&plan, &opts)
+	executor.Execute()
+
+	// verify journal was saved
+	if _, err := os.Stat(journalPath); os.IsNotExist(err) {
+		t.Fatal("journal file was not auto-saved after concurrent execution")
+	}
+
+	// load and verify
+	savedJournal := journal.NewJournal(journalPath, "copy")
+	err := savedJournal.LoadFromJson(filepath.Join(journalPath, "fiona_logs.json"))
+	if err != nil {
+		t.Fatalf("failed to load saved journal after concurrent execution: %v", err)
+	}
+
+	if savedJournal.Count() != numFiles {
+		t.Errorf("expected %d entries in saved journal, got %d", numFiles, savedJournal.Count())
+	}
+
+	// verify all entries succeeded
+	successCount := 0
+	for i := 0; i < numFiles; i++ {
+		entry, exists := savedJournal.GetEntry(i)
+		if !exists {
+			continue
+		}
+
+		if entry.Status == "succeeded" {
+			successCount++
+		}
+	}
+
+	if successCount != numFiles {
+		t.Errorf("expected all %d operations to succeed, got %d", numFiles, successCount)
+	}
+}
+
+func TestEndToEnd_JournalSaveFailureHandling(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+
+	// use invalid path (directory that doesn't exist and can't be created)
+	journalPath := "/root/restricted/"
+
+	// create test file
+	createTestFile(t, filepath.Join(srcDir, "file.txt"), []byte("content"))
+
+	opts := cli.Opts{
+		SourcePath:       srcDir,
+		DestPath:         destDir,
+		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
+		FileAction:       "copy",
+		Force:            "yes",
+		DryRun:           false,
+		ConflictStrategy: cli.ConflictSkip,
+		Workers:          1,
+		LogPath:          journalPath,
+	}
+
+	rls, _ := opts.ParseToRules()
+	sc := scanner.NewScanner()
+	files, _ := sc.Scan(opts.SourcePath)
+
+	plan := sorter.NewPlan(&opts)
+	for _, f := range files {
+		action := types.NewAction(f, rls, opts.DestPath)
+		plan.AddAction(action)
+	}
+
+	executor := sorter.NewExecutor(&plan, &opts)
+
+	// this should not panic, just print error
+	// execution should complete even if journal save fails
+	executor.Execute()
+
+	// verify files were still processed despite journal save failure
+	// walk destination to find the file
+	fileFound := false
+	filepath.Walk(destDir, func(path string, info os.FileInfo, err error) error {
+		if err == nil && !info.IsDir() && info.Name() == "file.txt" {
+			fileFound = true
+		}
+		return nil
+	})
+
+	if !fileFound {
+		t.Fatal("Expected file.txt to be processed and copied, but it was not found in destination")
+	}
 }

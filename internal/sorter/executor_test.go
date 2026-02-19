@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 )
@@ -267,16 +268,20 @@ func TestProcessFile_Copy_NoConflict(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: cli.ConflictReplace,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	assertFileContent(t, dst, content)
@@ -296,16 +301,20 @@ func TestProcessFile_Move_NoConflict(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "move",
+			FileAction:       "move",
 			ConflictStrategy: cli.ConflictReplace,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	assertFileContent(t, dst, content)
@@ -328,16 +337,20 @@ func TestProcessFile_Copy_ConflictReplace(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: cli.ConflictReplace,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if !strings.Contains(msg, "⟲ Replaced:") {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	assertFileContent(t, dst, srcContent) // Should be replaced
@@ -360,16 +373,20 @@ func TestProcessFile_Copy_ConflictSkip(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: cli.ConflictSkip,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if !strings.Contains(msg, "⊘ Skipping (already exists):") {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	assertFileContent(t, dst, dstContent) // Should remain unchanged
@@ -392,16 +409,20 @@ func TestProcessFile_Copy_ConflictRename(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: cli.ConflictRename,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if !strings.Contains(msg, "⚠ Conflict resolved: saving as") {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	// Original dest should be unchanged
@@ -429,16 +450,20 @@ func TestProcessFile_Move_ConflictRename(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "move",
+			FileAction:       "move",
 			ConflictStrategy: cli.ConflictRename,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if !strings.Contains(msg, "⚠ Conflict resolved: saving as") {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	assertFileContent(t, dst, dstContent)
@@ -461,16 +486,20 @@ func TestProcessFile_InvalidConflictStrategy(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: "invalid_strategy",
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err == nil {
 		t.Error("ProcessFile() should error for invalid conflict strategy")
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 }
 
@@ -484,16 +513,20 @@ func TestProcessFile_SourceNotExists(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: cli.ConflictReplace,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err == nil {
 		t.Error("ProcessFile() should error for non-existent source")
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 }
 
@@ -514,16 +547,20 @@ func TestProcessFile_Copy_PreservesMetadata(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: cli.ConflictReplace,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	srcInfo, _ := os.Stat(src)
@@ -557,7 +594,7 @@ func TestExecuteAction_CreatesDestinationDirectory(t *testing.T) {
 	}
 
 	opts := &cli.Opts{
-		Action:           "copy",
+		FileAction:       "copy",
 		ConflictStrategy: cli.ConflictReplace,
 	}
 
@@ -567,9 +604,13 @@ func TestExecuteAction_CreatesDestinationDirectory(t *testing.T) {
 
 	executor := NewExecutor(plan, opts)
 
-	err := executor.executeAction(action)
+	msg, err := executor.executeAction(action)
 	if err != nil {
 		t.Fatalf("executeAction() error = %v", err)
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	// Check that directory was created
@@ -596,16 +637,20 @@ func TestExecuteAction_Copy(t *testing.T) {
 	}
 
 	opts := &cli.Opts{
-		Action:           "copy",
+		FileAction:       "copy",
 		ConflictStrategy: cli.ConflictReplace,
 	}
 
 	plan := &Plan{Actions: []types.Action{action}}
 	executor := NewExecutor(plan, opts)
 
-	err := executor.executeAction(action)
+	msg, err := executor.executeAction(action)
 	if err != nil {
 		t.Fatalf("executeAction() error = %v", err)
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	finalPath := filepath.Join(destDir, "file.txt")
@@ -627,16 +672,20 @@ func TestExecuteAction_Move(t *testing.T) {
 	}
 
 	opts := &cli.Opts{
-		Action:           "move",
+		FileAction:       "move",
 		ConflictStrategy: cli.ConflictReplace,
 	}
 
 	plan := &Plan{Actions: []types.Action{action}}
 	executor := NewExecutor(plan, opts)
 
-	err := executor.executeAction(action)
+	msg, err := executor.executeAction(action)
 	if err != nil {
 		t.Fatalf("executeAction() error = %v", err)
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	finalPath := filepath.Join(destDir, "file.txt")
@@ -658,16 +707,20 @@ func TestProcessFile_EmptyFile(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: cli.ConflictReplace,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	assertFileContent(t, dst, []byte{})
@@ -686,16 +739,20 @@ func TestProcessFile_BinaryFile(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: cli.ConflictReplace,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	assertFileContent(t, dst, binaryContent)
@@ -714,16 +771,20 @@ func TestProcessFile_UnicodeFilename(t *testing.T) {
 			Sort:             cli.SortOption{Primary: "", Secondary: ""},
 			SourcePath:       "",
 			DestPath:         "",
-			Action:           "copy",
+			FileAction:       "copy",
 			ConflictStrategy: cli.ConflictReplace,
 			Force:            "",
 			DryRun:           true,
 			Workers:          10},
 	)
 
-	err := ex.ProcessFile(src, dst)
+	msg, err := ex.ProcessFile(src, dst)
 	if err != nil {
 		t.Fatalf("ProcessFile() error = %v", err)
+	}
+
+	if msg != "" {
+		t.Errorf("ProcessFile() message = %v", msg)
 	}
 
 	assertFileContent(t, dst, content)

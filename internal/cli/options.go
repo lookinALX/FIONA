@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"FIONA/internal/messages"
 	"FIONA/internal/rules"
 	"errors"
 	"flag"
@@ -37,7 +38,7 @@ type Opts struct {
 	SourcePath       string
 	DestPath         string
 	LogPath          string
-	Action           string
+	FileAction       string
 	ConflictStrategy string
 	Force            string
 	DryRun           bool
@@ -103,16 +104,16 @@ func (opts *Opts) ParseFlags() error {
 		return fmt.Errorf("cannot get work directory: %w", err)
 	}
 
-	Must(addFlag(&opts.Sort.Primary, "c", "criteria", "mimetype", "Criteria to group by firstly"))
-	Must(addFlag(&opts.Sort.Secondary, "t", "then", "", "Secondary grouping criteria"))
-	Must(addFlag(&opts.SourcePath, "s", "source", cwd, "Source directory to take files to sort"))
-	Must(addFlag(&opts.DestPath, "d", "dest", cwd, "Destination directory to move or copy files from source directory and sort after"))
-	Must(addFlag(&opts.LogPath, "", "log", cwd, "Log directory to write log files to"))
-	Must(addFlag(&opts.Action, "a", "action", "copy", "How to handle files (copy, move)"))
-	Must(addFlag(&opts.ConflictStrategy, "", "on-conflict", ConflictReplace, "How to handle conflicts"))
-	Must(addFlag(&opts.DryRun, "n", "dry-run", true, "Preview without changes"))
-	Must(addFlag(&opts.Force, "", "force", "N", "Force execute without conformation if 'yes'"))
-	Must(addFlag(&opts.Workers, "w", "workers", maxWorkers, "Number of workers for the current run"))
+	messages.Must(addFlag(&opts.Sort.Primary, "c", "criteria", "mimetype", "Criteria to group by firstly"))
+	messages.Must(addFlag(&opts.Sort.Secondary, "t", "then", "", "Secondary grouping criteria"))
+	messages.Must(addFlag(&opts.SourcePath, "s", "source", cwd, "Source directory to take files to sort"))
+	messages.Must(addFlag(&opts.DestPath, "d", "dest", cwd, "Destination directory to move or copy files from source directory and sort after"))
+	messages.Must(addFlag(&opts.LogPath, "", "log", cwd, "Log directory to write log files to"))
+	messages.Must(addFlag(&opts.FileAction, "a", "action", "copy", "How to handle files (copy, move)"))
+	messages.Must(addFlag(&opts.ConflictStrategy, "", "on-conflict", ConflictReplace, "How to handle conflicts"))
+	messages.Must(addFlag(&opts.DryRun, "n", "dry-run", true, "Preview without changes"))
+	messages.Must(addFlag(&opts.Force, "", "force", "N", "Force execute without conformation if 'yes'"))
+	messages.Must(addFlag(&opts.Workers, "w", "workers", maxWorkers, "Number of workers for the current run"))
 	flag.Parse()
 
 	err = opts.validateOptions()
@@ -120,7 +121,7 @@ func (opts *Opts) ParseFlags() error {
 	switch {
 	case err == nil:
 		return nil
-	case errors.Is(err, ErrDestNotExists):
+	case errors.Is(err, messages.ErrDestNotExists):
 		if nestedErr := os.MkdirAll(opts.DestPath, 0755); nestedErr != nil {
 			return fmt.Errorf("destination directory is not exists, cannot create one: %w", nestedErr)
 		}
@@ -137,7 +138,7 @@ func (opts *Opts) validateOptions() error {
 	if err := validateSecondaryCriteriaFlag(opts.Sort.Secondary); err != nil {
 		return err
 	}
-	if err := validateActionFlag(opts.Action); err != nil {
+	if err := validateActionFlag(opts.FileAction); err != nil {
 		return err
 	}
 	if err := validateSourceFlag(opts.SourcePath); err != nil {
@@ -204,30 +205,30 @@ func addFlag(p any, short, long string, defVal any, usage string) error {
 func validatePrimaryCriteriaFlag(crit string) error {
 	if _, exists := validPrimaryCriteria[crit]; !exists {
 		if crit == "" {
-			return ErrEmptyPrimaryCriteria
+			return messages.ErrEmptyPrimaryCriteria
 		}
-		return ErrInvalidPrimaryCriteria
+		return messages.ErrInvalidPrimaryCriteria
 	}
 	return nil
 }
 
 func validateSecondaryCriteriaFlag(crit string) error {
 	if _, exists := validSecondaryCriteria[crit]; !exists {
-		return ErrInvalidSecondaryCriteria
+		return messages.ErrInvalidSecondaryCriteria
 	}
 	return nil
 }
 
 func validateActionFlag(crit string) error {
 	if _, exists := validActions[crit]; !exists {
-		return ErrInvalidAction
+		return messages.ErrInvalidAction
 	}
 	return nil
 }
 
 func validateOnConflictFlag(onConflict string) error {
 	if _, exists := validOnConflictFlag[onConflict]; !exists {
-		return ErrInvalidOnConflict
+		return messages.ErrInvalidOnConflict
 	}
 	return nil
 }
@@ -236,10 +237,10 @@ func validateWorkersFlag(workers *int) error {
 	var i any = *workers
 	value, ok := i.(int)
 	if !ok {
-		return ErrInvalidWorkers
+		return messages.ErrInvalidWorkers
 	}
 	if value < 0 {
-		return ErrInvalidWorkers
+		return messages.ErrInvalidWorkers
 	}
 	if value > maxWorkers {
 		*workers = maxWorkers
@@ -250,14 +251,14 @@ func validateWorkersFlag(workers *int) error {
 
 func validateSourceFlag(crit string) error {
 	if crit == "" {
-		return ErrEmptySource
+		return messages.ErrEmptySource
 	}
 	info, exists, err := pathExists(crit)
 	if !exists {
-		return ErrSourceNotExists
+		return messages.ErrSourceNotExists
 	}
 	if !info.IsDir() {
-		return ErrSourceIsNotDir
+		return messages.ErrSourceIsNotDir
 	}
 	if err != nil {
 		return fmt.Errorf("cannot access source directory: %w", err)
@@ -267,14 +268,14 @@ func validateSourceFlag(crit string) error {
 
 func validateDestFlag(crit string) error {
 	if crit == "" {
-		return ErrEmptyDest
+		return messages.ErrEmptyDest
 	}
 	info, exists, err := pathExists(crit)
 	if !exists {
-		return ErrDestNotExists
+		return messages.ErrDestNotExists
 	}
 	if !info.IsDir() {
-		return ErrDestIsNotDir
+		return messages.ErrDestIsNotDir
 	}
 	if err != nil {
 		return fmt.Errorf("cannot access destination directory: %w", err)
@@ -284,14 +285,14 @@ func validateDestFlag(crit string) error {
 
 func validateLogFlag(crit string) error {
 	if crit == "" {
-		return ErrLogPathIsEmpty
+		return messages.ErrLogPathIsEmpty
 	}
 	info, exists, err := pathExists(crit)
 	if !exists {
-		return ErrLogPathNotExists
+		return messages.ErrLogPathNotExists
 	}
 	if !info.IsDir() {
-		return ErrLogPathIsNotDir
+		return messages.ErrLogPathIsNotDir
 	}
 	if err != nil {
 		return fmt.Errorf("cannot access log directory: %w", err)
@@ -341,7 +342,7 @@ func makeRule(name string, isPrimary bool) (rules.Rule, error) {
 	}
 	factory, ok := ruleFactories[name]
 	if !ok {
-		return nil, ErrUnknownRuleName
+		return nil, messages.ErrUnknownRuleName
 	}
 	return factory(isPrimary), nil
 }

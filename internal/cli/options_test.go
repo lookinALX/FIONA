@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"FIONA/internal/messages"
 	"FIONA/internal/rules"
 	"errors"
 	"os"
@@ -23,9 +24,9 @@ func TestValidatePrimaryCriteriaFlag(t *testing.T) {
 		{"valid date flag", CritDate, nil},
 		{"valid size flag", CritSize, nil},
 		// invalid cases
-		{"invalid criteria", "invalid", ErrInvalidPrimaryCriteria},
-		{"empty string", "", ErrEmptyPrimaryCriteria},
-		{"random string", "foobar", ErrInvalidPrimaryCriteria},
+		{"invalid criteria", "invalid", messages.ErrInvalidPrimaryCriteria},
+		{"empty string", "", messages.ErrEmptyPrimaryCriteria},
+		{"random string", "foobar", messages.ErrInvalidPrimaryCriteria},
 	}
 
 	for _, tt := range tests {
@@ -53,8 +54,8 @@ func TestValidateSecondaryCriteriaFlag(t *testing.T) {
 		{"valid size flag", CritSize, nil},
 		{"empty string", "", nil},
 		// invalid cases
-		{"invalid criteria", "invalid", ErrInvalidSecondaryCriteria},
-		{"random string", "foobar", ErrInvalidSecondaryCriteria},
+		{"invalid criteria", "invalid", messages.ErrInvalidSecondaryCriteria},
+		{"random string", "foobar", messages.ErrInvalidSecondaryCriteria},
 	}
 
 	for _, tt := range tests {
@@ -77,8 +78,8 @@ func TestValidateActionFlag(t *testing.T) {
 		{"valid move flag", "move", nil},
 		{"valid copy flag", "copy", nil},
 		// invalid cases
-		{"invalid input string", "foobar", ErrInvalidAction},
-		{"empty action", "", ErrInvalidAction},
+		{"invalid input string", "foobar", messages.ErrInvalidAction},
+		{"empty action", "", messages.ErrInvalidAction},
 	}
 
 	for _, tt := range tests {
@@ -107,9 +108,9 @@ func TestValidateSourceFlag(t *testing.T) {
 		// valid cases
 		{"valid directory", tmpDir, nil},
 		// invalid cases
-		{"empty string", "", ErrEmptySource},
-		{"non-existent path", "/path/that/does/not/exist", ErrSourceNotExists},
-		{"file instead of directory", tmpFile, ErrSourceIsNotDir},
+		{"empty string", "", messages.ErrEmptySource},
+		{"non-existent path", "/path/that/does/not/exist", messages.ErrSourceNotExists},
+		{"file instead of directory", tmpFile, messages.ErrSourceIsNotDir},
 	}
 
 	for _, tt := range tests {
@@ -138,9 +139,9 @@ func TestValidateDestFlag(t *testing.T) {
 		// valid cases
 		{"valid directory", tmpDir, nil},
 		// invalid cases
-		{"empty string", "", ErrEmptyDest},
-		{"non-existent path", "/path/that/does/not/exist", ErrDestNotExists},
-		{"file instead of directory", tmpFile, ErrDestIsNotDir},
+		{"empty string", "", messages.ErrEmptyDest},
+		{"non-existent path", "/path/that/does/not/exist", messages.ErrDestNotExists},
+		{"file instead of directory", tmpFile, messages.ErrDestIsNotDir},
 	}
 
 	for _, tt := range tests {
@@ -168,9 +169,9 @@ func TestValidateLogPathFlag(t *testing.T) {
 		// valid cases
 		{"valid directory", tmpDir, nil},
 		// invalid cases
-		{"empty path", "", ErrLogPathIsEmpty},
-		{"non-existent path", "/path/that/does/not/exist", ErrLogPathNotExists},
-		{"file instead of directory", tmpFile, ErrLogPathIsNotDir},
+		{"empty path", "", messages.ErrLogPathIsEmpty},
+		{"non-existent path", "/path/that/does/not/exist", messages.ErrLogPathNotExists},
+		{"file instead of directory", tmpFile, messages.ErrLogPathIsNotDir},
 	}
 
 	for _, tt := range tests {
@@ -194,7 +195,7 @@ func TestValidateOnConflictFlag(t *testing.T) {
 		{"valid rename", "rename", nil},
 		{"valid skip", "skip", nil},
 		//invalid cases
-		{"invalid on-conflict", "invalid", ErrInvalidOnConflict},
+		{"invalid on-conflict", "invalid", messages.ErrInvalidOnConflict},
 	}
 
 	for _, tt := range tests {
@@ -272,7 +273,7 @@ func TestValidateOptions(t *testing.T) {
 	optSecondaryInvalid.Sort.Secondary = invalidOption
 
 	optActionInvalid := optValid
-	optActionInvalid.Action = invalidOption
+	optActionInvalid.FileAction = invalidOption
 
 	optSourceInvalid := optValid
 	optSourceInvalid.SourcePath = ""
@@ -297,14 +298,14 @@ func TestValidateOptions(t *testing.T) {
 		// valid case
 		{"all valid", optValid, nil},
 		// invalid cases
-		{"primary invalid", optPrimaryInvalid, ErrInvalidPrimaryCriteria},
-		{"secondary invalid", optSecondaryInvalid, ErrInvalidSecondaryCriteria},
-		{"action invalid", optActionInvalid, ErrInvalidAction},
-		{"source invalid", optSourceInvalid, ErrEmptySource},
-		{"destination invalid", optDestInvalid, ErrEmptyDest},
-		{"log path invalid", optLogPathInvalid, ErrLogPathIsEmpty},
-		{"on conflict invalid", optOnConflictInvalid, ErrInvalidOnConflict},
-		{"workers invalid", optWorkersInvalid, ErrInvalidWorkers},
+		{"primary invalid", optPrimaryInvalid, messages.ErrInvalidPrimaryCriteria},
+		{"secondary invalid", optSecondaryInvalid, messages.ErrInvalidSecondaryCriteria},
+		{"action invalid", optActionInvalid, messages.ErrInvalidAction},
+		{"source invalid", optSourceInvalid, messages.ErrEmptySource},
+		{"destination invalid", optDestInvalid, messages.ErrEmptyDest},
+		{"log path invalid", optLogPathInvalid, messages.ErrLogPathIsEmpty},
+		{"on conflict invalid", optOnConflictInvalid, messages.ErrInvalidOnConflict},
+		{"workers invalid", optWorkersInvalid, messages.ErrInvalidWorkers},
 	}
 
 	for _, tt := range tests {
@@ -332,7 +333,7 @@ func TestOpts_ParseToRules(t *testing.T) {
 					Secondary: CritEmpty,
 				},
 			},
-			wantErr:   ErrUnknownRuleName,
+			wantErr:   messages.ErrUnknownRuleName,
 			wantRules: nil,
 		},
 		{
