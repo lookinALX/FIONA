@@ -13,6 +13,8 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 const separator = "================================================"
@@ -63,6 +65,8 @@ func (ex *Executor) start() {
 	fmt.Println(separator)
 	fmt.Println("Starting execution...")
 
+	bar := progressbar.Default(int64(len(ex.plan.Actions)))
+
 	jobs := make(chan types.Action, len(ex.plan.Actions))
 	var wg sync.WaitGroup
 
@@ -88,6 +92,7 @@ func (ex *Executor) start() {
 					status = "succeeded"
 				}
 				ex.jrn.AppendLogEntryFromAction(action, status, msg, errMsg)
+				bar.Add(1)
 			}
 		}(i)
 	}
@@ -98,6 +103,8 @@ func (ex *Executor) start() {
 	close(jobs)
 
 	wg.Wait()
+
+	bar.Finish()
 
 	if err := ex.jrn.SaveAsJson(); err != nil {
 		fmt.Println("!!! ⚠ !!! Failed to save as json:", err)
