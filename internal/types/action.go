@@ -10,7 +10,6 @@ type Action struct {
 	SourcePath string
 	DestDir    string
 	DestPath   string
-	FileAction string
 	FileSize   int64
 }
 
@@ -27,4 +26,10 @@ func NewAction(fi *scanner.FileInfo, rules []rules.Rule, destFullPath string) Ac
 		DestPath:   destPath,
 		FileSize:   fi.Size,
 	}
+}
+
+type UndoAction struct {
+	SourcePath       string
+	DestPath         string
+	LastActionStatus string
 }

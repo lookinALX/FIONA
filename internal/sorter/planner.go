@@ -2,6 +2,7 @@ package sorter
 
 import (
 	"FIONA/internal/cli"
+	"FIONA/internal/journal"
 	"FIONA/internal/types"
 	"fmt"
 	"path/filepath"
@@ -13,7 +14,7 @@ type Plan struct {
 	Actions       []types.Action
 	BaseDirSource string
 	BaseDirDest   string
-	fileAction    string
+	FileAction    string
 	DirCounts     map[string]int
 	DirSizes      map[string]int64
 }
@@ -23,10 +24,34 @@ func NewPlan(opt *cli.Opts) Plan {
 		Actions:       []types.Action{},
 		BaseDirDest:   opt.DestPath,
 		BaseDirSource: opt.SourcePath,
-		fileAction:    opt.FileAction,
+		FileAction:    opt.FileAction,
 		DirCounts:     map[string]int{},
 		DirSizes:      map[string]int64{},
 	}
+}
+
+type UndoPlan struct {
+	UndoActions []types.UndoAction
+	FileAction  string
+}
+
+func NewUndoPlan(jrn *journal.Journal) *UndoPlan {
+	plan := UndoPlan{
+		UndoActions: []types.UndoAction{},
+		FileAction:  jrn.FileAction,
+	}
+
+	for _, entry := range jrn.Logs {
+		plan.UndoActions = append(
+			plan.UndoActions,
+			types.UndoAction{
+				SourcePath:       filepath.Join(entry.DestPath, filepath.Base(entry.SourcePath)),
+				DestPath:         entry.SourcePath,
+				LastActionStatus: entry.Status},
+		)
+	}
+
+	return &plan
 }
 
 func (p *Plan) AddAction(action types.Action) {
@@ -97,7 +122,7 @@ func (p *Plan) Print(longPrint bool) {
 	fmt.Println(separator)
 	fmt.Println("              DRY-RUN PLAN")
 	fmt.Println(separator)
-	fmt.Printf("\n  FileAction:      %s\n", p.fileAction)
+	fmt.Printf("\n  FileAction:      %s\n", p.FileAction)
 	fmt.Printf("  Source:      %s\n", p.BaseDirSource)
 	fmt.Printf("  Destination: %s\n\n", p.BaseDirDest)
 	fmt.Println(separator)

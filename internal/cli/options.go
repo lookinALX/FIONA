@@ -139,12 +139,18 @@ func (opts *Opts) ParseUndoFlags() error {
 	}
 
 	messages.Must(addFlag(&opts.LogPath, "", "log", filepath.Join(cwd, "fiona_logs.json"), "Log directory to read log file from"))
+	messages.Must(addFlag(&opts.Workers, "w", "workers", maxWorkers, "Number of workers for the current run"))
 	flag.Parse()
 
 	err = validateLogUndoFlag(opts.LogPath)
 	if err != nil {
 		return fmt.Errorf("invalid options:\n    %w", err)
 	}
+	err = validateWorkersFlag(&opts.Workers)
+	if err != nil {
+		return fmt.Errorf("invalid options:\n    %w", err)
+	}
+
 	return nil
 }
 

@@ -9,6 +9,11 @@ import (
 	"time"
 )
 
+type journalData struct {
+	FileAction string                 `json:"file_action"`
+	Logs       map[int]types.LogEntry `json:"logs"`
+}
+
 type Journal struct {
 	mu         sync.Mutex
 	path       string
@@ -69,7 +74,12 @@ func (jrn *Journal) SaveAsJson() error {
 	jrn.mu.Lock()
 	defer jrn.mu.Unlock()
 
-	data, err := json.MarshalIndent(jrn.Logs, "", "  ")
+	wrapper := journalData{
+		FileAction: jrn.FileAction,
+		Logs:       jrn.Logs,
+	}
+
+	data, err := json.MarshalIndent(wrapper, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal journal: %w", err)
 	}
@@ -91,15 +101,15 @@ func (jrn *Journal) LoadFromJson(path string) error {
 	jrn.mu.Lock()
 	defer jrn.mu.Unlock()
 
-	// clear existing logs
-	jrn.Logs = make(map[int]types.LogEntry)
-
-	err = json.Unmarshal(data, &jrn.Logs)
+	var wrapper journalData
+	err = json.Unmarshal(data, &wrapper)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal journal: %w", err)
 	}
 
-	// update nextID to be max(keys) + 1
+	jrn.FileAction = wrapper.FileAction
+	jrn.Logs = wrapper.Logs
+
 	maxID := -1
 	for id := range jrn.Logs {
 		if id > maxID {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"FIONA/internal/cli"
+	"FIONA/internal/journal"
 	"FIONA/internal/scanner"
 	"FIONA/internal/sorter"
 	"FIONA/internal/types"
@@ -28,15 +29,28 @@ func main() {
 		}
 	}
 
-	switch os.Args[1] {
+	subcommand := os.Args[1]
+	os.Args = append([]string{os.Args[0]}, os.Args[2:]...)
+
+	switch subcommand {
 	case "undo":
-		fmt.Println("undo")
-		// Continue with undo
 		err := opts.ParseUndoFlags()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
 			os.Exit(ExitFailure)
 		}
+
+		jrn := journal.NewJournal("", "")
+		err = jrn.LoadFromJson(opts.LogPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
+			os.Exit(ExitFailure)
+		}
+
+		rv := sorter.NewReverter(sorter.NewUndoPlan(&jrn), opts.Workers)
+
+		rv.RunUndo()
+
 		os.Exit(ExitSuccess)
 	case "sort":
 		err := opts.ParseSortFlags()
@@ -44,6 +58,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
 			os.Exit(ExitFailure)
 		}
+
 		rls, err := opts.ParseSortFlagsToRules()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
