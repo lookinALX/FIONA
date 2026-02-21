@@ -55,7 +55,7 @@ func TestEndToEnd_CopyByTypeThenExtension(t *testing.T) {
 		Workers:          runtime.NumCPU(),
 	}
 
-	rls, err := opts.ParseToRules()
+	rls, err := opts.ParseSortFlagsToRules()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -105,7 +105,7 @@ func TestEndToEnd_JournalAutoSave(t *testing.T) {
 		LogPath:          journalPath,
 	}
 
-	rls, _ := opts.ParseToRules()
+	rls, _ := opts.ParseSortFlagsToRules()
 	sc := scanner.NewScanner()
 	files, _ := sc.Scan(opts.SourcePath)
 
@@ -193,7 +193,7 @@ func TestEndToEnd_JournalAutoSaveWithConflicts(t *testing.T) {
 		LogPath:          journalPath,
 	}
 
-	rls, _ := opts.ParseToRules()
+	rls, _ := opts.ParseSortFlagsToRules()
 	sc := scanner.NewScanner()
 	files, _ := sc.Scan(opts.SourcePath)
 
@@ -259,7 +259,7 @@ func TestEndToEnd_JournalAutoSaveWithFailures(t *testing.T) {
 		LogPath:          journalPath,
 	}
 
-	rls, _ := opts.ParseToRules()
+	rls, _ := opts.ParseSortFlagsToRules()
 	sc := scanner.NewScanner()
 	files, _ := sc.Scan(opts.SourcePath)
 
@@ -346,7 +346,7 @@ func TestEndToEnd_JournalAutoSaveConcurrent(t *testing.T) {
 		LogPath:          journalPath,
 	}
 
-	rls, _ := opts.ParseToRules()
+	rls, _ := opts.ParseSortFlagsToRules()
 	sc := scanner.NewScanner()
 	files, _ := sc.Scan(opts.SourcePath)
 
@@ -415,7 +415,7 @@ func TestEndToEnd_JournalSaveFailureHandling(t *testing.T) {
 		LogPath:          journalPath,
 	}
 
-	rls, _ := opts.ParseToRules()
+	rls, _ := opts.ParseSortFlagsToRules()
 	sc := scanner.NewScanner()
 	files, _ := sc.Scan(opts.SourcePath)
 

@@ -7,20 +7,22 @@ import (
 )
 
 func init() {
-	flag.Usage = printUsage
+	flag.Usage = PrintUsage
 }
 
-func printUsage() {
+func PrintUsage() {
 	fmt.Fprintf(os.Stderr, `
 ╔════════════════════════════════════════════════════╗
 ║            FIONA - File Organizer                  ║
 ╚════════════════════════════════════════════════════╝
 
-Usage: fiona [OPTIONS]
+Usage: 
+	fiona sort [OPTIONS]
+	fiona undo [OPTIONS]
 
 Organize and sort files into directories based on various criteria.
 
-OPTIONS:
+OPTIONS SORT:
   -c, --criteria <string>
         Primary sorting criteria (default: mimetype)
         Available: mimetype, extension, year, month, date, size
@@ -53,18 +55,25 @@ OPTIONS:
   --log <string>
 		Log directory to write log files to (default: current directory)
 
+OPTIONS UNDO:
+	--log <string>
+		Log file to read logs from, must be json (default: current directory, file name fiona_logs.json)
+
 EXAMPLES:
   # Preview sorting by file extension
-  fiona -c extension
+  fiona sort -c extension
 
   # Sort photos by year, then month, and move them
-  fiona -c year -t month -a move -s ~/Photos
+  fiona sort -c year -t month -a move -s ~/Photos
 
   # Copy documents by type with rename on conflict
-  fiona -c mimetype --on-conflict rename -s ~/Documents -d ~/Organized
+  fiona sort -c mimetype --on-conflict rename -s ~/Documents -d ~/Organized
 
   # Execute immediately without dry-run
-  fiona -c extension -n=false --force yes
+  fiona sort -c extension -n=false --force yes
+
+  # Undo last fiona run
+  fiona undo TBD
 
 AVAILABLE CRITERIA:
   mimetype   - Group by MIME type (images, videos, documents, etc.)
@@ -75,5 +84,15 @@ AVAILABLE CRITERIA:
   size       - Group by file size ranges
 
 For more information: https://github.com/lookinALX/FIONA
+`)
+}
+
+func PrintShortUsage() {
+	fmt.Fprintf(os.Stderr, `
+Usage: 
+	fiona sort [OPTIONS]
+	fiona undo [OPTIONS])
+
+Use fiona -h or --help for more information.
 `)
 }

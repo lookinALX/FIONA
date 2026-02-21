@@ -16,6 +16,7 @@ var (
 	ErrLogPathNotExists         = errors.New("log path doesn't exists")
 	ErrLogPathIsEmpty           = errors.New("log path is empty")
 	ErrLogPathIsNotDir          = errors.New("log path is not a directory")
+	ErrLogUndoPathIsDir         = errors.New("log undo path is a directory")
 	ErrUnknownRuleName          = errors.New("unknown rule name")
 	ErrInvalidOnConflict        = errors.New("invalid on-conflict, valid on-conflict values are 'replace', 'skip' or 'rename'")
 	ErrInvalidWorkers           = errors.New("invalud number of workers, must be positiv int")

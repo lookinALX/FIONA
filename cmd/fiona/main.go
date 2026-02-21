@@ -9,38 +9,66 @@ import (
 	"os"
 )
 
+const (
+	ExitSuccess = 0
+	ExitFailure = 1
+)
+
 var opts cli.Opts
 
 func main() {
 	for _, arg := range os.Args[1:] {
 		if arg == "--version" || arg == "-version" || arg == "-v" {
 			fmt.Printf("FIONA %s\n", Version)
-			os.Exit(0)
+			os.Exit(ExitSuccess)
+		}
+		if arg == "--help" || arg == "-h" {
+			cli.PrintUsage()
+			os.Exit(ExitSuccess)
 		}
 	}
 
-	err := opts.ParseFlags()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
-		return
-	}
-	rls, err := opts.ParseToRules()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
-	}
+	switch os.Args[1] {
+	case "undo":
+		fmt.Println("undo")
+		// Continue with undo
+		err := opts.ParseUndoFlags()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
+			os.Exit(ExitFailure)
+		}
+		os.Exit(ExitSuccess)
+	case "sort":
+		err := opts.ParseSortFlags()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
+			os.Exit(ExitFailure)
+		}
+		rls, err := opts.ParseSortFlagsToRules()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
+			os.Exit(ExitFailure)
+		}
 
-	sc := scanner.NewScanner()
-	files, err := sc.Scan(opts.SourcePath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
-	}
+		sc := scanner.NewScanner()
+		files, err := sc.Scan(opts.SourcePath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
+			os.Exit(ExitFailure)
+		}
 
-	pl := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		pl.AddAction(action)
-	}
+		pl := sorter.NewPlan(&opts)
+		for _, f := range files {
+			action := types.NewAction(f, rls, opts.DestPath)
+			pl.AddAction(action)
+		}
 
-	executor := sorter.NewExecutor(&pl, &opts)
-	executor.Execute()
+		executor := sorter.NewExecutor(&pl, &opts)
+		executor.Execute()
+		os.Exit(ExitSuccess)
+	default:
+		fmt.Println("!!! ⚠ Unknown command ⚠ !!!")
+		cli.PrintShortUsage()
+		os.Exit(ExitFailure)
+	}
 }

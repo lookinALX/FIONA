@@ -4,6 +4,7 @@ import (
 	"FIONA/internal/messages"
 	"FIONA/internal/rules"
 	"errors"
+	"flag"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -310,15 +311,15 @@ func TestValidateOptions(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.input.validateOptions()
+			err := tt.input.validateSortOptions()
 			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("validateOptions() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("validateSortOptions() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestOpts_ParseToRules(t *testing.T) {
+func TestOpts_ParseSortFlagsToRules(t *testing.T) {
 	tests := []struct {
 		name      string
 		input     Opts
@@ -367,13 +368,154 @@ func TestOpts_ParseToRules(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRules, err := tt.input.ParseToRules()
+			gotRules, err := tt.input.ParseSortFlagsToRules()
 			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("ParseToRules() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ParseSortFlagsToRules() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if !reflect.DeepEqual(gotRules, tt.wantRules) {
-				t.Errorf("ParseToRules() gotRules = %v, want %v", gotRules, tt.wantRules)
+				t.Errorf("ParseSortFlagsToRules() gotRules = %v, want %v", gotRules, tt.wantRules)
 			}
 		})
+	}
+}
+
+func TestValidateLogUndoFlag(t *testing.T) {
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "test_log.json")
+	if err := os.WriteFile(tmpFile, []byte("test"), 0644); err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+
+	tests := []struct {
+		name    string
+		input   string
+		wantErr error
+	}{
+		{"valid file", tmpFile, nil},
+		{"empty string", "", messages.ErrLogPathIsEmpty},
+		{"non-existent path", "/path/that/does/not/exist.json", messages.ErrLogPathNotExists},
+		{"directory instead of file", tmpDir, messages.ErrLogUndoPathIsDir},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateLogUndoFlag(tt.input)
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("got error %v, want %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestParseUndoFlags(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	validLogPath := filepath.Join(tmpDir, "fiona_logs.json")
+	if err := os.WriteFile(validLogPath, []byte("{}"), 0644); err != nil {
+		t.Fatalf("failed to create temp log file: %v", err)
+	}
+
+	tests := []struct {
+		name    string
+		args    []string
+		setup   func()
+		wantErr bool
+	}{
+		{
+			name: "valid log path",
+			args: []string{"cmd", "--log", validLogPath},
+			setup: func() {
+				flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+			},
+			wantErr: false,
+		},
+		{
+			name: "non-existent log path",
+			args: []string{"cmd", "--log", "/does/not/exist.json"},
+			setup: func() {
+				flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+			},
+			wantErr: true,
+		},
+		{
+			name: "directory instead of file",
+			args: []string{"cmd", "--log", tmpDir},
+			setup: func() {
+				flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+			},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			oldArgs := os.Args
+			defer func() { os.Args = oldArgs }()
+
+			if tt.setup != nil {
+				tt.setup()
+			}
+
+			os.Args = tt.args
+
+			opts := &Opts{}
+			err := opts.ParseUndoFlags()
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseUndoFlags() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			if !tt.wantErr && opts.LogPath == "" {
+				t.Error("LogPath should be set when no error")
+			}
+		})
+	}
+}
+
+func TestParseUndoFlagsDefaultValue(t *testing.T) {
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("failed to get cwd: %v", err)
+	}
+
+	defaultLogPath := filepath.Join(cwd, "fiona_logs.json")
+
+	if err := os.WriteFile(defaultLogPath, []byte("{}"), 0644); err != nil {
+		t.Fatalf("failed to create default log file: %v", err)
+	}
+	defer os.Remove(defaultLogPath)
+
+	os.Args = []string{"cmd"}
+
+	opts := &Opts{}
+	err = opts.ParseUndoFlags()
+
+	if err != nil {
+		t.Errorf("ParseUndoFlags() with default should not error: %v", err)
+	}
+
+	if opts.LogPath != defaultLogPath {
+		t.Errorf("expected default LogPath %s, got %s", defaultLogPath, opts.LogPath)
+	}
+}
+
+func TestParseUndoFlagsEmptyLogPath(t *testing.T) {
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	
+	os.Args = []string{"cmd", "--log", ""}
+
+	opts := &Opts{}
+	err := opts.ParseUndoFlags()
+
+	if !errors.Is(err, messages.ErrLogPathIsEmpty) {
+		t.Errorf("expected ErrLogPathIsEmpty, got %v", err)
 	}
 }

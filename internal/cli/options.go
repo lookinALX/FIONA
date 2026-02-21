@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 )
 
@@ -98,7 +99,7 @@ var ruleFactories = map[string]ruleFactory{
 	},
 }
 
-func (opts *Opts) ParseFlags() error {
+func (opts *Opts) ParseSortFlags() error {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("cannot get work directory: %w", err)
@@ -116,7 +117,7 @@ func (opts *Opts) ParseFlags() error {
 	messages.Must(addFlag(&opts.Workers, "w", "workers", maxWorkers, "Number of workers for the current run"))
 	flag.Parse()
 
-	err = opts.validateOptions()
+	err = opts.validateSortOptions()
 
 	switch {
 	case err == nil:
@@ -131,7 +132,23 @@ func (opts *Opts) ParseFlags() error {
 	}
 }
 
-func (opts *Opts) validateOptions() error {
+func (opts *Opts) ParseUndoFlags() error {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("cannot get work directory: %w", err)
+	}
+
+	messages.Must(addFlag(&opts.LogPath, "", "log", filepath.Join(cwd, "fiona_logs.json"), "Log directory to read log file from"))
+	flag.Parse()
+
+	err = validateLogUndoFlag(opts.LogPath)
+	if err != nil {
+		return fmt.Errorf("invalid options:\n    %w", err)
+	}
+	return nil
+}
+
+func (opts *Opts) validateSortOptions() error {
 	if err := validatePrimaryCriteriaFlag(opts.Sort.Primary); err != nil {
 		return err
 	}
@@ -300,6 +317,23 @@ func validateLogFlag(crit string) error {
 	return nil
 }
 
+func validateLogUndoFlag(crit string) error {
+	if crit == "" {
+		return messages.ErrLogPathIsEmpty
+	}
+	info, exists, err := pathExists(crit)
+	if !exists {
+		return messages.ErrLogPathNotExists
+	}
+	if info.IsDir() {
+		return messages.ErrLogUndoPathIsDir
+	}
+	if err != nil {
+		return fmt.Errorf("cannot access undo log path: %w", err)
+	}
+	return nil
+}
+
 func pathExists(path string) (os.FileInfo, bool, error) {
 	info, err := os.Stat(path)
 	if err == nil {
@@ -311,7 +345,7 @@ func pathExists(path string) (os.FileInfo, bool, error) {
 	return info, false, err
 }
 
-func (opts *Opts) ParseToRules() ([]rules.Rule, error) {
+func (opts *Opts) ParseSortFlagsToRules() ([]rules.Rule, error) {
 	var result []rules.Rule
 
 	if rule, err := makeRule(opts.Sort.Primary, true); err != nil {
