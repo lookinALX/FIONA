@@ -1,13 +1,14 @@
 package sorter
 
 import (
-	"FIONA/internal/cli"
-	"FIONA/internal/journal"
-	"FIONA/internal/types"
 	"fmt"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/lookinALX/FIONA/internal/cli"
+	"github.com/lookinALX/FIONA/internal/journal"
+	"github.com/lookinALX/FIONA/internal/types"
 )
 
 type Plan struct {

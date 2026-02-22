@@ -1,9 +1,6 @@
 package sorter
 
 import (
-	"FIONA/internal/cli"
-	"FIONA/internal/journal"
-	"FIONA/internal/types"
 	"bufio"
 	"errors"
 	"fmt"
@@ -13,6 +10,10 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+
+	"github.com/lookinALX/FIONA/internal/cli"
+	"github.com/lookinALX/FIONA/internal/journal"
+	"github.com/lookinALX/FIONA/internal/types"
 
 	"github.com/schollz/progressbar/v3"
 )

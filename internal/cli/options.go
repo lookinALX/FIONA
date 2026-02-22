@@ -1,14 +1,15 @@
 package cli
 
 import (
-	"FIONA/internal/messages"
-	"FIONA/internal/rules"
 	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/lookinALX/FIONA/internal/messages"
+	"github.com/lookinALX/FIONA/internal/rules"
 )
 
 var maxWorkers = runtime.NumCPU() * 2

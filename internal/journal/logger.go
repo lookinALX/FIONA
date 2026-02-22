@@ -1,12 +1,13 @@
 package journal
 
 import (
-	"FIONA/internal/types"
 	"encoding/json"
 	"fmt"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/lookinALX/FIONA/internal/types"
 )
 
 type journalData struct {

@@ -1,13 +1,14 @@
 package sorter
 
 import (
-	"FIONA/internal/cli"
-	"FIONA/internal/rules"
-	"FIONA/internal/scanner"
-	"FIONA/internal/types"
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/lookinALX/FIONA/internal/cli"
+	"github.com/lookinALX/FIONA/internal/rules"
+	"github.com/lookinALX/FIONA/internal/scanner"
+	"github.com/lookinALX/FIONA/internal/types"
 )
 
 // ─── Test helpers ────────────────────────────────────────────────────────────

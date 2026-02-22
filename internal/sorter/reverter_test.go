@@ -1,11 +1,12 @@
 package sorter
 
 import (
-	"FIONA/internal/types"
 	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/lookinALX/FIONA/internal/types"
 )
 
 func TestNewReverter(t *testing.T) {

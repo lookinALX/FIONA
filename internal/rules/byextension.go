@@ -1,8 +1,9 @@
 package rules
 
 import (
-	"FIONA/internal/scanner"
 	"strings"
+
+	"github.com/lookinALX/FIONA/internal/scanner"
 )
 
 type ByExtensionRule struct {

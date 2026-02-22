@@ -1,14 +1,15 @@
 package cli
 
 import (
-	"FIONA/internal/messages"
-	"FIONA/internal/rules"
 	"errors"
 	"flag"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/lookinALX/FIONA/internal/messages"
+	"github.com/lookinALX/FIONA/internal/rules"
 )
 
 func TestValidatePrimaryCriteriaFlag(t *testing.T) {
@@ -509,7 +510,7 @@ func TestParseUndoFlagsEmptyLogPath(t *testing.T) {
 	defer func() { os.Args = oldArgs }()
 
 	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
-	
+
 	os.Args = []string{"cmd", "--log", ""}
 
 	opts := &Opts{}

@@ -1,14 +1,15 @@
 package sorter
 
 import (
-	"FIONA/internal/cli"
-	"FIONA/internal/types"
 	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/lookinALX/FIONA/internal/cli"
+	"github.com/lookinALX/FIONA/internal/types"
 )
 
 // ─── Helper functions ────────────────────────────────────────────────────────

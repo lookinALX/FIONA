@@ -1,11 +1,12 @@
 package journal
 
 import (
-	"FIONA/internal/types"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/lookinALX/FIONA/internal/types"
 )
 
 func TestJournal_AppendLogEntry(t *testing.T) {

@@ -1,11 +1,6 @@
 package tests
 
 import (
-	"FIONA/internal/cli"
-	"FIONA/internal/journal"
-	"FIONA/internal/scanner"
-	"FIONA/internal/sorter"
-	"FIONA/internal/types"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -13,6 +8,12 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/lookinALX/FIONA/internal/cli"
+	"github.com/lookinALX/FIONA/internal/journal"
+	"github.com/lookinALX/FIONA/internal/scanner"
+	"github.com/lookinALX/FIONA/internal/sorter"
+	"github.com/lookinALX/FIONA/internal/types"
 )
 
 // ── SORT ───────────────────────────────────────────────────────────────

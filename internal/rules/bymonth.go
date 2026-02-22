@@ -1,7 +1,7 @@
 package rules
 
 import (
-	"FIONA/internal/scanner"
+	"github.com/lookinALX/FIONA/internal/scanner"
 )
 
 type ByMonthRule struct {

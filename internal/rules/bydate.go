@@ -1,6 +1,6 @@
 package rules
 
-import "FIONA/internal/scanner"
+import "github.com/lookinALX/FIONA/internal/scanner"
 
 type ByDateRule struct {
 	IsPrimary bool

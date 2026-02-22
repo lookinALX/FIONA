@@ -1,9 +1,10 @@
 package types
 
 import (
-	"FIONA/internal/rules"
-	"FIONA/internal/scanner"
 	"path/filepath"
+
+	"github.com/lookinALX/FIONA/internal/rules"
+	"github.com/lookinALX/FIONA/internal/scanner"
 )
 
 type Action struct {

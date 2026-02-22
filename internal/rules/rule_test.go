@@ -1,8 +1,9 @@
 package rules
 
 import (
-	"FIONA/internal/scanner"
 	"testing"
+
+	"github.com/lookinALX/FIONA/internal/scanner"
 )
 
 func TestRulesGetDestination(t *testing.T) {

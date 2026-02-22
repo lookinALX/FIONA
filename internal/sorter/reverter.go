@@ -1,11 +1,12 @@
 package sorter
 
 import (
-	"FIONA/internal/types"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/lookinALX/FIONA/internal/types"
 
 	"github.com/schollz/progressbar/v3"
 )

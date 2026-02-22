@@ -1,8 +1,9 @@
 package rules
 
 import (
-	"FIONA/internal/scanner"
 	"unicode"
+
+	"github.com/lookinALX/FIONA/internal/scanner"
 )
 
 type ByYearRule struct {
