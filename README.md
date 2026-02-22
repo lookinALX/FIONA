@@ -13,8 +13,9 @@
 </p>
 
 <p align="center">
-  <a href="https://go.dev/"><img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go" alt="Go Version"></a>
+  <a href="https://go.dev/"><img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat&logo=go" alt="Go Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="https://goreportcard.com/report/github.com/lookinalx/fiona"><img src="https://goreportcard.com/badge/github.com/lookinalx/fiona" alt="Go Report"></a>
 </p>
 
 ---
