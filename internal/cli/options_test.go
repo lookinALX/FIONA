@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/lookinALX/FIONA/internal/messages"
-	"github.com/lookinALX/FIONA/internal/rules"
+	"github.com/lookinalx/fiona/internal/messages"
+	"github.com/lookinalx/fiona/internal/rules"
 )
 
 func TestValidatePrimaryCriteriaFlag(t *testing.T) {

@@ -85,7 +85,7 @@ AVAILABLE CRITERIA:
   date       - Group by full date
   size       - Group by file size ranges
 
-For more information: https://github.com/lookinALX/FIONA
+For more information: https://github.com/lookinalx/fiona
 `)
 }
 

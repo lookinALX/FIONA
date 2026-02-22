@@ -6,9 +6,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/lookinALX/FIONA/internal/cli"
-	"github.com/lookinALX/FIONA/internal/journal"
-	"github.com/lookinALX/FIONA/internal/types"
+	"github.com/lookinalx/fiona/internal/cli"
+	"github.com/lookinalx/fiona/internal/journal"
+	"github.com/lookinalx/fiona/internal/types"
 )
 
 type Plan struct {

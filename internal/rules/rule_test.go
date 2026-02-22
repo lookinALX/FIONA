@@ -3,7 +3,7 @@ package rules
 import (
 	"testing"
 
-	"github.com/lookinALX/FIONA/internal/scanner"
+	"github.com/lookinalx/fiona/internal/scanner"
 )
 
 func TestRulesGetDestination(t *testing.T) {

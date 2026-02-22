@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lookinALX/FIONA/internal/types"
+	"github.com/lookinalx/fiona/internal/types"
 )
 
 type journalData struct {

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/lookinALX/FIONA/internal/types"
+	"github.com/lookinalx/fiona/internal/types"
 
 	"github.com/schollz/progressbar/v3"
 )

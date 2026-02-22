@@ -3,8 +3,8 @@ package types
 import (
 	"path/filepath"
 
-	"github.com/lookinALX/FIONA/internal/rules"
-	"github.com/lookinALX/FIONA/internal/scanner"
+	"github.com/lookinalx/fiona/internal/rules"
+	"github.com/lookinalx/fiona/internal/scanner"
 )
 
 type Action struct {

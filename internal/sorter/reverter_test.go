@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/lookinALX/FIONA/internal/types"
+	"github.com/lookinalx/fiona/internal/types"
 )
 
 func TestNewReverter(t *testing.T) {

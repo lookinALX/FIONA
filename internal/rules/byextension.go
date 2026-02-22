@@ -3,7 +3,7 @@ package rules
 import (
 	"strings"
 
-	"github.com/lookinALX/FIONA/internal/scanner"
+	"github.com/lookinalx/fiona/internal/scanner"
 )
 
 type ByExtensionRule struct {

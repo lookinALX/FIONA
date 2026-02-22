@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lookinALX/FIONA/internal/types"
+	"github.com/lookinalx/fiona/internal/types"
 )
 
 func TestJournal_AppendLogEntry(t *testing.T) {

@@ -9,11 +9,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lookinALX/FIONA/internal/cli"
-	"github.com/lookinALX/FIONA/internal/journal"
-	"github.com/lookinALX/FIONA/internal/scanner"
-	"github.com/lookinALX/FIONA/internal/sorter"
-	"github.com/lookinALX/FIONA/internal/types"
+	"github.com/lookinalx/fiona/internal/cli"
+	"github.com/lookinalx/fiona/internal/journal"
+	"github.com/lookinalx/fiona/internal/scanner"
+	"github.com/lookinalx/fiona/internal/sorter"
+	"github.com/lookinalx/fiona/internal/types"
 )
 
 // ── SORT ───────────────────────────────────────────────────────────────
