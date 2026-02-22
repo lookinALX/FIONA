@@ -58,6 +58,8 @@ OPTIONS SORT:
 OPTIONS UNDO:
 	--log <string>
 		Log file to read logs from, must be json (default: current directory, file name fiona_logs.json)
+	  -w, --workers <int>
+        Number of workers for the current run (default: max availible)
 
 EXAMPLES:
   # Preview sorting by file extension
