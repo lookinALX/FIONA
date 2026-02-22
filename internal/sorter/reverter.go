@@ -43,7 +43,7 @@ func (r *Reverter) RunUndo() {
 			for undo := range jobs {
 				if r.plan.FileAction == "copy" {
 					err := os.Remove(undo.SourcePath)
-					if err != nil {
+					if err != nil && !os.IsNotExist(err) {
 						r.mu.Lock()
 						fmt.Fprintf(os.Stderr, "failed by undoing the file %s --> %v\n", undo.SourcePath, err)
 						r.mu.Unlock()

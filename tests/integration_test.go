@@ -15,6 +15,8 @@ import (
 	"testing"
 )
 
+// ── SORT ───────────────────────────────────────────────────────────────
+
 func createTestFile(t *testing.T, path string, content []byte) {
 	t.Helper()
 	dir := filepath.Dir(path)
@@ -444,4 +446,213 @@ func TestEndToEnd_JournalSaveFailureHandling(t *testing.T) {
 	if !fileFound {
 		t.Fatal("Expected file.txt to be processed and copied, but it was not found in destination")
 	}
+}
+
+// ── UNDO ───────────────────────────────────────────────────────────────
+
+// runSort is a helper that runs a full sort operation and returns the saved journal path
+func runSort(t *testing.T, srcDir, destDir, logDir, fileAction string) string {
+	t.Helper()
+
+	opts := cli.Opts{
+		SourcePath:       srcDir,
+		DestPath:         destDir,
+		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
+		FileAction:       fileAction,
+		Force:            "yes",
+		DryRun:           false,
+		ConflictStrategy: cli.ConflictSkip,
+		Workers:          runtime.NumCPU(),
+		LogPath:          logDir,
+	}
+
+	rls, err := opts.ParseSortFlagsToRules()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	sc := scanner.NewScanner()
+	files, err := sc.Scan(opts.SourcePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	plan := sorter.NewPlan(&opts)
+	for _, f := range files {
+		action := types.NewAction(f, rls, opts.DestPath)
+		plan.AddAction(action)
+	}
+
+	executor := sorter.NewExecutor(&plan, &opts)
+	executor.Execute()
+
+	return filepath.Join(logDir, "fiona_logs.json")
+}
+
+// runUndo is a helper that loads a journal and runs the undo operation
+func runUndo(t *testing.T, logPath string, workers int) {
+	t.Helper()
+
+	jrn := journal.NewJournal("", "")
+	if err := jrn.LoadFromJson(logPath); err != nil {
+		t.Fatalf("failed to load journal: %v", err)
+	}
+
+	rv := sorter.NewReverter(sorter.NewUndoPlan(&jrn), workers)
+	rv.RunUndo()
+}
+
+// TestEndToEnd_UndoCopy verifies that after sort+copy, undo removes the copied files
+// but leaves the originals in source untouched
+func TestEndToEnd_UndoCopy(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	logDir := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "photo.jpg"), []byte("jpg content"))
+	createTestFile(t, filepath.Join(srcDir, "doc.pdf"), []byte("pdf content"))
+	createTestFile(t, filepath.Join(srcDir, "note.txt"), []byte("txt content"))
+
+	logPath := runSort(t, srcDir, destDir, logDir, "copy")
+
+	// verify files were copied to dest
+	fileFound := false
+	filepath.Walk(destDir, func(path string, info os.FileInfo, err error) error {
+		if err == nil && !info.IsDir() && info.Name() == "photo.jpg" {
+			fileFound = true
+		}
+		return nil
+	})
+	if !fileFound {
+		t.Fatal("sort did not copy files, test precondition failed")
+	}
+
+	runUndo(t, logPath, runtime.NumCPU())
+
+	// after undo: originals must still exist in src
+	assertFileExists(t, filepath.Join(srcDir, "photo.jpg"))
+	assertFileExists(t, filepath.Join(srcDir, "doc.pdf"))
+	assertFileExists(t, filepath.Join(srcDir, "note.txt"))
+
+	// after undo: copied files must be removed from dest
+	assertFileNotExists(t, destDir, "photo.jpg")
+	assertFileNotExists(t, destDir, "doc.pdf")
+	assertFileNotExists(t, destDir, "note.txt")
+}
+
+// TestEndToEnd_UndoMove verifies that after sort+move, undo moves the files back to source
+func TestEndToEnd_UndoMove(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	logDir := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "photo.jpg"), []byte("jpg content"))
+	createTestFile(t, filepath.Join(srcDir, "doc.pdf"), []byte("pdf content"))
+
+	logPath := runSort(t, srcDir, destDir, logDir, "move")
+
+	// verify files were moved out of src
+	if _, err := os.Stat(filepath.Join(srcDir, "photo.jpg")); !os.IsNotExist(err) {
+		t.Fatal("sort did not move files, test precondition failed")
+	}
+
+	runUndo(t, logPath, runtime.NumCPU())
+
+	// after undo: files must be back in src
+	assertFileExists(t, filepath.Join(srcDir, "photo.jpg"))
+	assertFileExists(t, filepath.Join(srcDir, "doc.pdf"))
+
+	// after undo: files must be gone from dest
+	assertFileNotExists(t, destDir, "photo.jpg")
+	assertFileNotExists(t, destDir, "doc.pdf")
+}
+
+// TestEndToEnd_UndoSkipsFailedEntries verifies that failed log entries are not undone
+func TestEndToEnd_UndoSkipsFailedEntries(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	logDir := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "valid.txt"), []byte("content"))
+
+	opts := cli.Opts{
+		SourcePath:       srcDir,
+		DestPath:         destDir,
+		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
+		FileAction:       "copy",
+		Force:            "yes",
+		DryRun:           false,
+		ConflictStrategy: cli.ConflictSkip,
+		Workers:          1,
+		LogPath:          logDir,
+	}
+
+	rls, _ := opts.ParseSortFlagsToRules()
+	sc := scanner.NewScanner()
+	files, _ := sc.Scan(opts.SourcePath)
+
+	plan := sorter.NewPlan(&opts)
+	for _, f := range files {
+		action := types.NewAction(f, rls, opts.DestPath)
+		plan.AddAction(action)
+	}
+	// inject a failing action
+	plan.AddAction(types.Action{
+		SourcePath: "/nonexistent/ghost.txt",
+		DestPath:   destDir,
+	})
+
+	executor := sorter.NewExecutor(&plan, &opts)
+	executor.Execute()
+
+	logPath := filepath.Join(logDir, "fiona_logs.json")
+
+	// undo should not panic and should complete normally
+	runUndo(t, logPath, 1)
+
+	// valid.txt was copied then undone — should be gone from dest
+	assertFileNotExists(t, destDir, "valid.txt")
+
+	// original in src must be untouched
+	assertFileExists(t, filepath.Join(srcDir, "valid.txt"))
+}
+
+// TestEndToEnd_UndoConcurrent verifies undo works correctly with multiple workers
+func TestEndToEnd_UndoConcurrent(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	logDir := t.TempDir()
+
+	const numFiles = 20
+	for i := 0; i < numFiles; i++ {
+		name := filepath.Join(srcDir, filepath.Join(srcDir, "file"+string(rune('0'+i))+".txt"))
+		createTestFile(t, name, []byte("content"))
+	}
+
+	logPath := runSort(t, srcDir, destDir, logDir, "copy")
+	runUndo(t, logPath, 8)
+
+	// all copied files must be removed from dest
+	count := 0
+	filepath.Walk(destDir, func(path string, info os.FileInfo, err error) error {
+		if err == nil && !info.IsDir() {
+			count++
+		}
+		return nil
+	})
+
+	if count != 0 {
+		t.Errorf("expected 0 files in dest after undo, got %d", count)
+	}
+}
+
+// assertFileNotExists walks the given root and fails if a file with the given name is found
+func assertFileNotExists(t *testing.T, root, name string) {
+	t.Helper()
+	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err == nil && !info.IsDir() && info.Name() == name {
+			t.Errorf("file should not exist after undo but was found: %s", path)
+		}
+		return nil
+	})
 }

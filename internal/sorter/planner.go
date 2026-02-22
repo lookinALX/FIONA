@@ -42,6 +42,9 @@ func NewUndoPlan(jrn *journal.Journal) *UndoPlan {
 	}
 
 	for _, entry := range jrn.Logs {
+		if entry.Status == "failed" {
+			continue
+		}
 		plan.UndoActions = append(
 			plan.UndoActions,
 			types.UndoAction{
