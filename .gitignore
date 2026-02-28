@@ -11,3 +11,7 @@
 /ml/ml_log_results.json
 /ml/*.pt
 /ml/*.pth
+
+/ml/build/
+/ml/dist/
+/ml/*.spec
