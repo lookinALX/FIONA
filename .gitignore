@@ -1,3 +1,13 @@
 .idea
-/.venv
 /testdir
+
+/.venv
+
+/ml/__pycache__/
+/ml/.pytest_cache/
+/ml/*.pyc
+/ml/*.pyo
+
+/ml/ml_log_results.json
+/ml/*.pt
+/ml/*.pth
