@@ -9,6 +9,7 @@ import (
 	"github.com/lookinalx/fiona/internal/scanner"
 	"github.com/lookinalx/fiona/internal/sorter"
 	"github.com/lookinalx/fiona/internal/types"
+	"github.com/lookinalx/fiona/ml"
 )
 
 const (
@@ -71,6 +72,13 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
 			os.Exit(ExitFailure)
+		}
+
+		// TODO: ml set tags integration (image classification)
+		if opts.Sort.Primary == "ml" || opts.Sort.Secondary == "ml" {
+			for _, file := range files {
+				file.Tag = ml.GetTag()
+			}
 		}
 
 		pl := sorter.NewPlan(&opts)

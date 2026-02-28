@@ -35,6 +35,7 @@ type FileInfo struct {
 	Size      int64
 	Date      string
 	Type      string
+	Tag       string
 }
 
 func NewFileInfo(path string) (*FileInfo, error) {

@@ -115,13 +115,29 @@ async def classify_image(data: Dict[str, List[str]]):
     }
     """
     try:
+        go_results = {}
+        all_results = {}
+
         categories = ",".join(CATEGORIES)
 
         category_list = [cat.strip() for cat in categories.split(",")]
 
         prompts = [CATEGORY_PROMPTS[cat] for cat in category_list]
 
-        dataset = ImageDataset(data["paths"])
+        image_paths = []
+        not_image_paths = [] 
+
+        for path in data["paths"]:
+            try:
+                Image.open(path).verify()
+                image_paths.append(path)
+            except Exception:
+                not_image_paths.append(path)
+        
+        for path in not_image_paths:
+            go_results[path] = "__not_image__"
+
+        dataset = ImageDataset(image_paths)
 
         num_workers = min(4, os.cpu_count())
 
@@ -135,8 +151,6 @@ async def classify_image(data: Dict[str, List[str]]):
         )
 
         model.eval()
-        all_results = {}
-        go_results = {}
 
         with torch.no_grad():
             for inputs, paths in loader:

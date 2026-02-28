@@ -21,6 +21,7 @@ const (
 	CritMonth     = "month"
 	CritSize      = "size"
 	CritDate      = "date"
+	CritML        = "ml"
 	CritEmpty     = ""
 )
 
@@ -54,6 +55,7 @@ var validPrimaryCriteria = map[string]struct{}{
 	CritYear:      {},
 	CritMonth:     {},
 	CritDate:      {},
+	CritML:        {},
 }
 
 var validSecondaryCriteria = map[string]struct{}{
@@ -64,6 +66,7 @@ var validSecondaryCriteria = map[string]struct{}{
 	CritYear:      {},
 	CritMonth:     {},
 	CritDate:      {},
+	CritML:        {},
 }
 
 var validActions = map[string]struct{}{
@@ -98,6 +101,7 @@ var ruleFactories = map[string]ruleFactory{
 	CritExtension: func(isPrimary bool) rules.Rule {
 		return &rules.ByExtensionRule{IsPrimary: isPrimary}
 	},
+	CritML: func(isPrimary bool) rules.Rule { return &rules.ByMLRule{IsPrimary: isPrimary} },
 }
 
 func (opts *Opts) ParseSortFlags() error {
