@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  A cross-platform file organizer written in Go that automatically sorts files based on configurable rules with ML-powered image classification coming soon.
+  A cross-platform file organizer written in Go that automatically sorts files based on configurable rules with ML-powered image classification.
 </p>
 
 <p align="center">
@@ -27,6 +27,7 @@
 - [Quick Start](#-quick-start)
 - [Commands](#-commands)
 - [Sorting Criteria](#-sorting-criteria)
+- [ML Classification](#-ml-classification)
 - [Examples](#-examples)
 - [Development](#-development)
 - [Roadmap](#-roadmap)
@@ -37,6 +38,7 @@
 ## ✨ Features
 
 - **Smart File Sorting** — organize files by MIME type, extension, date, size, or a combination
+- **ML Image Classification** — sort photos into semantic categories using CLIP zero-shot classification
 - **Hierarchical Organization** — primary + secondary criteria (e.g., `images/jpg/`, `2025/01/`)
 - **Parallel Processing** — multi-worker execution for fast operation on large directories
 - **Conflict Resolution** — replace, skip, or auto-rename on filename collision
@@ -62,6 +64,17 @@ cd FIONA
 go build -o fiona ./cmd/fiona
 ```
 
+**For ML classification**, also build the Python classifier:
+
+```bash
+cd ml
+pip install -r requirements.txt
+pyinstaller --onefile --name fiona-classifier classifier.py
+# binary will be in ml/dist/fiona-classifier
+```
+
+Place `fiona-classifier` in the same directory as the `fiona` binary.
+
 ---
 
 ## 🎯 Quick Start
@@ -72,6 +85,9 @@ fiona sort -s ~/Downloads -d ~/Organized -c mimetype
 
 # Execute immediately
 fiona sort -s ~/Downloads -d ~/Organized -c mimetype -n=false --force yes
+
+# Sort photos using ML classification
+fiona sort -s ~/Photos -d ~/Photos/Sorted -c ml
 
 # Undo last operation
 fiona undo --log path/to/fiona_logs.json
@@ -110,7 +126,7 @@ fiona --help            — print help
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--log` | `./fiona_logs.json` | Path to the log file to read |
-| `--workers` | `-w` | Number of parallel workers | 
+| `--workers` | `-w` | Number of parallel workers |
 
 ---
 
@@ -124,6 +140,7 @@ fiona --help            — print help
 | Year | `year` | `2025/` |
 | Month | `month` | `01/` |
 | Size | `size` | `small/`, `medium/`, `large/` |
+| ML | `ml` | `people/`, `animals/`, `food/`, ... |
 
 Combine primary and secondary criteria for nested structure:
 
@@ -134,6 +151,60 @@ fiona sort -c mimetype -t extension -s ~/Photos
 # year → month: 2025/01/, 2025/02/
 fiona sort -c year -t month -s ~/Documents
 ```
+
+---
+
+## 🤖 ML Classification
+
+When using `-c ml`, FIONA spawns `fiona-classifier` — a standalone Python binary with a CLIP model — classifies all images in the source directory, and sorts them into semantic category folders.
+
+### Default Categories
+
+| Category | Description |
+|----------|-------------|
+| `people` | Portraits, selfies, group photos |
+| `family` | Family gatherings, relatives |
+| `pets` | Dogs, cats, domestic animals |
+| `nature` | Landscapes, forests, mountains |
+| `food` | Meals, restaurants, cooking |
+| `travel` | Trips, landmarks, sightseeing |
+| `events` | Parties, weddings, celebrations |
+| `sports` | Athletic activities, fitness |
+| `home` | Rooms, furniture, interiors |
+| `vehicles` | Cars, motorcycles, aircraft |
+| `work` | Office, desks, meetings |
+| `documents` | Scans, receipts, printed text |
+| `screenshots` | Screen captures, app UIs |
+| `other` | Everything else |
+
+### Custom Categories
+
+Pass a JSON config file with custom category names and CLIP prompts:
+
+```json
+{
+  "dad": "a photo of my father, an older man with grey hair",
+  "vacation_2024": "photos from our summer vacation in Italy",
+  "cats": "a photo of a cat"
+}
+```
+
+```bash
+fiona sort -s ~/Photos -d ~/Sorted -c ml --ml-config ~/my_categories.json
+```
+
+### Non-Image Files
+
+Files that cannot be opened as images (PDFs, videos, text files) are automatically classified by MIME type and sorted alongside images without interrupting the operation.
+
+### ML Log
+
+After each run, `fiona-classifier` writes a detailed log to `ml_log_results.json` in the working directory containing confidence scores for every classified image.
+
+### Requirements
+
+- `fiona-classifier` binary must be in the same directory as `fiona`
+- GPU is used automatically if available (CUDA), otherwise CPU
 
 ---
 
@@ -164,6 +235,28 @@ Organized/
 │   └── clip.mp4
 └── archives/
     └── backup.zip
+```
+
+### Sort photos using ML classification
+
+```bash
+fiona sort -s ~/Photos -d ~/Photos/Sorted -c ml --force yes
+```
+
+**Result:**
+```
+Sorted/
+├── people/
+│   └── portrait.jpg
+├── pets/
+│   ├── dog1.jpg
+│   └── dog2.jpg
+├── food/
+│   └── pizza.jpg
+├── nature/
+│   └── sunset.png
+└── documents/
+    └── scan.pdf
 ```
 
 ### Sort photos by year then month
@@ -214,6 +307,10 @@ FIONA/
 │   ├── sorter/          # planner, executor, reverter
 │   ├── journal/         # transaction logging
 │   └── types/           # shared types (Action, LogEntry, etc.)
+├── ml/
+│   ├── classifier.py    # FastAPI server with CLIP model
+│   ├── requirements.txt # Python dependencies
+│   └── test_classifier.py
 ├── tests/
 │   └── integration_test.go
 ├── go.mod
@@ -234,6 +331,9 @@ go test ./tests -v
 
 # With coverage
 go test -cover ./...
+
+# Python classifier tests
+cd ml && pytest test_classifier.py -v
 ```
 
 ### Adding a New Rule
@@ -279,18 +379,22 @@ var ruleFactories = map[string]ruleFactory{
 ### 🚧 Milestone 3 — ML Image Classification (In Progress)
 
 **FIONA** (full version) — CLIP-based zero-shot classification:
-- Classify images into semantic categories using text tags
-- Default categories: people, animals, nature, food, travel, events, sports, vehicles, home, documents, memes, other
-- Custom tags via `--tags` flag
-- FastAPI Python server, distributed as standalone `fiona-ml` binary
+- [x] FastAPI Python server with CLIP model (`fiona-classifier` binary)
+- [x] Batch image classification via HTTP
+- [x] Go subprocess management — start/stop `fiona-classifier` automatically
+- [x] `ByMLRule` — sort files by ML-assigned tags
+- [x] Fallback to MIME type for non-image files
+- [x] Custom categories via JSON config file
+- [ ] `--ml-config` flag wired into CLI
+- [ ] `fiona-classifier` PyInstaller build optimisation (target < 500MB)
 
-**FIONA Light** — MobileNetV2-based classification:
-- Lightweight alternative (~170MB vs ~1GB)
-- Same 12 categories via ImageNet mapping
+**FIONA Light** — MobileNetV2-based classification (Planned):
+- Lightweight alternative (~170MB)
+- 14 categories via ImageNet class mapping
 - Transfer learning: fine-tune on your own dataset via `fiona train`
-- Distributed as `fiona-ml-light` binary
+- Distributed as `fiona-classifier-light` binary
 
-**Planned for both versions:**
+**Future:**
 - Face recognition via InsightFace for personal people tags
 
 ### 📅 Milestone 4 — Web Interface
@@ -299,6 +403,7 @@ var ruleFactories = map[string]ruleFactory{
 - Real-time operation monitoring
 
 ### 📅 Future
+- `fiona analyze` — unsupervised clustering + LLM to suggest folder structure automatically
 - Watch mode for continuous directory monitoring
 - Duplicate detection and deduplication
 - Cloud storage integration (S3, Google Drive, Dropbox)
