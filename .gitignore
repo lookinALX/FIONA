@@ -16,4 +16,6 @@
 /ml/*.spec
 /ml/build
 
-architecture.mdbuild/
+architecture.md
+
+build/
