@@ -1,6 +1,10 @@
+--index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://pypi.org/simple
+
 fastapi==0.131.0
 uvicorn[standard]==0.41.0
 torch==2.10.0
-torchvision==0.25.0
 Pillow==12.1.0
 transformers==5.2.0
+
+# Future: insightface for face recognition (Milestone 3+)
