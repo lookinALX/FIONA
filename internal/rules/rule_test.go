@@ -49,6 +49,12 @@ func TestRulesGetDestination(t *testing.T) {
 			inputFileInfo: &scanner.FileInfo{Extension: ".png", Type: "images"},
 			wantResult:    "images",
 		},
+		{
+			name:          "ByML GetDestination",
+			inputRule:     &ByMLRule{true},
+			inputFileInfo: &scanner.FileInfo{Extension: ".png", Type: "images", Tag: "car"},
+			wantResult:    "car",
+		},
 	}
 
 	for _, tt := range tests {

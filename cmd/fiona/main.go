@@ -74,10 +74,35 @@ func main() {
 			os.Exit(ExitFailure)
 		}
 
-		// TODO: ml set tags integration (image classification)
 		if opts.Sort.Primary == "ml" || opts.Sort.Secondary == "ml" {
+			server := ml.NewServer()
+			err = server.Start()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
+				os.Exit(ExitFailure)
+			}
+			defer server.Stop()
+
+			client := ml.NewClient("")
+
+			paths := make([]string, 0, len(files))
 			for _, file := range files {
-				file.Tag = ml.GetTag()
+				paths = append(paths, file.Path)
+			}
+
+			tags, mlErr := client.Classify(paths)
+			if mlErr != nil {
+				fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", mlErr)
+				os.Exit(ExitFailure)
+			}
+
+			for i := range files {
+				tag := tags[files[i].Path]
+				if tag == "__not_image__" {
+					files[i].Tag = files[i].Type
+				} else {
+					files[i].Tag = tag
+				}
 			}
 		}
 

@@ -1,7 +1,10 @@
 package tests
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -14,6 +17,7 @@ import (
 	"github.com/lookinalx/fiona/internal/scanner"
 	"github.com/lookinalx/fiona/internal/sorter"
 	"github.com/lookinalx/fiona/internal/types"
+	"github.com/lookinalx/fiona/ml"
 )
 
 // ── SORT ───────────────────────────────────────────────────────────────
@@ -446,6 +450,227 @@ func TestEndToEnd_JournalSaveFailureHandling(t *testing.T) {
 
 	if !fileFound {
 		t.Fatal("Expected file.txt to be processed and copied, but it was not found in destination")
+	}
+}
+
+// mockMLServer starts a test HTTP server that mimics fiona-classifier.
+// tagMap maps filename → ML category returned by /classify.
+func mockMLServer(t *testing.T, tagMap map[string]string) *httptest.Server {
+	t.Helper()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/health":
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+
+		case "/classify":
+			var body struct {
+				Paths []string `json:"paths"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				http.Error(w, "bad request", http.StatusBadRequest)
+				return
+			}
+
+			result := make(map[string]string, len(body.Paths))
+			for _, path := range body.Paths {
+				name := filepath.Base(path)
+				if tag, ok := tagMap[name]; ok {
+					result[path] = tag
+				} else {
+					result[path] = "__not_image__"
+				}
+			}
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(result)
+
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	return srv
+}
+
+// runMLSort replicates the ML sort flow from main.go using a mock server URL.
+func runMLSort(t *testing.T, srcDir, destDir, logDir, serverURL string) {
+	t.Helper()
+
+	opts := cli.Opts{
+		SourcePath:       srcDir,
+		DestPath:         destDir,
+		Sort:             cli.SortOption{Primary: cli.CritML},
+		FileAction:       "copy",
+		Force:            "yes",
+		DryRun:           false,
+		ConflictStrategy: cli.ConflictSkip,
+		Workers:          runtime.NumCPU(),
+		LogPath:          logDir,
+	}
+
+	rls, err := opts.ParseSortFlagsToRules()
+	if err != nil {
+		t.Fatalf("ParseSortFlagsToRules: %v", err)
+	}
+
+	sc := scanner.NewScanner()
+	files, err := sc.Scan(opts.SourcePath)
+	if err != nil {
+		t.Fatalf("Scan: %v", err)
+	}
+
+	// ML tagging via mock server
+	client := ml.NewClient(serverURL)
+	paths := make([]string, 0, len(files))
+	for _, f := range files {
+		paths = append(paths, f.Path)
+	}
+
+	tags, err := client.Classify(paths)
+	if err != nil {
+		t.Fatalf("Classify: %v", err)
+	}
+
+	for i := range files {
+		tag := tags[files[i].Path]
+		if tag == "__not_image__" {
+			files[i].Tag = files[i].Type
+		} else {
+			files[i].Tag = tag
+		}
+	}
+
+	plan := sorter.NewPlan(&opts)
+	for _, f := range files {
+		action := types.NewAction(f, rls, opts.DestPath)
+		plan.AddAction(action)
+	}
+
+	executor := sorter.NewExecutor(&plan, &opts)
+	executor.Execute()
+}
+
+// TestEndToEnd_MLSort_ImagesCategorisedByMLTag verifies that images are
+// placed in folders matching the ML tag returned by the classifier.
+func TestEndToEnd_MLSort_ImagesCategorisedByMLTag(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	logDir := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "dog.jpg"), []byte("fake jpg"))
+	createTestFile(t, filepath.Join(srcDir, "cat.jpg"), []byte("fake jpg"))
+	createTestFile(t, filepath.Join(srcDir, "pizza.jpg"), []byte("fake jpg"))
+
+	tagMap := map[string]string{
+		"dog.jpg":   "animals",
+		"cat.jpg":   "pets",
+		"pizza.jpg": "food",
+	}
+
+	srv := mockMLServer(t, tagMap)
+	defer srv.Close()
+
+	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+
+	assertFileExists(t, filepath.Join(destDir, "animals", "dog.jpg"))
+	assertFileExists(t, filepath.Join(destDir, "pets", "cat.jpg"))
+	assertFileExists(t, filepath.Join(destDir, "food", "pizza.jpg"))
+}
+
+// TestEndToEnd_MLSort_NonImageFallsBackToMimeType verifies that files
+// tagged __not_image__ are sorted by their MIME type instead.
+func TestEndToEnd_MLSort_NonImageFallsBackToMimeType(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	logDir := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "report.pdf"), []byte("fake pdf"))
+	createTestFile(t, filepath.Join(srcDir, "notes.txt"), []byte("fake txt"))
+
+	// mock returns __not_image__ for non-images
+	tagMap := map[string]string{}
+
+	srv := mockMLServer(t, tagMap)
+	defer srv.Close()
+
+	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+
+	// non-images fall back to MIME type — both are documents
+	assertFileExists(t, filepath.Join(destDir, "documents", "report.pdf"))
+	assertFileExists(t, filepath.Join(destDir, "documents", "notes.txt"))
+}
+
+// TestEndToEnd_MLSort_MixedFiles verifies correct handling of a batch
+// containing both images (ML-tagged) and non-images (fallback).
+func TestEndToEnd_MLSort_MixedFiles(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	logDir := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "vacation.jpg"), []byte("fake jpg"))
+	createTestFile(t, filepath.Join(srcDir, "contract.pdf"), []byte("fake pdf"))
+	createTestFile(t, filepath.Join(srcDir, "sunset.png"), []byte("fake png"))
+
+	tagMap := map[string]string{
+		"vacation.jpg": "travel",
+		"sunset.png":   "nature",
+		// contract.pdf → __not_image__ (not in map)
+	}
+
+	srv := mockMLServer(t, tagMap)
+	defer srv.Close()
+
+	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+
+	assertFileExists(t, filepath.Join(destDir, "travel", "vacation.jpg"))
+	assertFileExists(t, filepath.Join(destDir, "nature", "sunset.png"))
+	assertFileExists(t, filepath.Join(destDir, "documents", "contract.pdf"))
+}
+
+// TestEndToEnd_MLSort_EmptyDirectory verifies that an empty source dir
+// completes without errors.
+func TestEndToEnd_MLSort_EmptyDirectory(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	logDir := t.TempDir()
+
+	srv := mockMLServer(t, map[string]string{})
+	defer srv.Close()
+
+	// should not panic or error
+	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+
+	entries, err := os.ReadDir(destDir)
+	if err != nil {
+		t.Fatalf("ReadDir: %v", err)
+	}
+	if len(entries) != 0 {
+		t.Errorf("expected empty destDir, got %d entries", len(entries))
+	}
+}
+
+// TestEndToEnd_MLSort_ServerReturnsError verifies that a classifier error
+// is propagated and execution does not proceed silently.
+func TestEndToEnd_MLSort_ServerReturnsError(t *testing.T) {
+	srcDir := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "photo.jpg"), []byte("fake jpg"))
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/health":
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+		case "/classify":
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]string{"error": "model not loaded"})
+		}
+	}))
+	defer srv.Close()
+
+	client := ml.NewClient(srv.URL)
+	_, err := client.Classify([]string{filepath.Join(srcDir, "photo.jpg")})
+	if err == nil {
+		t.Error("expected error when classifier returns error key")
 	}
 }
 

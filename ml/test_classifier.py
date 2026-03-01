@@ -201,8 +201,7 @@ class TestClassifyEndpoint:
 
         assert response.status_code == 200
         body = response.json()
-        # Either an error key or the path mapped to "other"
-        assert "error" in body or body.get("/nonexistent/ghost.jpg") == "other"
+        assert body.get("/nonexistent/ghost.jpg") == "__not_image__"
 
     async def test_classify_single_image(self, tmp_path):
         """Single image should return single entry."""
@@ -233,6 +232,36 @@ class TestClassifyEndpoint:
         assert len(body) == len(paths)
         for p in paths:
             assert p in body
+
+    async def test_classify_non_image_returns_not_image_tag(self, tmp_path):
+        """Non-image files should return __not_image__ tag."""
+        p = str(tmp_path / "document.pdf")
+        with open(p, "w") as f:
+            f.write("not an image")
+
+        from classifier import app
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post("/classify", json={"paths": [p]})
+
+        body = response.json()
+        assert body[p] == "__not_image__"
+
+    async def test_classify_mixed_images_and_non_images(self, tmp_path):
+        """Mixed batch: images get category, non-images get __not_image__."""
+        img_path = str(tmp_path / "photo.jpg")
+        doc_path = str(tmp_path / "doc.txt")
+
+        create_test_image(img_path)
+        with open(doc_path, "w") as f:
+            f.write("not an image")
+
+        from classifier import app, CATEGORIES
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            response = await client.post("/classify", json={"paths": [img_path, doc_path]})
+
+        body = response.json()
+        assert body[doc_path] == "__not_image__"
+        assert body[img_path] in CATEGORIES
 
 
 # ── config loading ────────────────────────────────────────────────────────────
