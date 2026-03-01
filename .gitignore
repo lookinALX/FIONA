@@ -12,6 +12,8 @@
 /ml/*.pt
 /ml/*.pth
 
-/ml/build/
 /ml/dist/
 /ml/*.spec
+/ml/build
+
+architecture.mdbuild/
