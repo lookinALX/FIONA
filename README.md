@@ -54,6 +54,14 @@
 
 ## 🚀 Installation
 
+### Pre-built Binaries (recommended)
+
+Download the latest release from [GitHub Releases](https://github.com/lookinALX/FIONA/releases/latest):
+- `fiona` — main binary
+- `fiona-classifier` — required for ML classification (`-c ml`)
+
+Place both files in the same directory and run.
+
 ### Build from Source
 
 **Requirements:** Go 1.21+
