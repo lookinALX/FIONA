@@ -69,7 +69,29 @@ go build -o fiona ./cmd/fiona
 ```bash
 cd ml
 pip install -r requirements.txt
-pyinstaller --onefile --name fiona-classifier classifier.py
+pyinstaller \
+  --onefile \
+  --strip \
+  --name fiona-classifier \
+  --exclude-module matplotlib \
+  --exclude-module scipy \
+  --exclude-module notebook \
+  --exclude-module jupyter \
+  --exclude-module IPython \
+  --exclude-module tkinter \
+  --exclude-module PyQt5 \
+  --exclude-module wx \
+  --exclude-module torchaudio \
+  --exclude-module cv2 \
+  --exclude-module sklearn \
+  --exclude-module pandas \
+  --exclude-module numpy.testing \
+  --exclude-module unittest \
+  --exclude-module xmlrpc \
+  --exclude-module email \
+  --exclude-module html \
+  --exclude-module http.server \
+  classifier.py
 # binary will be in ml/dist/fiona-classifier
 ```
 
