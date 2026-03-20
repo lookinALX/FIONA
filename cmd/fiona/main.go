@@ -75,7 +75,7 @@ func main() {
 		}
 
 		if opts.Sort.Primary == "ml" || opts.Sort.Secondary == "ml" {
-			server := ml.NewServer()
+			server := ml.NewServer(opts.MlConfigPath)
 			err = server.Start()
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)

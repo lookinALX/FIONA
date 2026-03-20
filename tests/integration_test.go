@@ -674,6 +674,38 @@ func TestEndToEnd_MLSort_ServerReturnsError(t *testing.T) {
 	}
 }
 
+func TestEndToEnd_MLSort_CustomConfig(t *testing.T) {
+	srcDir := t.TempDir()
+	destDir := t.TempDir()
+	logDir := t.TempDir()
+	configDir := t.TempDir()
+
+	createTestFile(t, filepath.Join(srcDir, "beach.jpg"), []byte("fake jpg"))
+	createTestFile(t, filepath.Join(srcDir, "cat.jpg"), []byte("fake jpg"))
+	createTestFile(t, filepath.Join(srcDir, "report.pdf"), []byte("fake pdf"))
+
+	configPath := filepath.Join(configDir, "custom_categories.json")
+	configData := []byte(`{
+		"vacation_2024": "photos from summer vacation at the beach in 2024",
+		"my_pets": "photos of my cat and other pet animals at home"
+	}`)
+	createTestFile(t, configPath, configData)
+
+	tagMap := map[string]string{
+		"beach.jpg": "vacation_2024",
+		"cat.jpg":   "my_pets",
+	}
+
+	srv := mockMLServer(t, tagMap)
+	defer srv.Close()
+
+	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+
+	assertFileExists(t, filepath.Join(destDir, "vacation_2024", "beach.jpg"))
+	assertFileExists(t, filepath.Join(destDir, "my_pets", "cat.jpg"))
+	assertFileExists(t, filepath.Join(destDir, "documents", "report.pdf"))
+}
+
 // ── UNDO ───────────────────────────────────────────────────────────────
 
 // runSort is a helper that runs a full sort operation and returns the saved journal path

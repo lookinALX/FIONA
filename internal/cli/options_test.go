@@ -253,6 +253,10 @@ func TestPathExists(t *testing.T) {
 
 func TestValidateOptions(t *testing.T) {
 	tmpDir := t.TempDir()
+	MlConfigPath := filepath.Join(tmpDir, "config.toml")
+	if err := os.WriteFile(MlConfigPath, []byte("test"), 0644); err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
 
 	invalidOption := "invalid"
 
@@ -261,6 +265,7 @@ func TestValidateOptions(t *testing.T) {
 		tmpDir,
 		tmpDir,
 		tmpDir,
+		MlConfigPath,
 		"move",
 		"replace",
 		"N",
@@ -292,6 +297,9 @@ func TestValidateOptions(t *testing.T) {
 	optWorkersInvalid := optValid
 	optWorkersInvalid.Workers = -1
 
+	optMlConfigInvalid := optValid
+	optMlConfigInvalid.Sort.Secondary = "ml"
+
 	tests := []struct {
 		name    string
 		input   Opts
@@ -308,6 +316,7 @@ func TestValidateOptions(t *testing.T) {
 		{"log path invalid", optLogPathInvalid, messages.ErrLogPathIsEmpty},
 		{"on conflict invalid", optOnConflictInvalid, messages.ErrInvalidOnConflict},
 		{"workers invalid", optWorkersInvalid, messages.ErrInvalidWorkers},
+		{"ml config path invalid", optMlConfigInvalid, messages.ErrConfigMLIsNotJson},
 	}
 
 	for _, tt := range tests {

@@ -41,6 +41,7 @@ type Opts struct {
 	SourcePath       string
 	DestPath         string
 	LogPath          string
+	MlConfigPath     string
 	FileAction       string
 	ConflictStrategy string
 	Force            string
@@ -120,6 +121,7 @@ func (opts *Opts) ParseSortFlags() error {
 	messages.Must(addFlag(&opts.DryRun, "n", "dry-run", true, "Preview without changes"))
 	messages.Must(addFlag(&opts.Force, "", "force", "N", "Force execute without conformation if 'yes'"))
 	messages.Must(addFlag(&opts.Workers, "w", "workers", maxWorkers, "Number of workers for the current run"))
+	messages.Must(addFlag(&opts.MlConfigPath, "", "ml-config", "", "Path to a ML configuration file with categories and promts"))
 	flag.Parse()
 
 	err = opts.validateSortOptions()
@@ -184,6 +186,13 @@ func (opts *Opts) validateSortOptions() error {
 	if err := validateLogFlag(opts.LogPath); err != nil {
 		return err
 	}
+
+	if opts.Sort.Primary == "ml" || opts.Sort.Secondary == "ml" {
+		if err := validateConfigMlFlag(opts.MlConfigPath); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -324,6 +333,26 @@ func validateLogFlag(crit string) error {
 	}
 	if err != nil {
 		return fmt.Errorf("cannot access log directory: %w", err)
+	}
+	return nil
+}
+
+func validateConfigMlFlag(crit string) error {
+	if crit == "" {
+		return nil
+	}
+	info, exists, err := pathExists(crit)
+	if !exists {
+		return messages.ErrConfigMlPathNotExists
+	}
+	if info.IsDir() {
+		return messages.ErrConfigMlPathIsDir
+	}
+	if err != nil {
+		return fmt.Errorf("cannot access config ml: %w", err)
+	}
+	if filepath.Ext(crit) != ".json" {
+		return messages.ErrConfigMLIsNotJson
 	}
 	return nil
 }

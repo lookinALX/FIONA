@@ -3,6 +3,7 @@ import torch
 import json
 import sys
 import os
+import argparse
 
 from PIL import Image
 from transformers import CLIPProcessor, CLIPModel
@@ -192,24 +193,24 @@ async def health():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 2:
-        print("ERROR python script: ")
-        print(" ------------- more arguments then allowed --> only file path is expected")
-        sys.exit(1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=str)
+    parser.add_argument("--port", type=int, default=8000)
+    args = parser.parse_args()
 
-    if len(sys.argv) == 2:
-        CONFIG_FILE_PATH = sys.argv[1] 
+    if args.config is not None:
+        CONFIG_FILE_PATH = args.config
         with open(CONFIG_FILE_PATH, "r", encoding = "utf-8") as f:
             configuration = json.load(f)
-        
-        error = validate_config(configuration)
-        if error:
-            print(f"invalid config: {error}")
-            sys.exit(1)
-        
-        CATEGORY_PROMPTS = configuration
-        CATEGORIES = list(CATEGORY_PROMPTS.keys())
+            
+            error = validate_config(configuration)
+            if error:
+                print(f"invalid config: {error}")
+                sys.exit(1)
+            
+            CATEGORY_PROMPTS = configuration
+            CATEGORIES = list(CATEGORY_PROMPTS.keys())
 
 
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=args.port)

@@ -20,6 +20,9 @@ var (
 	ErrUnknownRuleName          = errors.New("unknown rule name")
 	ErrInvalidOnConflict        = errors.New("invalid on-conflict, valid on-conflict values are 'replace', 'skip' or 'rename'")
 	ErrInvalidWorkers           = errors.New("invalud number of workers, must be positiv int")
+	ErrConfigMlPathNotExists    = errors.New("config ml path doesn't exists")
+	ErrConfigMlPathIsDir        = errors.New("config ml path is a directory")
+	ErrConfigMLIsNotJson        = errors.New("config ml is not json")
 )
 
 func Must(err error) {
