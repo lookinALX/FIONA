@@ -150,6 +150,7 @@ fiona --help            — print help
 | `--force` | — | `N` | Skip confirmation (`yes`) |
 | `--workers` | `-w` | CPU count × 2 | Number of parallel workers |
 | `--log` | — | current dir | Directory to write `fiona_logs.json` |
+| `--ml-config` | — | — | Path to custom ML categories JSON (only with `-c ml`) |
 
 ### undo flags
 
@@ -415,8 +416,8 @@ var ruleFactories = map[string]ruleFactory{
 - [x] `ByMLRule` — sort files by ML-assigned tags
 - [x] Fallback to MIME type for non-image files
 - [x] Custom categories via JSON config file
-- [ ] `--ml-config` flag wired into CLI
-- [ ] `fiona-classifier` PyInstaller build optimisation (target < 500MB)
+- [x] `--ml-config` flag wired into CLI
+- [x] `fiona-classifier` PyInstaller build optimisation (271 MB, CPU-only)
 
 **FIONA Light** — MobileNetV2-based classification (Planned):
 - Lightweight alternative (~170MB)
