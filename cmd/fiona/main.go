@@ -83,7 +83,7 @@ func main() {
 			}
 			defer server.Stop()
 
-			client := ml.NewClient("")
+			client := ml.NewClient(server.BaseURL())
 
 			paths := make([]string, 0, len(files))
 			for _, file := range files {

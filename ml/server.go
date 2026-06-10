@@ -21,6 +21,10 @@ func NewServer(configPath string) *Server {
 	return &Server{configPath: configPath}
 }
 
+func (s *Server) BaseURL() string {
+	return fmt.Sprintf("http://localhost:%d", s.port)
+}
+
 func (s *Server) Start() error {
 	port, err := getFreePort()
 	if err != nil {
