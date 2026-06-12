@@ -407,28 +407,24 @@ var ruleFactories = map[string]ruleFactory{
 - Undo / rollback via `fiona undo`
 - Subcommand CLI (`sort`, `undo`)
 
-### 🚧 Milestone 3 — ML Image Classification (In Progress)
+### ✅ Milestone 3 — ML Image Classification (Complete)
+- FastAPI Python server with CLIP model (`fiona-classifier` binary)
+- Batch image classification via HTTP
+- Go subprocess management — start/stop `fiona-classifier` automatically
+- `ByMLRule` — sort files by ML-assigned tags
+- Fallback to MIME type for non-image files
+- Custom categories via JSON config file
+- `--ml-config` flag wired into CLI
+- `fiona-classifier` PyInstaller build optimisation (271 MB, CPU-only)
 
-**FIONA** (full version) — CLIP-based zero-shot classification:
-- [x] FastAPI Python server with CLIP model (`fiona-classifier` binary)
-- [x] Batch image classification via HTTP
-- [x] Go subprocess management — start/stop `fiona-classifier` automatically
-- [x] `ByMLRule` — sort files by ML-assigned tags
-- [x] Fallback to MIME type for non-image files
-- [x] Custom categories via JSON config file
-- [x] `--ml-config` flag wired into CLI
-- [x] `fiona-classifier` PyInstaller build optimisation (271 MB, CPU-only)
+### 📅 Milestone 4 — TUI Interface
+- Interactive terminal UI (bubbletea / lipgloss)
+- Browse source directory and select files before sorting
+- Live preview of the sort plan in the terminal
+- Real-time progress with file-level status
+- Undo history browser
 
-**FIONA Light** — MobileNetV2-based classification (Planned):
-- Lightweight alternative (~170MB)
-- 14 categories via ImageNet class mapping
-- Transfer learning: fine-tune on your own dataset via `fiona train`
-- Distributed as `fiona-classifier-light` binary
-
-**Future:**
-- Face recognition via InsightFace for personal people tags
-
-### 📅 Milestone 4 — Web Interface
+### 📅 Milestone 5 — Web Interface
 - REST API with `net/http`
 - Browser-based UI with embedded assets
 - Real-time operation monitoring
