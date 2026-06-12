@@ -168,7 +168,7 @@ func TestClassify_NotImageTag(t *testing.T) {
 // ── server tests ──────────────────────────────────────────────────────────────
 
 func TestNewServer(t *testing.T) {
-	s := NewServer()
+	s := NewServer("")
 	if s == nil {
 		t.Fatal("expected non-nil server")
 	}
@@ -178,7 +178,7 @@ func TestNewServer(t *testing.T) {
 }
 
 func TestStop_BeforeStart(t *testing.T) {
-	s := NewServer()
+	s := NewServer("")
 	// stop before Start should not panic or error
 	if err := s.Stop(); err != nil {
 		t.Errorf("expected no error on Stop before Start, got %v", err)
@@ -186,7 +186,7 @@ func TestStop_BeforeStart(t *testing.T) {
 }
 
 func TestStop_NilProcess(t *testing.T) {
-	s := NewServer()
+	s := NewServer("")
 	s.cmd = &exec.Cmd{} // cmd set but Process is nil
 	if err := s.Stop(); err != nil {
 		t.Errorf("expected no error when Process is nil, got %v", err)
@@ -194,7 +194,7 @@ func TestStop_NilProcess(t *testing.T) {
 }
 
 func TestStart_ClassifierNotFound(t *testing.T) {
-	s := NewServer()
+	s := NewServer("")
 	// the real fiona-classifier won't be next to the test binary
 	// so Start() should fail trying to exec a nonexistent file
 	err := s.Start()
@@ -207,7 +207,7 @@ func TestStart_ClassifierNotFound(t *testing.T) {
 
 func TestStop_KillsProcess(t *testing.T) {
 	// start a real long-running process to verify Kill works
-	s := NewServer()
+	s := NewServer("")
 	s.cmd = exec.Command("sleep", "60")
 	if err := s.cmd.Start(); err != nil {
 		t.Skipf("cannot start sleep process: %v", err)

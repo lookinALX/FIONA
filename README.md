@@ -33,6 +33,8 @@
 - [Roadmap](#-roadmap)
 - [License](#-license)
 
+![](assets/screenshot_tui.png)
+
 ---
 
 ## ✨ Features
@@ -48,6 +50,7 @@
 - **Transaction Log** — every operation is logged to JSON for auditing and rollback
 - **Undo/Rollback** — reverse any sort operation using the transaction log
 - **Progress Bar** — real-time progress during execution
+- **TUI Interface** — interactive terminal UI for browsing, configuring, and monitoring sort operations
 - **Cross-Platform** — single binary for Windows, Linux, and macOS
 
 ---

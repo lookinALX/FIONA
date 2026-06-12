@@ -8,6 +8,7 @@ import (
 	"github.com/lookinalx/fiona/internal/journal"
 	"github.com/lookinalx/fiona/internal/scanner"
 	"github.com/lookinalx/fiona/internal/sorter"
+	"github.com/lookinalx/fiona/internal/tui"
 	"github.com/lookinalx/fiona/internal/types"
 	"github.com/lookinalx/fiona/ml"
 )
@@ -35,6 +36,12 @@ func main() {
 	os.Args = append([]string{os.Args[0]}, os.Args[2:]...)
 
 	switch subcommand {
+	case "tui":
+		if err := tui.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
+			os.Exit(ExitFailure)
+		}
+		os.Exit(ExitSuccess)
 	case "undo":
 		err := opts.ParseUndoFlags()
 		if err != nil {
