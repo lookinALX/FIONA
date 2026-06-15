@@ -30,6 +30,8 @@ type FileTree struct {
 	Selected string
 	focused  bool
 	width    int
+	editing  bool   // typing a path into the header field
+	input    string // current text while editing
 }
 
 func NewFileTree(title string) FileTree {
@@ -53,7 +55,13 @@ func NewFileTree(title string) FileTree {
 func (ft FileTree) Update(msg tea.Msg) (FileTree, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		if ft.editing {
+			return ft.updateEditing(msg), nil
+		}
 		switch msg.String() {
+		case "e":
+			ft.editing = true
+			ft.input = ft.Selected
 		case "up", "k":
 			if ft.cursor > 0 {
 				ft.cursor--
@@ -75,10 +83,72 @@ func (ft FileTree) Update(msg tea.Msg) (FileTree, tea.Cmd) {
 				ft.goToParent()
 			}
 		case "enter", " ":
+			if ft.nodes[ft.cursor].expanded {
+				ft.collapse(ft.cursor)
+			} else {
+				ft.expand(ft.cursor)
+			}
 			ft.Selected = ft.nodes[ft.cursor].path
 		}
 	}
 	return ft, nil
+}
+
+// StartEditing puts the path field into edit mode, pre-filled with the current
+// selection.
+func (ft FileTree) StartEditing() FileTree {
+	ft.editing = true
+	ft.input = ft.Selected
+	return ft
+}
+
+// updateEditing handles keystrokes while the user is typing a path.
+func (ft FileTree) updateEditing(msg tea.KeyMsg) FileTree {
+	switch msg.String() {
+	case "esc":
+		ft.editing = false
+		ft.input = ""
+	case "enter":
+		if ft.setRoot(expandPath(ft.input)) {
+			ft.editing = false
+			ft.input = ""
+		}
+	case "backspace":
+		if r := []rune(ft.input); len(r) > 0 {
+			ft.input = string(r[:len(r)-1])
+		}
+	default:
+		if len(msg.Runes) > 0 {
+			ft.input += string(msg.Runes)
+		}
+	}
+	return ft
+}
+
+// setRoot re-roots the tree at path if it is an existing directory.
+func (ft *FileTree) setRoot(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil || !info.IsDir() {
+		return false
+	}
+	name := filepath.Base(path)
+	ft.nodes = []treeNode{{path: path, name: name, depth: 0}}
+	ft.cursor = 0
+	ft.offset = 0
+	ft.Selected = path
+	ft.expand(0)
+	return true
+}
+
+// expandPath resolves a leading "~" to the user's home directory.
+func expandPath(path string) string {
+	path = strings.TrimSpace(path)
+	if path == "~" || strings.HasPrefix(path, "~/") {
+		if home, err := os.UserHomeDir(); err == nil {
+			return filepath.Join(home, strings.TrimPrefix(path, "~"))
+		}
+	}
+	return path
 }
 
 // ── view ──────────────────────────────────────────────────────────────────────
@@ -91,6 +161,10 @@ var (
 
 	treeNodeStyle = lipgloss.NewStyle().
 			Foreground(colorSage)
+
+	treeHintStyle = lipgloss.NewStyle().
+			Foreground(colorDimmed).
+			Italic(true)
 
 	treeLabelStyle = lipgloss.NewStyle().
 			Foreground(colorCream).
@@ -113,7 +187,17 @@ func (ft FileTree) View() string {
 		innerW = 10
 	}
 
-	header := treeLabelStyle.Render(ft.title+":") + " " + treeNodeStyle.Render(ft.Selected)
+	var pathPart string
+	if ft.editing {
+		pathPart = treeNodeStyle.Render(ft.input) + treeCursorStyle.Render(" ") +
+			treeHintStyle.Render("  enter ✓  esc ✕")
+	} else {
+		pathPart = treeNodeStyle.Render(ft.Selected)
+		if ft.focused {
+			pathPart += treeHintStyle.Render("  (e: edit)")
+		}
+	}
+	header := treeLabelStyle.Render(ft.title+":") + " " + pathPart
 
 	var sb strings.Builder
 	end := ft.offset + treeHeight

@@ -64,7 +64,8 @@ const (
 // ── styles ────────────────────────────────────────────────────────────────────
 
 var (
-	logoStyle = lipgloss.NewStyle().Foreground(colorSage)
+	logoStyle  = lipgloss.NewStyle().Foreground(colorSage)
+	logoMStyle = lipgloss.NewStyle().Foreground(colorCream)
 
 	tooNarrowStyle = lipgloss.NewStyle().Foreground(colorSage)
 
@@ -191,6 +192,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) handleClick(x, y int) model {
+	// any click cancels an in-progress path edit; a header click below re-enables it
+	m.sourceTree.editing = false
+	m.destTree.editing = false
+
 	// ── bottom bar ────────────────────────────────────────────────────────────
 	if y == m.height-1 {
 		sortW := lipgloss.Width(barItemInactive.Render("Sort"))
@@ -236,6 +241,8 @@ func (m model) handleClick(x, y int) model {
 				m.destTree.focused = false
 				if relRow >= 0 && relRow < treeHeight {
 					m.sourceTree = m.sourceTree.HandleMouseClick(relRow)
+				} else if relRow == -1 {
+					m.sourceTree = m.sourceTree.StartEditing()
 				}
 			} else {
 				m.focused = fieldDest
@@ -243,6 +250,8 @@ func (m model) handleClick(x, y int) model {
 				m.destTree.focused = true
 				if relRow >= 0 && relRow < treeHeight {
 					m.destTree = m.destTree.HandleMouseClick(relRow)
+				} else if relRow == -1 {
+					m.destTree = m.destTree.StartEditing()
 				}
 			}
 			return m
@@ -256,6 +265,8 @@ func (m model) handleClick(x, y int) model {
 			relRow := y - srcY - 2
 			if relRow >= 0 && relRow < treeHeight {
 				m.sourceTree = m.sourceTree.HandleMouseClick(relRow)
+			} else if relRow == -1 {
+				m.sourceTree = m.sourceTree.StartEditing()
 			}
 			return m
 		}
@@ -266,6 +277,8 @@ func (m model) handleClick(x, y int) model {
 			relRow := y - dstY - 2
 			if relRow >= 0 && relRow < treeHeight {
 				m.destTree = m.destTree.HandleMouseClick(relRow)
+			} else if relRow == -1 {
+				m.destTree = m.destTree.StartEditing()
 			}
 			return m
 		}
@@ -319,7 +332,7 @@ func (m model) View() string {
 
 	var header string
 	if m.headerH() == logoHeight+2 {
-		header = "\n" + logoStyle.Render(asciiLogo) + "\n\n"
+		header = "\n" + renderLogo() + "\n\n"
 	} else {
 		header = "\n  " + fallbackTitleStyle.Render("FIONA") + "\n\n"
 	}
@@ -345,6 +358,22 @@ func (m model) View() string {
 }
 
 // ── render helpers ────────────────────────────────────────────────────────────
+
+// renderLogo paints the ascii logo in sage, with every 'M' in cream.
+func renderLogo() string {
+	var b strings.Builder
+	for _, r := range asciiLogo {
+		switch r {
+		case 'M':
+			b.WriteString(logoMStyle.Render("M"))
+		case '\n', ' ':
+			b.WriteRune(r)
+		default:
+			b.WriteString(logoStyle.Render(string(r)))
+		}
+	}
+	return b.String()
+}
 
 func renderTooNarrow(width int) string {
 	line := strings.Repeat("─", width-2)
