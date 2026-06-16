@@ -42,10 +42,16 @@ func main() {
 
 	switch subcommand {
 	case "tui":
-		if err := tui.Run(); err != nil {
+		result, err := tui.Run()
+		if err != nil {
 			fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
 			os.Exit(ExitFailure)
 		}
+		if result.Cancelled() {
+			os.Exit(ExitSuccess)
+		}
+		// TODO: send result to sort/undo pipeline
+		_ = result
 		os.Exit(ExitSuccess)
 	case "undo":
 		err := opts.ParseUndoFlags()
