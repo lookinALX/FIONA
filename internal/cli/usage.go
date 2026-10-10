@@ -1,14 +1,9 @@
 package cli
 
 import (
-	"flag"
 	"fmt"
 	"os"
 )
-
-func init() {
-	flag.Usage = PrintUsage
-}
 
 func PrintUsage() {
 	fmt.Fprintf(os.Stderr, `
@@ -16,7 +11,7 @@ func PrintUsage() {
 ║            FIONA - File Organizer                  ║
 ╚════════════════════════════════════════════════════╝
 
-Usage: 
+Usage:
 	fiona sort [OPTIONS]
 	fiona undo [OPTIONS]
 
@@ -36,46 +31,71 @@ OPTIONS SORT:
 
   -d, --dest <path>
         Destination directory for organized files (default: current directory)
+        Created right before execution if it does not exist
 
   -a, --action <string>
         How to handle files: copy or move (default: copy)
 
   --on-conflict <string>
-        How to handle file conflicts: replace, skip, or rename (default: replace)
+        How to handle file conflicts: rename, skip, or replace (default: rename)
+        replace moves the existing file to <dest>/.fiona/trash/<run-id>/,
+        trash older than 5 days is removed on the next executed sort
+
+  -r, --recursive
+        Scan subdirectories too (default: top-level files only)
+        Never enters bundles (.app, .bundle, .framework, .photoslibrary, .xcodeproj)
+        and projects (folders with .git, .hg, .svn, node_modules, go.mod, package.json)
+
+  --hidden
+        Include files and directories starting with a dot (default: skipped)
 
   -n, --dry-run
-        Preview changes without executing (default: true)
+        Print the plan and exit, nothing on disk is changed; stronger than --yes
 
-  --force <yes|N>
-        Force execution without confirmation (default: N)
+  -y, --yes
+        Execute without confirmation
 
   -w, --workers <int>
-        Number of workers for the current run (default: max availible)
+        Number of workers for the current run, 1 or more (default: max availible)
 
-  --log <string>
-		Log directory to write log files to (default: current directory)
+  --log <path>
+        Directory to write the run journal to (default: <dest>/.fiona/runs)
 
 OPTIONS UNDO:
-	--log <string>
-		Log file to read logs from, must be json (default: current directory, file name fiona_logs.json)
-	  -w, --workers <int>
-        Number of workers for the current run (default: max availible)
+  --log <path>
+        Journal file of the run to undo (<run-id>.jsonl)
+
+  -d, --dest <path>
+        Undo the last run of this destination directory that is not undone yet
+        (default: current directory); cannot be combined with --log
+
+  -n, --dry-run
+        Print the undo preview and exit, nothing on disk is changed
+
+  -y, --yes
+        Execute without confirmation
+
+  -w, --workers <int>
+        Number of workers for the current run, 1 or more (default: max availible)
 
 EXAMPLES:
-  # Preview sorting by file extension
+  # Sort the top-level files of the current directory by extension (asks before executing)
   fiona sort -c extension
 
   # Sort photos by year, then month, and move them
   fiona sort -c year -t month -a move -s ~/Photos
 
-  # Copy documents by type with rename on conflict
-  fiona sort -c mimetype --on-conflict rename -s ~/Documents -d ~/Organized
+  # Copy documents by type, including subdirectories, skipping files that already exist
+  fiona sort -c mimetype -r --on-conflict skip -s ~/Documents -d ~/Organized
 
-  # Execute immediately without dry-run
-  fiona sort -c extension -n=false --force yes
+  # Preview only
+  fiona sort -c extension --dry-run
 
-  # Undo last fiona run
-  fiona undo TBD
+  # Execute immediately without confirmation
+  fiona sort -c extension --yes
+
+  # Undo the last run of a destination directory
+  fiona undo --dest ~/Organized
 
 AVAILABLE CRITERIA:
   mimetype   - Group by MIME type (images, videos, documents, etc.)
@@ -91,7 +111,7 @@ For more information: https://github.com/lookinalx/fiona
 
 func PrintShortUsage() {
 	fmt.Fprintf(os.Stderr, `
-Usage: 
+Usage:
 	fiona sort [OPTIONS]
 	fiona undo [OPTIONS])
 

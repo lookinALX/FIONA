@@ -1,16 +1,21 @@
 package tests
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"reflect"
 	"runtime"
-	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/lookinalx/fiona/internal/cli"
 	"github.com/lookinalx/fiona/internal/journal"
@@ -20,7 +25,90 @@ import (
 	"github.com/lookinalx/fiona/ml"
 )
 
-// ── SORT ───────────────────────────────────────────────────────────────
+// fionaBin is the real binary: scenarios check exit codes, stdin and signals.
+var fionaBin string
+
+func TestMain(m *testing.M) {
+	dir, err := os.MkdirTemp("", "fiona-test-bin")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	fionaBin = filepath.Join(dir, "fiona")
+	if runtime.GOOS == "windows" {
+		fionaBin += ".exe"
+	}
+
+	args := []string{"build"}
+	if raceEnabled {
+		args = append(args, "-race")
+	}
+	args = append(args, "-o", fionaBin, "github.com/lookinalx/fiona/cmd/fiona")
+	if out, err := exec.Command("go", args...).CombinedOutput(); err != nil {
+		fmt.Fprintf(os.Stderr, "cannot build fiona: %v\n%s", err, out)
+		os.RemoveAll(dir)
+		os.Exit(1)
+	}
+
+	code := m.Run()
+	os.RemoveAll(dir)
+	os.Exit(code)
+}
+
+// ── helpers ────────────────────────────────────────────────────────────
+
+type result struct {
+	stdout string
+	stderr string
+	code   int
+}
+
+// fiona runs the binary in an empty working directory and feeds it stdin.
+func fiona(t *testing.T, stdin string, args ...string) result {
+	t.Helper()
+
+	cmd := exec.Command(fionaBin, args...)
+	cmd.Dir = t.TempDir()
+	cmd.Stdin = strings.NewReader(stdin)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout, cmd.Stderr = &stdout, &stderr
+
+	res := result{}
+	if err := cmd.Run(); err != nil {
+		var exitErr *exec.ExitError
+		if !errors.As(err, &exitErr) {
+			t.Fatalf("cannot run fiona: %v", err)
+		}
+		res.code = exitErr.ExitCode()
+	}
+	res.stdout, res.stderr = stdout.String(), stderr.String()
+
+	if strings.Contains(res.stderr, "DATA RACE") {
+		t.Errorf("data race in fiona %v:\n%s", args, res.stderr)
+	}
+	return res
+}
+
+// mustFiona fails the test if the command does not exit with the wanted code.
+func mustFiona(t *testing.T, wantCode int, stdin string, args ...string) result {
+	t.Helper()
+
+	res := fiona(t, stdin, args...)
+	if res.code != wantCode {
+		t.Fatalf("fiona %v: exit code = %d, want %d\nstdout:\n%s\nstderr:\n%s", args, res.code, wantCode, res.stdout, res.stderr)
+	}
+	return res
+}
+
+func assertOutput(t *testing.T, output string, want ...string) {
+	t.Helper()
+	for _, w := range want {
+		if !strings.Contains(output, w) {
+			t.Errorf("output does not contain %q:\n%s", w, output)
+		}
+	}
+}
 
 func createTestFile(t *testing.T, path string, content []byte) {
 	t.Helper()
@@ -35,423 +123,871 @@ func createTestFile(t *testing.T, path string, content []byte) {
 
 func assertFileExists(t *testing.T, path string) {
 	t.Helper()
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+	if _, err := os.Lstat(path); err != nil {
 		t.Errorf("file doesn't exists: %s", path)
 	}
 }
 
-func TestEndToEnd_CopyByTypeThenExtension(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-
-	extensions := []string{".jpg", ".pdf", ".png", ".jpg", ".txt"}
-
-	for i := range 5 {
-		filename := "file" + strconv.Itoa(i) + extensions[i]
-		createTestFile(t, filepath.Join(srcDir, filename), []byte("fake content"))
-	}
-
-	opts := cli.Opts{
-		SourcePath:       srcDir,
-		DestPath:         destDir,
-		Sort:             cli.SortOption{Primary: cli.CritMIMEType, Secondary: cli.CritExtension},
-		FileAction:       "copy",
-		Force:            "yes",
-		DryRun:           false,
-		ConflictStrategy: cli.ConflictSkip,
-		Workers:          runtime.NumCPU(),
-	}
-
-	rls, err := opts.ParseSortFlagsToRules()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	sc := scanner.NewScanner()
-	files, err := sc.Scan(opts.SourcePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	plan := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		plan.AddAction(action)
-	}
-
-	executor := sorter.NewExecutor(&plan, &opts)
-	executor.Execute()
-
-	assertFileExists(t, filepath.Join(destDir, "images", "jpg", "file0.jpg"))
-	assertFileExists(t, filepath.Join(destDir, "documents", "pdf", "file1.pdf"))
-	assertFileExists(t, filepath.Join(destDir, "images", "png", "file2.png"))
-	assertFileExists(t, filepath.Join(destDir, "images", "jpg", "file3.jpg"))
-	assertFileExists(t, filepath.Join(destDir, "documents", "txt", "file4.txt"))
-
-	assertFileExists(t, filepath.Join(srcDir, "file0.jpg"))
-}
-
-func TestEndToEnd_JournalAutoSave(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-	journalPath := t.TempDir()
-
-	createTestFile(t, filepath.Join(srcDir, "file1.txt"), []byte("content1"))
-	createTestFile(t, filepath.Join(srcDir, "file2.jpg"), []byte("content2"))
-	createTestFile(t, filepath.Join(srcDir, "file3.pdf"), []byte("content3"))
-
-	opts := cli.Opts{
-		SourcePath:       srcDir,
-		DestPath:         destDir,
-		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
-		FileAction:       "copy",
-		Force:            "yes",
-		DryRun:           false,
-		ConflictStrategy: cli.ConflictSkip,
-		Workers:          2,
-		LogPath:          journalPath,
-	}
-
-	rls, _ := opts.ParseSortFlagsToRules()
-	sc := scanner.NewScanner()
-	files, _ := sc.Scan(opts.SourcePath)
-
-	plan := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		plan.AddAction(action)
-	}
-
-	executor := sorter.NewExecutor(&plan, &opts)
-	executor.Execute()
-
-	// verify journal file was created
-	if _, err := os.Stat(filepath.Join(journalPath, "fiona_logs.json")); os.IsNotExist(err) {
-		t.Fatal("journal file was not auto-saved")
-	}
-
-	// verify file is not empty
-	data, err := os.ReadFile(filepath.Join(journalPath, "fiona_logs.json"))
-	if err != nil {
-		t.Fatalf("failed to read journal file: %v", err)
-	}
-
-	if len(data) == 0 {
-		t.Error("journal file is empty")
-	}
-
-	// load and verify content
-	newJournal := journal.NewJournal(journalPath, "copy")
-	err = newJournal.LoadFromJson(filepath.Join(journalPath, "fiona_logs.json"))
-	if err != nil {
-		t.Fatalf("failed to load saved journal: %v", err)
-	}
-
-	if newJournal.Count() != 3 {
-		t.Errorf("expected 3 entries in saved journal, got %d", newJournal.Count())
-	}
-
-	// verify all entries are complete
-	for i := 0; i < 3; i++ {
-		entry, exists := newJournal.GetEntry(i)
-		if !exists {
-			t.Errorf("entry %d not found in saved journal", i)
-			continue
-		}
-
-		if entry.SourcePath == "" {
-			t.Errorf("entry %d: SourcePath is empty", i)
-		}
-
-		if entry.DestPath == "" {
-			t.Errorf("entry %d: DestPath is empty", i)
-		}
-
-		if entry.Status == "" {
-			t.Errorf("entry %d: Status is empty", i)
-		}
-
-		if entry.Timestamp.IsZero() {
-			t.Errorf("entry %d: Timestamp is zero", i)
-		}
+func assertNotExists(t *testing.T, path string) {
+	t.Helper()
+	if _, err := os.Lstat(path); !os.IsNotExist(err) {
+		t.Errorf("path should not exist: %s", path)
 	}
 }
 
-func TestEndToEnd_JournalAutoSaveWithConflicts(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-	journalPath := t.TempDir()
-
-	createTestFile(t, filepath.Join(srcDir, "file1.txt"), []byte("new1"))
-	createTestFile(t, filepath.Join(srcDir, "file2.txt"), []byte("new2"))
-
-	os.MkdirAll(filepath.Join(destDir, "documents", "txt"), 0755)
-	createTestFile(t, filepath.Join(destDir, "documents", "txt", "file1.txt"), []byte("old1"))
-
-	opts := cli.Opts{
-		SourcePath:       srcDir,
-		DestPath:         destDir,
-		Sort:             cli.SortOption{Primary: cli.CritMIMEType, Secondary: cli.CritExtension},
-		FileAction:       "copy",
-		Force:            "yes",
-		DryRun:           false,
-		ConflictStrategy: cli.ConflictRename,
-		Workers:          1,
-		LogPath:          journalPath,
-	}
-
-	rls, _ := opts.ParseSortFlagsToRules()
-	sc := scanner.NewScanner()
-	files, _ := sc.Scan(opts.SourcePath)
-
-	plan := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		plan.AddAction(action)
-	}
-
-	executor := sorter.NewExecutor(&plan, &opts)
-	executor.Execute()
-
-	// load saved journal
-	savedJournal := journal.NewJournal(filepath.Join(journalPath, "fiona_logs.json"), "copy")
-	err := savedJournal.LoadFromJson(filepath.Join(journalPath, "fiona_logs.json"))
+func assertFileContent(t *testing.T, path, want string) {
+	t.Helper()
+	got, err := os.ReadFile(path)
 	if err != nil {
-		t.Fatalf("failed to load saved journal: %v", err)
+		t.Errorf("cannot read file: %v", err)
+		return
 	}
+	if string(got) != want {
+		t.Errorf("%s: content = %q, want %q", path, got, want)
+	}
+}
 
-	// find entry with conflict resolution
-	foundConflict := false
-	for i := 0; i < savedJournal.Count(); i++ {
-		entry, exists := savedJournal.GetEntry(i)
-		if !exists {
-			continue
+// snapshot maps every regular file under root to its content. FIONA's own
+// state directory is left out, so that sorted trees can be compared.
+func snapshot(t *testing.T, root string) map[string]string {
+	t.Helper()
+
+	files := make(map[string]string)
+	err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
 		}
-
-		if strings.Contains(entry.ConflictResolution, "Conflict resolved") {
-			foundConflict = true
-
-			if entry.Status != "succeeded" {
-				t.Error("conflict resolution should result in success")
+		if d.IsDir() && d.Name() == journal.StateDir {
+			return filepath.SkipDir
+		}
+		if d.Type().IsRegular() {
+			content, err := os.ReadFile(path)
+			if err != nil {
+				return err
 			}
-
-			if !strings.Contains(entry.ConflictResolution, "file1_1.txt") {
-				t.Errorf("expected renamed file in message, got: %s", entry.ConflictResolution)
-			}
-			break
-		}
-	}
-
-	if !foundConflict {
-		t.Error("expected to find conflict resolution in saved journal")
-	}
-}
-
-func TestEndToEnd_JournalAutoSaveWithFailures(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-	journalPath := t.TempDir()
-
-	createTestFile(t, filepath.Join(srcDir, "valid.txt"), []byte("content"))
-
-	opts := cli.Opts{
-		SourcePath:       srcDir,
-		DestPath:         destDir,
-		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
-		FileAction:       "copy",
-		Force:            "yes",
-		DryRun:           false,
-		ConflictStrategy: cli.ConflictSkip,
-		Workers:          1,
-		LogPath:          journalPath,
-	}
-
-	rls, _ := opts.ParseSortFlagsToRules()
-	sc := scanner.NewScanner()
-	files, _ := sc.Scan(opts.SourcePath)
-
-	plan := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		plan.AddAction(action)
-	}
-
-	plan.AddAction(types.Action{
-		SourcePath: "/nonexistent/missing.txt",
-		DestPath:   destDir,
-	})
-
-	executor := sorter.NewExecutor(&plan, &opts)
-	executor.Execute()
-
-	savedJournal := journal.NewJournal(journalPath, "copy")
-	err := savedJournal.LoadFromJson(filepath.Join(journalPath, "fiona_logs.json"))
-	if err != nil {
-		t.Fatalf("failed to load saved journal: %v", err)
-	}
-
-	if savedJournal.Count() != 2 {
-		t.Errorf("expected 2 entries in saved journal, got %d", savedJournal.Count())
-	}
-
-	// find failed entry
-	foundFailed := false
-	for i := 0; i < savedJournal.Count(); i++ {
-		entry, exists := savedJournal.GetEntry(i)
-		if !exists {
-			continue
-		}
-
-		if entry.Status == "failed" {
-			foundFailed = true
-
-			if entry.Error == "" {
-				t.Error("failed entry should have error message in saved journal")
-			}
-
-			if !strings.Contains(entry.Error, "no such file") &&
-				!strings.Contains(entry.Error, "does not exist") {
-				t.Errorf("expected file not found error, got: %s", entry.Error)
-			}
-			break
-		}
-	}
-
-	if !foundFailed {
-		t.Error("expected to find failed entry in saved journal")
-	}
-}
-
-func TestEndToEnd_JournalAutoSaveConcurrent(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-	journalPath := t.TempDir()
-
-	// create many files
-	const numFiles = 50
-	for i := 0; i < numFiles; i++ {
-		ext := ".txt"
-		if i%3 == 0 {
-			ext = ".jpg"
-		} else if i%3 == 1 {
-			ext = ".pdf"
-		}
-
-		filename := fmt.Sprintf("file%d%s", i, ext)
-		createTestFile(t, filepath.Join(srcDir, filename), []byte(fmt.Sprintf("content%d", i)))
-	}
-
-	opts := cli.Opts{
-		SourcePath:       srcDir,
-		DestPath:         destDir,
-		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
-		FileAction:       "copy",
-		Force:            "yes",
-		DryRun:           false,
-		ConflictStrategy: cli.ConflictSkip,
-		Workers:          8,
-		LogPath:          journalPath,
-	}
-
-	rls, _ := opts.ParseSortFlagsToRules()
-	sc := scanner.NewScanner()
-	files, _ := sc.Scan(opts.SourcePath)
-
-	plan := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		plan.AddAction(action)
-	}
-
-	executor := sorter.NewExecutor(&plan, &opts)
-	executor.Execute()
-
-	// verify journal was saved
-	if _, err := os.Stat(journalPath); os.IsNotExist(err) {
-		t.Fatal("journal file was not auto-saved after concurrent execution")
-	}
-
-	// load and verify
-	savedJournal := journal.NewJournal(journalPath, "copy")
-	err := savedJournal.LoadFromJson(filepath.Join(journalPath, "fiona_logs.json"))
-	if err != nil {
-		t.Fatalf("failed to load saved journal after concurrent execution: %v", err)
-	}
-
-	if savedJournal.Count() != numFiles {
-		t.Errorf("expected %d entries in saved journal, got %d", numFiles, savedJournal.Count())
-	}
-
-	// verify all entries succeeded
-	successCount := 0
-	for i := 0; i < numFiles; i++ {
-		entry, exists := savedJournal.GetEntry(i)
-		if !exists {
-			continue
-		}
-
-		if entry.Status == "succeeded" {
-			successCount++
-		}
-	}
-
-	if successCount != numFiles {
-		t.Errorf("expected all %d operations to succeed, got %d", numFiles, successCount)
-	}
-}
-
-func TestEndToEnd_JournalSaveFailureHandling(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-
-	// use invalid path (directory that doesn't exist and can't be created)
-	journalPath := "/root/restricted/"
-
-	// create test file
-	createTestFile(t, filepath.Join(srcDir, "file.txt"), []byte("content"))
-
-	opts := cli.Opts{
-		SourcePath:       srcDir,
-		DestPath:         destDir,
-		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
-		FileAction:       "copy",
-		Force:            "yes",
-		DryRun:           false,
-		ConflictStrategy: cli.ConflictSkip,
-		Workers:          1,
-		LogPath:          journalPath,
-	}
-
-	rls, _ := opts.ParseSortFlagsToRules()
-	sc := scanner.NewScanner()
-	files, _ := sc.Scan(opts.SourcePath)
-
-	plan := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		plan.AddAction(action)
-	}
-
-	executor := sorter.NewExecutor(&plan, &opts)
-
-	// this should not panic, just print error
-	// execution should complete even if journal save fails
-	executor.Execute()
-
-	// verify files were still processed despite journal save failure
-	// walk destination to find the file
-	fileFound := false
-	filepath.Walk(destDir, func(path string, info os.FileInfo, err error) error {
-		if err == nil && !info.IsDir() && info.Name() == "file.txt" {
-			fileFound = true
+			rel, _ := filepath.Rel(root, path)
+			files[filepath.ToSlash(rel)] = string(content)
 		}
 		return nil
 	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return files
+}
 
-	if !fileFound {
-		t.Fatal("Expected file.txt to be processed and copied, but it was not found in destination")
+func assertSnapshot(t *testing.T, root string, want map[string]string) {
+	t.Helper()
+
+	got := snapshot(t, root)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("%s:\n got %v\nwant %v", root, got, want)
 	}
 }
+
+// contents returns the set of file contents under root, whatever the names are.
+func contents(t *testing.T, root string) map[string]int {
+	t.Helper()
+
+	set := make(map[string]int)
+	for _, content := range snapshot(t, root) {
+		set[content]++
+	}
+	return set
+}
+
+func journals(t *testing.T, dir string) []string {
+	t.Helper()
+
+	paths, err := filepath.Glob(filepath.Join(dir, "*.jsonl"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return paths
+}
+
+// lastRun reads the only journal of dest.
+func lastRun(t *testing.T, dest string) *journal.Run {
+	t.Helper()
+
+	paths := journals(t, filepath.Join(dest, journal.StateDir, journal.RunsDir))
+	if len(paths) != 1 {
+		t.Fatalf("expected 1 journal in %s, got %d", dest, len(paths))
+	}
+	run, err := journal.Read(paths[0])
+	if err != nil {
+		t.Fatalf("cannot read journal: %v", err)
+	}
+	return run
+}
+
+// sameNamed creates count files with the same name in different subdirectories.
+func sameNamed(t *testing.T, root string, count int) {
+	t.Helper()
+	for i := 0; i < count; i++ {
+		createTestFile(t, filepath.Join(root, fmt.Sprintf("dir%03d", i), "same.txt"), []byte(fmt.Sprintf("content %d", i)))
+	}
+}
+
+// ── SORT ───────────────────────────────────────────────────────────────
+
+// S1: repeated move with dest inside source plans nothing and loses nothing.
+func TestS1_MoveTwice_DestInsideSource(t *testing.T) {
+	t.Parallel()
+
+	for _, flags := range [][]string{{"-r"}, {}} {
+		t.Run(strings.Join(flags, " "), func(t *testing.T) {
+			src := t.TempDir()
+			dest := filepath.Join(src, "sorted")
+			createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+			createTestFile(t, filepath.Join(src, "report.pdf"), []byte("report"))
+
+			args := append([]string{"sort", "-s", src, "-d", dest, "-a", "move", "-y"}, flags...)
+			mustFiona(t, 0, "", args...)
+
+			want := map[string]string{
+				"sorted/images/photo.jpg":     "photo",
+				"sorted/documents/report.pdf": "report",
+			}
+			assertSnapshot(t, src, want)
+
+			second := mustFiona(t, 0, "", args...)
+
+			assertOutput(t, second.stdout, "No files to process.", "Nothing to do.")
+			assertSnapshot(t, src, want)
+			if n := len(journals(t, filepath.Join(dest, journal.StateDir, journal.RunsDir))); n != 1 {
+				t.Errorf("a run that did nothing left a journal: %d journals", n)
+			}
+		})
+	}
+}
+
+// S2: repeated recursive move with source == dest finds every file in place.
+func TestS2_MoveTwice_SourceEqualsDest(t *testing.T) {
+	t.Parallel()
+
+	dir := t.TempDir()
+	createTestFile(t, filepath.Join(dir, "photo.jpg"), []byte("photo"))
+	createTestFile(t, filepath.Join(dir, "inbox", "photo.jpg"), []byte("another photo"))
+	createTestFile(t, filepath.Join(dir, "inbox", "report.pdf"), []byte("report"))
+
+	args := []string{"sort", "-s", dir, "-d", dir, "-a", "move", "-r", "-y"}
+	mustFiona(t, 0, "", args...)
+
+	want := map[string]string{
+		"images/photo.jpg":     "another photo",
+		"images/photo_1.jpg":   "photo",
+		"documents/report.pdf": "report",
+	}
+	assertSnapshot(t, dir, want)
+
+	second := mustFiona(t, 0, "", args...)
+
+	assertOutput(t, second.stdout, "Already in place: 3", "No files to process.", "Nothing to do.")
+	assertSnapshot(t, dir, want)
+}
+
+// S3: files with the same name from different subdirectories do not overwrite each other.
+func TestS3_SameNameFromDifferentSubdirectories(t *testing.T) {
+	t.Parallel()
+
+	src, dest := t.TempDir(), t.TempDir()
+	createTestFile(t, filepath.Join(src, "trip", "IMG_0001.jpg"), []byte("trip"))
+	createTestFile(t, filepath.Join(src, "wedding", "IMG_0001.jpg"), []byte("wedding"))
+
+	res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-r", "-y")
+
+	assertSnapshot(t, dest, map[string]string{
+		"images/IMG_0001.jpg":   "trip",
+		"images/IMG_0001_1.jpg": "wedding",
+	})
+	assertOutput(t, res.stdout, "copied: 2", "renamed: 1", "errors: 0")
+}
+
+// S4: 200 files with the same name survive a parallel move with rename.
+func TestS4_ManySameNamedFiles_Rename(t *testing.T) {
+	t.Parallel()
+
+	const numFiles, repeats = 200, 20
+
+	for i := 0; i < repeats; i++ {
+		src, dest := t.TempDir(), t.TempDir()
+		sameNamed(t, src, numFiles)
+		want := contents(t, src)
+
+		res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-r", "--on-conflict", "rename", "-w", "16", "-y")
+
+		if left := snapshot(t, src); len(left) != 0 {
+			t.Fatalf("repeat %d: %d files are left in source", i, len(left))
+		}
+		if got := snapshot(t, dest); len(got) != numFiles {
+			t.Fatalf("repeat %d: %d files in dest, want %d", i, len(got), numFiles)
+		}
+		if got := contents(t, dest); !reflect.DeepEqual(got, want) {
+			t.Fatalf("repeat %d: contents of the files are not preserved", i)
+		}
+		assertOutput(t, res.stdout, fmt.Sprintf("moved: %d", numFiles), "errors: 0")
+	}
+}
+
+// S5: with skip exactly one of 200 same-named files is moved, the rest stay.
+func TestS5_ManySameNamedFiles_Skip(t *testing.T) {
+	t.Parallel()
+
+	const numFiles, repeats = 200, 20
+
+	for i := 0; i < repeats; i++ {
+		src, dest := t.TempDir(), t.TempDir()
+		sameNamed(t, src, numFiles)
+		before := snapshot(t, src)
+
+		res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-r", "--on-conflict", "skip", "-w", "16", "-y")
+
+		assertOutput(t, res.stdout, "moved: 1", fmt.Sprintf("skipped: %d", numFiles-1), "errors: 0")
+
+		left, moved := snapshot(t, src), snapshot(t, dest)
+		if len(left) != numFiles-1 || len(moved) != 1 {
+			t.Fatalf("repeat %d: %d files in source and %d in dest, want %d and 1", i, len(left), len(moved), numFiles-1)
+		}
+		for name, content := range left {
+			if before[name] != content {
+				t.Fatalf("repeat %d: %s changed", i, name)
+			}
+		}
+		if moved["documents/same.txt"] != before["dir000/same.txt"] {
+			t.Fatalf("repeat %d: moved file has content %q", i, moved["documents/same.txt"])
+		}
+	}
+}
+
+// S6: replace sends the old file to trash and undo brings it back.
+func TestS6_ReplaceUsesTrashAndUndoRestores(t *testing.T) {
+	t.Parallel()
+
+	for _, action := range []string{"move", "copy"} {
+		t.Run(action, func(t *testing.T) {
+			src, dest := t.TempDir(), t.TempDir()
+			createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("new photo"))
+			createTestFile(t, filepath.Join(dest, "images", "photo.jpg"), []byte("old photo"))
+			srcBefore, destBefore := snapshot(t, src), snapshot(t, dest)
+
+			res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", action, "--on-conflict", "replace", "-y")
+
+			assertOutput(t, res.stdout, "replaced: 1", "errors: 0")
+			run := lastRun(t, dest)
+			assertFileContent(t, filepath.Join(dest, "images", "photo.jpg"), "new photo")
+			assertFileContent(t, filepath.Join(dest, ".fiona", "trash", run.Header.RunID, "images", "photo.jpg"), "old photo")
+
+			undo := mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
+
+			assertOutput(t, undo.stdout, "restored from trash: 1", "errors: 0")
+			assertSnapshot(t, src, srcBefore)
+			assertSnapshot(t, dest, destBefore)
+			assertNotExists(t, filepath.Join(dest, ".fiona", "trash"))
+		})
+	}
+}
+
+// S7: undo after skip and rename never touches files that existed before the run.
+func TestS7_UndoKeepsPreexistingFiles(t *testing.T) {
+	t.Parallel()
+
+	for _, action := range []string{"copy", "move"} {
+		for _, strategy := range []string{"skip", "rename"} {
+			t.Run(action+"/"+strategy, func(t *testing.T) {
+				src, dest := t.TempDir(), t.TempDir()
+				createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("new photo"))
+				createTestFile(t, filepath.Join(src, "report.pdf"), []byte("new report"))
+				createTestFile(t, filepath.Join(dest, "images", "photo.jpg"), []byte("old photo"))
+				createTestFile(t, filepath.Join(dest, "images", "photo_1.jpg"), []byte("old photo 1"))
+				srcBefore, destBefore := snapshot(t, src), snapshot(t, dest)
+
+				mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", action, "--on-conflict", strategy, "-y")
+				assertFileContent(t, filepath.Join(dest, "documents", "report.pdf"), "new report")
+
+				undo := mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
+
+				assertOutput(t, undo.stdout, "errors: 0")
+				assertSnapshot(t, src, srcBefore)
+				assertSnapshot(t, dest, destBefore)
+			})
+		}
+	}
+}
+
+// S8: dry-run changes nothing, whatever other flags say.
+func TestS8_DryRunChangesNothing(t *testing.T) {
+	t.Parallel()
+
+	for _, flags := range [][]string{{"--dry-run", "--yes"}, {"-n", "-y"}, {"--dry-run=true", "--yes"}} {
+		t.Run(strings.Join(flags, " "), func(t *testing.T) {
+			src := t.TempDir()
+			dest := filepath.Join(t.TempDir(), "not", "created")
+			createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+			before := snapshot(t, src)
+
+			args := append([]string{"sort", "-s", src, "-d", dest, "-a", "move"}, flags...)
+			res := mustFiona(t, 0, "", args...)
+
+			assertOutput(t, res.stdout, "Total: 1 file", "photo.jpg", "Dry run: nothing is changed.")
+			assertSnapshot(t, src, before)
+			assertNotExists(t, filepath.Dir(dest))
+			assertNotExists(t, filepath.Join(src, ".fiona"))
+		})
+	}
+
+	t.Run("existing dest", func(t *testing.T) {
+		dir := t.TempDir()
+		createTestFile(t, filepath.Join(dir, "photo.jpg"), []byte("photo"))
+
+		mustFiona(t, 0, "", "sort", "-s", dir, "-d", dir, "-a", "move", "--dry-run", "--yes")
+
+		assertSnapshot(t, dir, map[string]string{"photo.jpg": "photo"})
+		assertNotExists(t, filepath.Join(dir, ".fiona"))
+		assertNotExists(t, filepath.Join(dir, "images"))
+	})
+}
+
+// S9: all invalid flags are reported together and nothing is created.
+func TestS9_InvalidFlags(t *testing.T) {
+	t.Parallel()
+
+	src := t.TempDir()
+	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+	missingLog := filepath.Join(t.TempDir(), "no", "such", "log")
+
+	tests := []struct {
+		name string
+		args []string
+		want []string
+	}{
+		{
+			name: "everything at once",
+			args: []string{"-w", "0", "--on-conflict", "bogus", "--log", missingLog},
+			want: []string{"invalid number of workers", "invalid on-conflict", "log path doesn't exists"},
+		},
+		{
+			name: "negative workers",
+			args: []string{"-w", "-3", "--on-conflict", "bogus", "--log", missingLog},
+			want: []string{"invalid number of workers", "invalid on-conflict", "log path doesn't exists"},
+		},
+		{
+			name: "zero workers only",
+			args: []string{"-w", "0"},
+			want: []string{"invalid number of workers"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dest := filepath.Join(t.TempDir(), "not", "created")
+
+			args := append([]string{"sort", "-s", src, "-d", dest, "-y"}, tt.args...)
+			res := mustFiona(t, 1, "", args...)
+
+			assertOutput(t, res.stderr, tt.want...)
+			assertNotExists(t, filepath.Dir(dest))
+			assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
+		})
+	}
+}
+
+// S10: symlinks are skipped, not followed, and do not break the run.
+func TestS10_Symlinks(t *testing.T) {
+	t.Parallel()
+
+	outside := t.TempDir()
+	createTestFile(t, filepath.Join(outside, "secret.txt"), []byte("secret"))
+	createTestFile(t, filepath.Join(outside, "dir", "inside.txt"), []byte("inside"))
+
+	src, dest := t.TempDir(), t.TempDir()
+	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+	links := map[string]string{
+		"broken.txt":  filepath.Join(outside, "missing.txt"),
+		"to_dir":      filepath.Join(outside, "dir"),
+		"to_file.txt": filepath.Join(outside, "secret.txt"),
+	}
+	for name, target := range links {
+		if err := os.Symlink(target, filepath.Join(src, name)); err != nil {
+			t.Skipf("cannot create symlink: %v", err)
+		}
+	}
+
+	res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-r", "-y")
+
+	assertOutput(t, res.stdout, "Skipped by scanner: 3 (3 symlinks)", "moved: 1", "errors: 0")
+	assertSnapshot(t, dest, map[string]string{"images/photo.jpg": "photo"})
+	for name := range links {
+		if info, err := os.Lstat(filepath.Join(src, name)); err != nil || info.Mode()&os.ModeSymlink == 0 {
+			t.Errorf("symlink %s is not left in place", name)
+		}
+	}
+	assertSnapshot(t, outside, map[string]string{"secret.txt": "secret", "dir/inside.txt": "inside"})
+}
+
+// S11: bundles and projects are never taken apart.
+func TestS11_OpaqueDirectories(t *testing.T) {
+	t.Parallel()
+
+	for _, flags := range [][]string{{}, {"-r"}, {"-r", "--hidden"}} {
+		t.Run(strings.Join(flags, " "), func(t *testing.T) {
+			src, dest := t.TempDir(), t.TempDir()
+			createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+			createTestFile(t, filepath.Join(src, "myproject", ".git", "HEAD"), []byte("ref: refs/heads/main"))
+			createTestFile(t, filepath.Join(src, "myproject", "main.c"), []byte("int main() {}"))
+			createTestFile(t, filepath.Join(src, "myproject", "docs", "readme.txt"), []byte("readme"))
+			createTestFile(t, filepath.Join(src, "Foo.app", "Contents", "Info.plist"), []byte("plist"))
+			createTestFile(t, filepath.Join(src, "Foo.app", "Contents", "icon.png"), []byte("icon"))
+			createTestFile(t, filepath.Join(src, "unzipped", "go.mod"), []byte("module unzipped"))
+			createTestFile(t, filepath.Join(src, "unzipped", "logo.png"), []byte("logo"))
+
+			args := append([]string{"sort", "-s", src, "-d", dest, "-a", "move", "-y"}, flags...)
+			mustFiona(t, 0, "", args...)
+
+			assertSnapshot(t, dest, map[string]string{"images/photo.jpg": "photo"})
+			assertSnapshot(t, src, map[string]string{
+				"myproject/.git/HEAD":         "ref: refs/heads/main",
+				"myproject/main.c":            "int main() {}",
+				"myproject/docs/readme.txt":   "readme",
+				"Foo.app/Contents/Info.plist": "plist",
+				"Foo.app/Contents/icon.png":   "icon",
+				"unzipped/go.mod":             "module unzipped",
+				"unzipped/logo.png":           "logo",
+			})
+		})
+	}
+}
+
+// S16: a failed operation is reported and makes the exit code 1.
+func TestS16_FailedOperation(t *testing.T) {
+	t.Parallel()
+
+	if os.Getuid() == 0 {
+		t.Skip("root can write to any directory")
+	}
+
+	src, dest := t.TempDir(), t.TempDir()
+	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+	createTestFile(t, filepath.Join(src, "report.pdf"), []byte("report"))
+
+	locked := filepath.Join(dest, "images")
+	if err := os.MkdirAll(locked, 0555); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Chmod(locked, 0755)
+
+	res := mustFiona(t, 1, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
+
+	assertOutput(t, res.stdout, "moved: 1", "errors: 1", "photo.jpg")
+	assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
+	assertSnapshot(t, dest, map[string]string{"documents/report.pdf": "report"})
+
+	run := lastRun(t, dest)
+	if run.Footer == nil || run.Footer.OK != 1 || run.Footer.Failed != 1 {
+		t.Errorf("footer = %+v", run.Footer)
+	}
+}
+
+func TestSort_DefaultsAreSafe(t *testing.T) {
+	t.Parallel()
+
+	src, dest := t.TempDir(), t.TempDir()
+	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+	createTestFile(t, filepath.Join(src, ".hidden.jpg"), []byte("hidden"))
+	createTestFile(t, filepath.Join(src, "sub", "nested.jpg"), []byte("nested"))
+	createTestFile(t, filepath.Join(dest, "images", "photo.jpg"), []byte("old photo"))
+
+	// no flags: copy, top level only, no hidden files, rename on conflict
+	mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-y")
+
+	assertSnapshot(t, dest, map[string]string{
+		"images/photo.jpg":   "old photo",
+		"images/photo_1.jpg": "photo",
+	})
+	assertSnapshot(t, src, map[string]string{
+		"photo.jpg":      "photo",
+		".hidden.jpg":    "hidden",
+		"sub/nested.jpg": "nested",
+	})
+}
+
+func TestSort_RecursiveAndHiddenRestoreOldBehaviour(t *testing.T) {
+	t.Parallel()
+
+	src, dest := t.TempDir(), t.TempDir()
+	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+	createTestFile(t, filepath.Join(src, ".hidden.png"), []byte("hidden"))
+	createTestFile(t, filepath.Join(src, ".config", "nested.gif"), []byte("nested"))
+
+	mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-r", "--hidden", "-y")
+
+	assertSnapshot(t, dest, map[string]string{
+		"images/photo.jpg":   "photo",
+		"images/.hidden.png": "hidden",
+		"images/nested.gif":  "nested",
+	})
+}
+
+func TestSort_Confirmation(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		stdin    string
+		executed bool
+	}{
+		{"y", "y\n", true},
+		{"yes with windows line ending", "YES\r\n", true},
+		{"n", "n\n", false},
+		{"empty line", "\n", false},
+		{"end of input", "", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			src := t.TempDir()
+			dest := filepath.Join(t.TempDir(), "sorted")
+			createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+
+			res := mustFiona(t, 0, tt.stdin, "sort", "-s", src, "-d", dest, "-a", "move")
+
+			assertOutput(t, res.stdout, "Total: 1 file", "Would you like to continue? [y/N]")
+			if tt.executed {
+				assertSnapshot(t, dest, map[string]string{"images/photo.jpg": "photo"})
+				assertSnapshot(t, src, map[string]string{})
+			} else {
+				assertOutput(t, res.stdout, "Cancelled: nothing is changed.")
+				assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
+				assertNotExists(t, dest)
+			}
+		})
+	}
+}
+
+func TestSort_RemovedForceFlag(t *testing.T) {
+	t.Parallel()
+
+	src, dest := t.TempDir(), t.TempDir()
+	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+
+	res := mustFiona(t, 1, "", "sort", "-s", src, "-d", dest, "-a", "move", "--force", "yes")
+
+	assertOutput(t, res.stderr, "flag provided but not defined")
+	assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
+	assertSnapshot(t, dest, map[string]string{})
+}
+
+func TestSort_JournalLocation(t *testing.T) {
+	t.Parallel()
+
+	t.Run("default", func(t *testing.T) {
+		src, dest := t.TempDir(), t.TempDir()
+		createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+
+		res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-y")
+
+		run := lastRun(t, dest)
+		resolvedDest, err := cli.ResolvePath(dest)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if run.Header.Dest != resolvedDest || run.Header.FileAction != "copy" || run.Header.OnConflict != "rename" || run.Header.FionaVersion != "0.4.0" {
+			t.Errorf("header = %+v", run.Header)
+		}
+		if _, ok := journal.RunTime(run.Header.RunID); !ok || filepath.Base(run.Path) != run.Header.RunID+".jsonl" {
+			t.Errorf("run id = %q, journal = %q", run.Header.RunID, run.Path)
+		}
+		if run.Footer == nil || run.Footer.OK != 1 {
+			t.Errorf("footer = %+v", run.Footer)
+		}
+		assertOutput(t, res.stdout, "Journal: ", "To undo: fiona undo --dest ")
+	})
+
+	t.Run("custom directory", func(t *testing.T) {
+		src, dest, logDir := t.TempDir(), t.TempDir(), t.TempDir()
+		createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+
+		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "--log", logDir, "-y")
+
+		paths := journals(t, logDir)
+		if len(paths) != 1 {
+			t.Fatalf("expected 1 journal in the custom directory, got %d", len(paths))
+		}
+		assertNotExists(t, filepath.Join(dest, ".fiona"))
+
+		mustFiona(t, 0, "", "undo", "--log", paths[0], "-y")
+		assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
+	})
+
+	t.Run("every run has its own journal", func(t *testing.T) {
+		src, dest := t.TempDir(), t.TempDir()
+		createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+
+		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-y")
+		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-y")
+
+		if n := len(journals(t, filepath.Join(dest, journal.StateDir, journal.RunsDir))); n != 2 {
+			t.Errorf("expected 2 journals, got %d", n)
+		}
+	})
+}
+
+func TestSort_CleansTrashOlderThanFiveDays(t *testing.T) {
+	t.Parallel()
+
+	src, dest := t.TempDir(), t.TempDir()
+	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+
+	trash := filepath.Join(dest, ".fiona", "trash")
+	expired := journal.NewRunID(time.Now().Add(-6 * 24 * time.Hour))
+	recent := journal.NewRunID(time.Now().Add(-4 * 24 * time.Hour))
+	createTestFile(t, filepath.Join(trash, expired, "images", "old.jpg"), []byte("expired"))
+	createTestFile(t, filepath.Join(trash, recent, "images", "old.jpg"), []byte("recent"))
+
+	// a dry run cleans nothing
+	mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "--dry-run")
+	assertFileExists(t, filepath.Join(trash, expired, "images", "old.jpg"))
+
+	res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-y")
+
+	assertOutput(t, res.stdout, "Removed trash of 1 runs older than 5 days.")
+	assertNotExists(t, filepath.Join(trash, expired))
+	assertFileContent(t, filepath.Join(trash, recent, "images", "old.jpg"), "recent")
+}
+
+func TestVersion(t *testing.T) {
+	t.Parallel()
+
+	res := mustFiona(t, 0, "", "--version")
+	assertOutput(t, res.stdout, "FIONA 0.4.0")
+}
+
+// ── UNDO ───────────────────────────────────────────────────────────────
+
+// forgeJournal writes a journal by hand, as an attacker or a bug would.
+func forgeJournal(t *testing.T, source, dest, fileAction string, records ...string) string {
+	t.Helper()
+
+	header := fmt.Sprintf(`{"type":"header","version":2,"run_id":"20261010-153012-a1b2","started_at":"2026-10-10T15:30:12Z","source":%q,"dest":%q,"file_action":%q,"on_conflict":"rename","fiona_version":"0.4.0"}`,
+		source, dest, fileAction)
+
+	path := filepath.Join(t.TempDir(), "20261010-153012-a1b2.jsonl")
+	lines := append([]string{header}, records...)
+	if err := os.WriteFile(path, []byte(strings.Join(lines, "\n")+"\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	return path
+}
+
+// S12: a forged journal cannot make undo touch foreign files.
+func TestS12_ForgedJournal(t *testing.T) {
+	t.Parallel()
+
+	t.Run("dst outside dest rejects the whole journal", func(t *testing.T) {
+		source, dest, elsewhere := t.TempDir(), t.TempDir(), t.TempDir()
+		victim := filepath.Join(elsewhere, "victim.txt")
+		createTestFile(t, victim, []byte("victim"))
+		honest := filepath.Join(dest, "documents", "honest.txt")
+		createTestFile(t, honest, []byte("honest"))
+
+		path := forgeJournal(t, source, dest, "copy",
+			fmt.Sprintf(`{"type":"op","seq":0,"kind":"copy","src":%q,"dst":%q,"size":6}`, filepath.Join(source, "honest.txt"), honest),
+			fmt.Sprintf(`{"type":"op","seq":1,"kind":"copy","src":%q,"dst":%q,"size":6}`, filepath.Join(source, "victim.txt"), victim),
+			`{"type":"done","seq":0,"status":"ok","size":6}`,
+			`{"type":"done","seq":1,"status":"ok","size":6}`,
+		)
+
+		res := mustFiona(t, 1, "", "undo", "--log", path, "-y")
+
+		assertOutput(t, res.stderr, "journal rejected", "outside of dest")
+		assertFileContent(t, victim, "victim")
+		assertFileContent(t, honest, "honest")
+	})
+
+	t.Run("size mismatch skips the file", func(t *testing.T) {
+		source, dest := t.TempDir(), t.TempDir()
+		mine := filepath.Join(dest, "documents", "mine.txt")
+		createTestFile(t, mine, []byte("my own file, not a copy made by fiona"))
+
+		path := forgeJournal(t, source, dest, "copy",
+			fmt.Sprintf(`{"type":"op","seq":0,"kind":"copy","src":%q,"dst":%q,"size":6}`, filepath.Join(source, "mine.txt"), mine),
+			`{"type":"done","seq":0,"status":"ok","size":6,"mtime":"2026-10-10T15:30:12Z"}`,
+		)
+
+		res := mustFiona(t, 0, "", "undo", "--log", path, "-y")
+
+		assertOutput(t, res.stdout, "skip (changed after the run): 1", "copies removed: 0", "skipped: 1")
+		assertFileContent(t, mine, "my own file, not a copy made by fiona")
+	})
+
+	t.Run("the question is always asked", func(t *testing.T) {
+		src, dest := t.TempDir(), t.TempDir()
+		createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
+		sorted := snapshot(t, dest)
+
+		for _, stdin := range []string{"", "n\n"} {
+			res := mustFiona(t, 0, stdin, "undo", "--dest", dest)
+
+			assertOutput(t, res.stdout, "Undo of run ", "move back to ", "Would you like to continue? [y/N]", "Cancelled: nothing is changed.")
+			assertSnapshot(t, dest, sorted)
+		}
+
+		res := mustFiona(t, 0, "y\n", "undo", "--dest", dest)
+
+		assertOutput(t, res.stdout, "Would you like to continue? [y/N]", "moved back: 1")
+		assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
+	})
+
+	t.Run("journal of another dest is rejected", func(t *testing.T) {
+		src, dest, other := t.TempDir(), t.TempDir(), t.TempDir()
+		createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
+
+		run := lastRun(t, dest)
+		data, err := os.ReadFile(run.Path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		createTestFile(t, filepath.Join(other, ".fiona", "runs", filepath.Base(run.Path)), data)
+
+		res := mustFiona(t, 1, "", "undo", "--dest", other, "-y")
+
+		assertOutput(t, res.stderr, "journal rejected")
+		assertSnapshot(t, dest, map[string]string{"images/photo.jpg": "photo"})
+	})
+
+	t.Run("old journal format is rejected", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "fiona_logs.json")
+		createTestFile(t, path, []byte(`{"file_action":"move","logs":{"0":{"SourcePath":"/a/b.txt","DestPath":"/c","Status":"succeeded"}}}`))
+
+		res := mustFiona(t, 1, "", "undo", "--log", path, "-y")
+
+		assertOutput(t, res.stderr, "old format", "safe undo is impossible")
+	})
+}
+
+// S13: after kill -9 undo returns every file that was really moved.
+func TestS13_UndoOfKilledRun(t *testing.T) {
+	t.Parallel()
+
+	src, dest := t.TempDir(), t.TempDir()
+	for i := 0; i < 30; i++ {
+		createTestFile(t, filepath.Join(src, fmt.Sprintf("file%02d.txt", i)), []byte(fmt.Sprintf("content %d", i)))
+	}
+	before := snapshot(t, src)
+
+	mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
+
+	// as after kill -9: half of the results and the footer never reached the disk
+	run := lastRun(t, dest)
+	data, err := os.ReadFile(run.Path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var kept []string
+	done := 0
+	for _, line := range strings.SplitAfter(string(data), "\n") {
+		switch {
+		case strings.Contains(line, `"type":"footer"`):
+			continue
+		case strings.Contains(line, `"type":"done"`):
+			done++
+			if done%2 == 0 {
+				continue
+			}
+		}
+		kept = append(kept, line)
+	}
+	if err := os.WriteFile(run.Path, []byte(strings.Join(kept, "")+`{"type":"done","seq":1,"stat`), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	res := mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
+
+	assertOutput(t, res.stdout, "The run was interrupted", "moved back: 30", "errors: 0")
+	assertSnapshot(t, src, before)
+	assertSnapshot(t, dest, map[string]string{})
+}
+
+// S17: a run is undone only once.
+func TestS17_UndoTwice(t *testing.T) {
+	t.Parallel()
+
+	src, dest := t.TempDir(), t.TempDir()
+	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+
+	mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
+	run := lastRun(t, dest)
+
+	mustFiona(t, 0, "", "undo", "--log", run.Path, "-y")
+	assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
+
+	// someone sorts the same file by hand in between
+	createTestFile(t, filepath.Join(dest, "images", "photo.jpg"), []byte("photo"))
+
+	byLog := mustFiona(t, 1, "", "undo", "--log", run.Path, "-y")
+	assertOutput(t, byLog.stderr, "already undone")
+
+	byDest := mustFiona(t, 1, "", "undo", "--dest", dest, "-y")
+	assertOutput(t, byDest.stderr, "already undone")
+
+	assertFileContent(t, filepath.Join(dest, "images", "photo.jpg"), "photo")
+	assertFileContent(t, filepath.Join(src, "photo.jpg"), "photo")
+}
+
+func TestUndo_DryRun(t *testing.T) {
+	t.Parallel()
+
+	src, dest := t.TempDir(), t.TempDir()
+	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
+	mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
+
+	res := mustFiona(t, 0, "", "undo", "--dest", dest, "-n", "-y")
+
+	assertOutput(t, res.stdout, "move back to ", ": 1 file", "remove empty directories: 1", "Dry run: nothing is changed.")
+	assertSnapshot(t, dest, map[string]string{"images/photo.jpg": "photo"})
+
+	// the run is still there to be undone
+	mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
+	assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
+}
+
+func TestUndo_LatestRunFirst(t *testing.T) {
+	t.Parallel()
+
+	src, dest := t.TempDir(), t.TempDir()
+
+	createTestFile(t, filepath.Join(src, "first.jpg"), []byte("first"))
+	mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
+
+	// run identifiers have a resolution of one second
+	time.Sleep(1100 * time.Millisecond)
+
+	createTestFile(t, filepath.Join(src, "second.jpg"), []byte("second"))
+	mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
+
+	mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
+	assertSnapshot(t, src, map[string]string{"second.jpg": "second"})
+	assertSnapshot(t, dest, map[string]string{"images/first.jpg": "first"})
+
+	mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
+	assertSnapshot(t, src, map[string]string{"first.jpg": "first", "second.jpg": "second"})
+	assertSnapshot(t, dest, map[string]string{})
+}
+
+func TestUndo_NothingToUndo(t *testing.T) {
+	t.Parallel()
+
+	res := mustFiona(t, 1, "", "undo", "--dest", t.TempDir(), "-y")
+	assertOutput(t, res.stderr, "no runs to undo")
+
+	// without flags the current directory is used
+	res = mustFiona(t, 1, "", "undo", "-y")
+	assertOutput(t, res.stderr, "no runs to undo")
+}
+
+// ── ML ─────────────────────────────────────────────────────────────────
 
 // mockMLServer starts a test HTTP server that mimics fiona-classifier.
 // tagMap maps filename → ML category returned by /classify.
@@ -492,7 +1028,7 @@ func mockMLServer(t *testing.T, tagMap map[string]string) *httptest.Server {
 }
 
 // runMLSort replicates the ML sort flow from main.go using a mock server URL.
-func runMLSort(t *testing.T, srcDir, destDir, logDir, serverURL string) {
+func runMLSort(t *testing.T, srcDir, destDir, serverURL string) sorter.Summary {
 	t.Helper()
 
 	opts := cli.Opts{
@@ -500,11 +1036,8 @@ func runMLSort(t *testing.T, srcDir, destDir, logDir, serverURL string) {
 		DestPath:         destDir,
 		Sort:             cli.SortOption{Primary: cli.CritML},
 		FileAction:       "copy",
-		Force:            "yes",
-		DryRun:           false,
 		ConflictStrategy: cli.ConflictSkip,
 		Workers:          runtime.NumCPU(),
-		LogPath:          logDir,
 	}
 
 	rls, err := opts.ParseSortFlagsToRules()
@@ -512,11 +1045,11 @@ func runMLSort(t *testing.T, srcDir, destDir, logDir, serverURL string) {
 		t.Fatalf("ParseSortFlagsToRules: %v", err)
 	}
 
-	sc := scanner.NewScanner()
-	files, err := sc.Scan(opts.SourcePath)
+	scanned, err := scanner.Scan(opts.SourcePath, scanner.Options{})
 	if err != nil {
 		t.Fatalf("Scan: %v", err)
 	}
+	files := scanned.Files
 
 	// ML tagging via mock server
 	client := ml.NewClient(serverURL)
@@ -539,14 +1072,60 @@ func runMLSort(t *testing.T, srcDir, destDir, logDir, serverURL string) {
 		}
 	}
 
-	plan := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		plan.AddAction(action)
+	plan := sorter.NewPlan(files, rls, scanned.Skipped, sorter.PlanParams{
+		Source:     opts.SourcePath,
+		Dest:       opts.DestPath,
+		FileAction: opts.FileAction,
+		OnConflict: opts.ConflictStrategy,
+		RunID:      journal.NewRunID(time.Now()),
+	})
+
+	jrn, err := journal.Create(t.TempDir(), plan.RunID)
+	if err != nil {
+		t.Fatalf("journal.Create: %v", err)
 	}
 
-	executor := sorter.NewExecutor(&plan, &opts)
-	executor.Execute()
+	summary, err := sorter.NewExecutor(plan, jrn, opts.Workers, "test").Run(context.Background(), silentReporter{})
+	if err != nil {
+		t.Fatalf("Run: %v", err)
+	}
+	return summary
+}
+
+type silentReporter struct{}
+
+func (silentReporter) Start(int)                {}
+func (silentReporter) Done(types.Action, error) {}
+func (silentReporter) Finish(sorter.Summary)    {}
+
+// S15: a category name from the ML config cannot lead the write out of dest.
+func TestS15_MLCategoryCannotEscapeDest(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	srcDir := filepath.Join(root, "a", "b", "src")
+	destDir := filepath.Join(root, "a", "b", "dest")
+	createTestFile(t, filepath.Join(srcDir, "beach.jpg"), []byte("fake jpg"))
+	createTestFile(t, filepath.Join(srcDir, "cat.jpg"), []byte("fake jpg"))
+
+	srv := mockMLServer(t, map[string]string{
+		"beach.jpg": "../../x",
+		"cat.jpg":   "..",
+	})
+	defer srv.Close()
+
+	summary := runMLSort(t, srcDir, destDir, srv.URL)
+
+	if summary.Copied != 2 || summary.Failed != 0 || summary.Rejected != 0 {
+		t.Errorf("summary = %+v", summary)
+	}
+	assertSnapshot(t, destDir, map[string]string{
+		".._.._x/beach.jpg": "fake jpg",
+		"_other/cat.jpg":    "fake jpg",
+	})
+	assertNotExists(t, filepath.Join(root, "a", "x"))
+	assertNotExists(t, filepath.Join(root, "x"))
+	assertNotExists(t, filepath.Join(root, "a", "b", "cat.jpg"))
 }
 
 // TestEndToEnd_MLSort_ImagesCategorisedByMLTag verifies that images are
@@ -554,7 +1133,6 @@ func runMLSort(t *testing.T, srcDir, destDir, logDir, serverURL string) {
 func TestEndToEnd_MLSort_ImagesCategorisedByMLTag(t *testing.T) {
 	srcDir := t.TempDir()
 	destDir := t.TempDir()
-	logDir := t.TempDir()
 
 	createTestFile(t, filepath.Join(srcDir, "dog.jpg"), []byte("fake jpg"))
 	createTestFile(t, filepath.Join(srcDir, "cat.jpg"), []byte("fake jpg"))
@@ -569,7 +1147,7 @@ func TestEndToEnd_MLSort_ImagesCategorisedByMLTag(t *testing.T) {
 	srv := mockMLServer(t, tagMap)
 	defer srv.Close()
 
-	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+	runMLSort(t, srcDir, destDir, srv.URL)
 
 	assertFileExists(t, filepath.Join(destDir, "animals", "dog.jpg"))
 	assertFileExists(t, filepath.Join(destDir, "pets", "cat.jpg"))
@@ -581,7 +1159,6 @@ func TestEndToEnd_MLSort_ImagesCategorisedByMLTag(t *testing.T) {
 func TestEndToEnd_MLSort_NonImageFallsBackToMimeType(t *testing.T) {
 	srcDir := t.TempDir()
 	destDir := t.TempDir()
-	logDir := t.TempDir()
 
 	createTestFile(t, filepath.Join(srcDir, "report.pdf"), []byte("fake pdf"))
 	createTestFile(t, filepath.Join(srcDir, "notes.txt"), []byte("fake txt"))
@@ -592,7 +1169,7 @@ func TestEndToEnd_MLSort_NonImageFallsBackToMimeType(t *testing.T) {
 	srv := mockMLServer(t, tagMap)
 	defer srv.Close()
 
-	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+	runMLSort(t, srcDir, destDir, srv.URL)
 
 	// non-images fall back to MIME type — both are documents
 	assertFileExists(t, filepath.Join(destDir, "documents", "report.pdf"))
@@ -604,7 +1181,6 @@ func TestEndToEnd_MLSort_NonImageFallsBackToMimeType(t *testing.T) {
 func TestEndToEnd_MLSort_MixedFiles(t *testing.T) {
 	srcDir := t.TempDir()
 	destDir := t.TempDir()
-	logDir := t.TempDir()
 
 	createTestFile(t, filepath.Join(srcDir, "vacation.jpg"), []byte("fake jpg"))
 	createTestFile(t, filepath.Join(srcDir, "contract.pdf"), []byte("fake pdf"))
@@ -619,7 +1195,7 @@ func TestEndToEnd_MLSort_MixedFiles(t *testing.T) {
 	srv := mockMLServer(t, tagMap)
 	defer srv.Close()
 
-	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+	runMLSort(t, srcDir, destDir, srv.URL)
 
 	assertFileExists(t, filepath.Join(destDir, "travel", "vacation.jpg"))
 	assertFileExists(t, filepath.Join(destDir, "nature", "sunset.png"))
@@ -631,13 +1207,12 @@ func TestEndToEnd_MLSort_MixedFiles(t *testing.T) {
 func TestEndToEnd_MLSort_EmptyDirectory(t *testing.T) {
 	srcDir := t.TempDir()
 	destDir := t.TempDir()
-	logDir := t.TempDir()
 
 	srv := mockMLServer(t, map[string]string{})
 	defer srv.Close()
 
 	// should not panic or error
-	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+	runMLSort(t, srcDir, destDir, srv.URL)
 
 	entries, err := os.ReadDir(destDir)
 	if err != nil {
@@ -677,7 +1252,6 @@ func TestEndToEnd_MLSort_ServerReturnsError(t *testing.T) {
 func TestEndToEnd_MLSort_CustomConfig(t *testing.T) {
 	srcDir := t.TempDir()
 	destDir := t.TempDir()
-	logDir := t.TempDir()
 	configDir := t.TempDir()
 
 	createTestFile(t, filepath.Join(srcDir, "beach.jpg"), []byte("fake jpg"))
@@ -699,218 +1273,9 @@ func TestEndToEnd_MLSort_CustomConfig(t *testing.T) {
 	srv := mockMLServer(t, tagMap)
 	defer srv.Close()
 
-	runMLSort(t, srcDir, destDir, logDir, srv.URL)
+	runMLSort(t, srcDir, destDir, srv.URL)
 
 	assertFileExists(t, filepath.Join(destDir, "vacation_2024", "beach.jpg"))
 	assertFileExists(t, filepath.Join(destDir, "my_pets", "cat.jpg"))
 	assertFileExists(t, filepath.Join(destDir, "documents", "report.pdf"))
-}
-
-// ── UNDO ───────────────────────────────────────────────────────────────
-
-// runSort is a helper that runs a full sort operation and returns the saved journal path
-func runSort(t *testing.T, srcDir, destDir, logDir, fileAction string) string {
-	t.Helper()
-
-	opts := cli.Opts{
-		SourcePath:       srcDir,
-		DestPath:         destDir,
-		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
-		FileAction:       fileAction,
-		Force:            "yes",
-		DryRun:           false,
-		ConflictStrategy: cli.ConflictSkip,
-		Workers:          runtime.NumCPU(),
-		LogPath:          logDir,
-	}
-
-	rls, err := opts.ParseSortFlagsToRules()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	sc := scanner.NewScanner()
-	files, err := sc.Scan(opts.SourcePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	plan := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		plan.AddAction(action)
-	}
-
-	executor := sorter.NewExecutor(&plan, &opts)
-	executor.Execute()
-
-	return filepath.Join(logDir, "fiona_logs.json")
-}
-
-// runUndo is a helper that loads a journal and runs the undo operation
-func runUndo(t *testing.T, logPath string, workers int) {
-	t.Helper()
-
-	jrn := journal.NewJournal("", "")
-	if err := jrn.LoadFromJson(logPath); err != nil {
-		t.Fatalf("failed to load journal: %v", err)
-	}
-
-	rv := sorter.NewReverter(sorter.NewUndoPlan(&jrn), workers)
-	rv.RunUndo()
-}
-
-// TestEndToEnd_UndoCopy verifies that after sort+copy, undo removes the copied files
-// but leaves the originals in source untouched
-func TestEndToEnd_UndoCopy(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-	logDir := t.TempDir()
-
-	createTestFile(t, filepath.Join(srcDir, "photo.jpg"), []byte("jpg content"))
-	createTestFile(t, filepath.Join(srcDir, "doc.pdf"), []byte("pdf content"))
-	createTestFile(t, filepath.Join(srcDir, "note.txt"), []byte("txt content"))
-
-	logPath := runSort(t, srcDir, destDir, logDir, "copy")
-
-	// verify files were copied to dest
-	fileFound := false
-	filepath.Walk(destDir, func(path string, info os.FileInfo, err error) error {
-		if err == nil && !info.IsDir() && info.Name() == "photo.jpg" {
-			fileFound = true
-		}
-		return nil
-	})
-	if !fileFound {
-		t.Fatal("sort did not copy files, test precondition failed")
-	}
-
-	runUndo(t, logPath, runtime.NumCPU())
-
-	// after undo: originals must still exist in src
-	assertFileExists(t, filepath.Join(srcDir, "photo.jpg"))
-	assertFileExists(t, filepath.Join(srcDir, "doc.pdf"))
-	assertFileExists(t, filepath.Join(srcDir, "note.txt"))
-
-	// after undo: copied files must be removed from dest
-	assertFileNotExists(t, destDir, "photo.jpg")
-	assertFileNotExists(t, destDir, "doc.pdf")
-	assertFileNotExists(t, destDir, "note.txt")
-}
-
-// TestEndToEnd_UndoMove verifies that after sort+move, undo moves the files back to source
-func TestEndToEnd_UndoMove(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-	logDir := t.TempDir()
-
-	createTestFile(t, filepath.Join(srcDir, "photo.jpg"), []byte("jpg content"))
-	createTestFile(t, filepath.Join(srcDir, "doc.pdf"), []byte("pdf content"))
-
-	logPath := runSort(t, srcDir, destDir, logDir, "move")
-
-	// verify files were moved out of src
-	if _, err := os.Stat(filepath.Join(srcDir, "photo.jpg")); !os.IsNotExist(err) {
-		t.Fatal("sort did not move files, test precondition failed")
-	}
-
-	runUndo(t, logPath, runtime.NumCPU())
-
-	// after undo: files must be back in src
-	assertFileExists(t, filepath.Join(srcDir, "photo.jpg"))
-	assertFileExists(t, filepath.Join(srcDir, "doc.pdf"))
-
-	// after undo: files must be gone from dest
-	assertFileNotExists(t, destDir, "photo.jpg")
-	assertFileNotExists(t, destDir, "doc.pdf")
-}
-
-// TestEndToEnd_UndoSkipsFailedEntries verifies that failed log entries are not undone
-func TestEndToEnd_UndoSkipsFailedEntries(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-	logDir := t.TempDir()
-
-	createTestFile(t, filepath.Join(srcDir, "valid.txt"), []byte("content"))
-
-	opts := cli.Opts{
-		SourcePath:       srcDir,
-		DestPath:         destDir,
-		Sort:             cli.SortOption{Primary: cli.CritMIMEType},
-		FileAction:       "copy",
-		Force:            "yes",
-		DryRun:           false,
-		ConflictStrategy: cli.ConflictSkip,
-		Workers:          1,
-		LogPath:          logDir,
-	}
-
-	rls, _ := opts.ParseSortFlagsToRules()
-	sc := scanner.NewScanner()
-	files, _ := sc.Scan(opts.SourcePath)
-
-	plan := sorter.NewPlan(&opts)
-	for _, f := range files {
-		action := types.NewAction(f, rls, opts.DestPath)
-		plan.AddAction(action)
-	}
-	// inject a failing action
-	plan.AddAction(types.Action{
-		SourcePath: "/nonexistent/ghost.txt",
-		DestPath:   destDir,
-	})
-
-	executor := sorter.NewExecutor(&plan, &opts)
-	executor.Execute()
-
-	logPath := filepath.Join(logDir, "fiona_logs.json")
-
-	// undo should not panic and should complete normally
-	runUndo(t, logPath, 1)
-
-	// valid.txt was copied then undone — should be gone from dest
-	assertFileNotExists(t, destDir, "valid.txt")
-
-	// original in src must be untouched
-	assertFileExists(t, filepath.Join(srcDir, "valid.txt"))
-}
-
-// TestEndToEnd_UndoConcurrent verifies undo works correctly with multiple workers
-func TestEndToEnd_UndoConcurrent(t *testing.T) {
-	srcDir := t.TempDir()
-	destDir := t.TempDir()
-	logDir := t.TempDir()
-
-	const numFiles = 20
-	for i := 0; i < numFiles; i++ {
-		name := filepath.Join(srcDir, filepath.Join(srcDir, "file"+string(rune('0'+i))+".txt"))
-		createTestFile(t, name, []byte("content"))
-	}
-
-	logPath := runSort(t, srcDir, destDir, logDir, "copy")
-	runUndo(t, logPath, 8)
-
-	// all copied files must be removed from dest
-	count := 0
-	filepath.Walk(destDir, func(path string, info os.FileInfo, err error) error {
-		if err == nil && !info.IsDir() {
-			count++
-		}
-		return nil
-	})
-
-	if count != 0 {
-		t.Errorf("expected 0 files in dest after undo, got %d", count)
-	}
-}
-
-// assertFileNotExists walks the given root and fails if a file with the given name is found
-func assertFileNotExists(t *testing.T, root, name string) {
-	t.Helper()
-	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		if err == nil && !info.IsDir() && info.Name() == name {
-			t.Errorf("file should not exist after undo but was found: %s", path)
-		}
-		return nil
-	})
 }

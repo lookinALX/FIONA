@@ -31,12 +31,11 @@ func TestDefineType(t *testing.T) {
 }
 
 func TestNewFileInfo(t *testing.T) {
-	tmpFile := filepath.Join(os.TempDir(), "testfile.txt")
+	tmpFile := filepath.Join(t.TempDir(), "testfile.txt")
 	err := os.WriteFile(tmpFile, []byte("Hello"), 0644)
 	if err != nil {
 		t.Fatalf("failed to create temp file: %v", err)
 	}
-	defer os.Remove(tmpFile)
 
 	fi, err := NewFileInfo(tmpFile)
 	if err != nil {
@@ -58,18 +57,31 @@ func TestNewFileInfo(t *testing.T) {
 	if fi.Type != "documents" {
 		t.Errorf("Type = %q; want %q", fi.Type, "documents")
 	}
+
+	if fi.ModTime.IsZero() {
+		t.Errorf("ModTime is zero")
+	}
 }
 
 func TestNewFileInfoDirError(t *testing.T) {
-	tmpDir := filepath.Join(os.TempDir(), "testdir")
-	err := os.Mkdir(tmpDir, 0755)
-	if err != nil {
-		t.Fatalf("failed to create temp dir: %v", err)
-	}
-	defer os.Remove(tmpDir)
-
-	_, err = NewFileInfo(tmpDir)
+	_, err := NewFileInfo(t.TempDir())
 	if err == nil {
 		t.Errorf("expected error for directory, got nil")
+	}
+}
+
+func TestNewFileInfoSymlinkError(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "target.txt")
+	if err := os.WriteFile(target, []byte("Hello"), 0644); err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+	link := filepath.Join(dir, "link.txt")
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("cannot create symlink: %v", err)
+	}
+
+	if _, err := NewFileInfo(link); err == nil {
+		t.Errorf("expected error for symlink, got nil")
 	}
 }

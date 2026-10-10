@@ -26,6 +26,7 @@
 - [Installation](#-installation)
 - [Quick Start](#-quick-start)
 - [Commands](#-commands)
+- [Data Safety](#-data-safety)
 - [Sorting Criteria](#-sorting-criteria)
 - [ML Classification](#-ml-classification)
 - [Examples](#-examples)
@@ -43,12 +44,12 @@
 - **ML Image Classification** — sort photos into semantic categories using CLIP zero-shot classification
 - **Hierarchical Organization** — primary + secondary criteria (e.g., `images/jpg/`, `2025/01/`)
 - **Parallel Processing** — multi-worker execution for fast operation on large directories
-- **Conflict Resolution** — replace, skip, or auto-rename on filename collision
-- **Dry-Run Mode** — preview the full operation plan before executing
+- **Conflict Resolution** — auto-rename (default), skip, or replace on filename collision; a replaced file goes to trash, never deleted
+- **Dry-Run Mode** — `--dry-run` prints the full operation plan and changes nothing
 - **Copy or Move** — choose whether originals are preserved or relocated
 - **Metadata Preservation** — maintains file permissions and modification times
-- **Transaction Log** — every operation is logged to JSON for auditing and rollback
-- **Undo/Rollback** — reverse any sort operation using the transaction log
+- **Write-Ahead Journal** — the whole plan is written to disk before the first file is touched
+- **Undo/Rollback** — reverse any run, even an interrupted one, with a preview and confirmation
 - **Progress Bar** — real-time progress during execution
 - **TUI Interface** — interactive terminal UI for browsing, configuring, and monitoring sort operations
 - **Cross-Platform** — single binary for Windows, Linux, and macOS
@@ -113,17 +114,20 @@ Place `fiona-classifier` in the same directory as the `fiona` binary.
 ## 🎯 Quick Start
 
 ```bash
-# Preview sorting Downloads by MIME type (dry-run is on by default)
+# Sort the top-level files of Downloads by MIME type: shows the plan and asks before executing
 fiona sort -s ~/Downloads -d ~/Organized -c mimetype
 
-# Execute immediately
-fiona sort -s ~/Downloads -d ~/Organized -c mimetype -n=false --force yes
+# Only preview, change nothing
+fiona sort -s ~/Downloads -d ~/Organized -c mimetype --dry-run
+
+# Execute immediately, including subdirectories
+fiona sort -s ~/Downloads -d ~/Organized -c mimetype -r --yes
 
 # Sort photos using ML classification
 fiona sort -s ~/Photos -d ~/Photos/Sorted -c ml
 
-# Undo last operation
-fiona undo --log path/to/fiona_logs.json
+# Undo the last run of a destination directory
+fiona undo --dest ~/Organized
 ```
 
 ---
@@ -134,7 +138,7 @@ FIONA uses subcommands:
 
 ```
 fiona sort [OPTIONS]    — sort files
-fiona undo [OPTIONS]    — reverse a previous sort using a log file
+fiona undo [OPTIONS]    — reverse a previous sort using its journal
 fiona --version         — print version
 fiona --help            — print help
 ```
@@ -146,21 +150,59 @@ fiona --help            — print help
 | `--criteria` | `-c` | `mimetype` | Primary sorting criterion |
 | `--then` | `-t` | — | Secondary sorting criterion |
 | `--source` | `-s` | current dir | Source directory |
-| `--dest` | `-d` | current dir | Destination directory |
+| `--dest` | `-d` | current dir | Destination directory; created right before execution if missing |
 | `--action` | `-a` | `copy` | `copy` or `move` |
-| `--on-conflict` | — | `replace` | `replace`, `skip`, `rename` |
-| `--dry-run` | `-n` | `true` | Preview without executing |
-| `--force` | — | `N` | Skip confirmation (`yes`) |
-| `--workers` | `-w` | CPU count × 2 | Number of parallel workers |
-| `--log` | — | current dir | Directory to write `fiona_logs.json` |
+| `--on-conflict` | — | `rename` | `rename`, `skip`, `replace` (the old file goes to trash) |
+| `--recursive` | `-r` | off | Scan subdirectories too |
+| `--hidden` | — | off | Include files and directories starting with a dot |
+| `--dry-run` | `-n` | off | Print the plan and exit; stronger than `--yes` |
+| `--yes` | `-y` | off | Execute without confirmation |
+| `--workers` | `-w` | CPU count × 2 | Number of parallel workers, 1 or more |
+| `--log` | — | `<dest>/.fiona/runs` | Directory to write the run journal to |
 | `--ml-config` | — | — | Path to custom ML categories JSON (only with `-c ml`) |
+
+Without `--dry-run` and `--yes` FIONA prints the plan, asks `Would you like to continue? [y/N]` and executes only on `y` or `yes`.
+
+All flags are validated together before anything is touched: every error is printed, and the exit code is 1. The exit code is also 1 if any operation fails or the run is interrupted.
 
 ### undo flags
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--log` | `./fiona_logs.json` | Path to the log file to read |
-| `--workers` | `-w` | Number of parallel workers |
+| Flag | Short | Default | Description |
+|------|-------|---------|-------------|
+| `--log` | — | — | Journal file of the run to undo (`<run-id>.jsonl`) |
+| `--dest` | `-d` | current dir | Undo the last run of this destination that is not undone yet; cannot be combined with `--log` |
+| `--dry-run` | `-n` | off | Print the undo preview and exit |
+| `--yes` | `-y` | off | Execute without confirmation |
+| `--workers` | `-w` | CPU count × 2 | Number of parallel workers, 1 or more |
+
+---
+
+## 🛡️ Data Safety
+
+**What is scanned.** By default only regular files at the top level of the source. With `-r` FIONA goes into subdirectories, but never into bundles (`.app`, `.bundle`, `.framework`, `.photoslibrary`, `.xcodeproj`) or projects (directories containing `.git`, `.hg`, `.svn`, `node_modules`, `go.mod` or `package.json`). Hidden entries are skipped unless `--hidden` is given. Symlinks and special files are never followed or sorted; they are reported in the plan as `Skipped by scanner`. If the destination lies inside the source, it is not scanned.
+
+**Nothing is overwritten.** Every conflict is resolved in the plan, before execution:
+
+| `--on-conflict` | Behaviour |
+|-----------------|-----------|
+| `rename` (default) | the new file gets the first free name: `photo_1.jpg`, `photo_2.jpg`, … |
+| `skip` | the source file stays where it is |
+| `replace` | the existing file is moved to `<dest>/.fiona/trash/<run-id>/`, then the new one takes its place |
+
+Trash of runs older than 5 days is removed automatically the next time a sort is executed in the same destination.
+
+**Journal.** Each executed run writes `<dest>/.fiona/runs/<run-id>.jsonl` (JSON Lines): the whole plan first, then the result of every operation. If the journal cannot be created, no file is touched.
+
+**Undo.** `fiona undo` shows what it is going to do and asks for confirmation. It moves files back (or removes copies), returns replaced files from trash and removes the directories the run created if they are empty. A file that was changed after the run (different size or modification time) or whose original location is occupied is skipped, never overwritten. A run interrupted by Ctrl+C or a crash can be undone too. A journal that points outside of its own source and destination is rejected as a whole. Each run can be undone once.
+
+### Upgrading from 0.3.x
+
+- Scanning is not recursive and skips hidden files; the old behaviour is `-r --hidden`.
+- `--on-conflict` defaults to `rename` instead of `replace`.
+- `--dry-run` is off by default and never executes anything; `--force yes` is removed, use `--yes`.
+- The journal is `<dest>/.fiona/runs/<run-id>.jsonl` instead of `fiona_logs.json` in the current directory. Old journals cannot be used for undo.
+- `--workers 0` is an error.
+- The exit code is 1 if any operation fails.
 
 ---
 
@@ -253,7 +295,7 @@ fiona sort \
   -c mimetype \
   -a move \
   --on-conflict rename \
-  --force yes
+  --yes
 ```
 
 **Result:**
@@ -274,7 +316,7 @@ Organized/
 ### Sort photos using ML classification
 
 ```bash
-fiona sort -s ~/Photos -d ~/Photos/Sorted -c ml --force yes
+fiona sort -s ~/Photos -d ~/Photos/Sorted -c ml --yes
 ```
 
 **Result:**
@@ -315,13 +357,20 @@ Archive/
 fiona sort -s ~/Documents -d ~/Sorted -c mimetype
 # Shows plan, asks for confirmation
 
-Would you like to continue? (y/N)
+Would you like to continue? [y/N]
+
+fiona sort -s ~/Documents -d ~/Sorted -c mimetype --dry-run
+# Shows plan and exits
 ```
 
 ### Undo a previous sort
 
 ```bash
-fiona undo --log ~/Organized/fiona_logs.json
+# the last run of a destination directory
+fiona undo --dest ~/Organized
+
+# a specific run
+fiona undo --log ~/Organized/.fiona/runs/20261010-153012-a1b2.jsonl
 ```
 
 ---
@@ -339,7 +388,7 @@ FIONA/
 │   ├── scanner/         # directory traversal, file metadata
 │   ├── rules/           # sorting rule implementations
 │   ├── sorter/          # planner, executor, reverter
-│   ├── journal/         # transaction logging
+│   ├── journal/         # write-ahead run journal (JSON Lines)
 │   └── types/           # shared types (Action, LogEntry, etc.)
 ├── ml/
 │   ├── classifier.py    # FastAPI server with CLIP model

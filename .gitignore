@@ -1,5 +1,10 @@
 .idea
+.DS_Store
 /testdir
+
+# built binaries
+/fiona
+/cmd/fiona/fiona
 
 /.venv
 

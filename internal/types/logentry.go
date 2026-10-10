@@ -2,26 +2,20 @@ package types
 
 import "time"
 
+const (
+	StatusOK     = "ok"
+	StatusFailed = "failed"
+)
+
+// LogEntry is one operation of a run as read back from the journal.
 type LogEntry struct {
-	Timestamp          time.Time
-	SourcePath         string
-	DestPath           string
-	Status             string // "success" or "failed"
-	ConflictResolution string
-	Error              string
+	Action
+	Result *LogResult // nil if the run was interrupted before the operation finished
 }
 
-func NewLogEntry() LogEntry {
-	return LogEntry{}
-}
-
-func NewLogEntryFromAction(action Action) LogEntry {
-	return LogEntry{
-		Timestamp:          time.Now(),
-		SourcePath:         action.SourcePath,
-		DestPath:           action.DestPath,
-		Status:             "",
-		ConflictResolution: "",
-		Error:              "",
-	}
+type LogResult struct {
+	Status  string // "ok" or "failed"
+	Error   string
+	Size    int64     // actual size of the target file after the operation
+	ModTime time.Time // actual mtime of the target file after the operation
 }
