@@ -40,6 +40,7 @@ func interruptAndUndo(t *testing.T, numFiles int) bool {
 
 	cmd := exec.Command(fionaBin, "sort", "-s", src, "-d", dest, "-a", "move", "-w", "1", "-y")
 	cmd.Dir = t.TempDir()
+	cmd.Env = fionaEnv(t)
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout, cmd.Stderr = &stdout, &stderr
 	if err := cmd.Start(); err != nil {
@@ -80,7 +81,7 @@ func interruptAndUndo(t *testing.T, numFiles int) bool {
 	if !errors.As(waitErr, &exitErr) || exitErr.ExitCode() != 1 {
 		t.Errorf("exit = %v, want exit code 1\nstdout:\n%s", waitErr, stdout.String())
 	}
-	assertOutput(t, stdout.String(), "Execution is interrupted.")
+	assertOutput(t, stdout.String(), "Stopped after ", "Undo: fiona undo")
 
 	left, moved := snapshot(t, src), snapshot(t, dest)
 	if len(left) == 0 || len(moved) == 0 || len(left)+len(moved) != numFiles {
@@ -100,7 +101,7 @@ func interruptAndUndo(t *testing.T, numFiles int) bool {
 
 	res := mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
 
-	assertOutput(t, res.stdout, "The run was interrupted", fmt.Sprintf("moved back: %d", len(moved)), "errors: 0")
+	assertOutput(t, res.stdout, "The run was interrupted:", fmt.Sprintf("✓ Restored %d files", len(moved)))
 	assertSnapshot(t, src, before)
 	assertSnapshot(t, dest, map[string]string{})
 

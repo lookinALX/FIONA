@@ -3,239 +3,179 @@ package main
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
-	"time"
+
+	"github.com/charmbracelet/lipgloss"
+	"golang.org/x/term"
 
 	"github.com/lookinalx/fiona/internal/cli"
-	"github.com/lookinalx/fiona/internal/journal"
-	"github.com/lookinalx/fiona/internal/scanner"
-	"github.com/lookinalx/fiona/internal/sorter"
+	"github.com/lookinalx/fiona/internal/config"
+	"github.com/lookinalx/fiona/internal/report"
+	"github.com/lookinalx/fiona/internal/suggest"
 	"github.com/lookinalx/fiona/internal/tui"
-	"github.com/lookinalx/fiona/ml"
 )
 
 const (
 	ExitSuccess = 0
 	ExitFailure = 1
+	ExitUsage   = 2 // a mistake in the command line or the config, nothing is touched
 )
+
+var subcommands = []string{"sort", "undo", "history", "presets", "tui", "help"}
+
+// env is what the commands write to and read from.
+type env struct {
+	stdin         io.Reader
+	stdout        io.Writer
+	stderr        io.Writer
+	stdinTerminal bool
+	terminal      bool // stdout is a terminal
+	styles        report.Styles
+}
 
 func main() {
 	os.Exit(run(os.Args[1:]))
 }
 
 func run(args []string) int {
+	e := env{
+		stdin:         os.Stdin,
+		stdout:        os.Stdout,
+		stderr:        os.Stderr,
+		stdinTerminal: term.IsTerminal(int(os.Stdin.Fd())),
+		terminal:      term.IsTerminal(int(os.Stdout.Fd())),
+		styles:        report.NewStyles(lipgloss.NewRenderer(os.Stdout)),
+	}
+
 	for _, arg := range args {
-		if arg == "--version" || arg == "-version" || arg == "-v" {
-			fmt.Printf("FIONA %s\n", Version)
+		if arg == "--" {
+			break
+		}
+		if arg == "--version" || arg == "-v" {
+			fmt.Fprintf(e.stdout, "FIONA %s\n", Version)
 			return ExitSuccess
 		}
 		if arg == "--help" || arg == "-h" {
-			cli.PrintUsage()
+			cli.PrintUsage(e.stdout, Version)
 			return ExitSuccess
 		}
 	}
 
-	if len(args) < 1 {
-		cli.PrintShortUsage()
-		return ExitFailure
+	if len(args) == 0 {
+		if e.stdinTerminal && e.terminal {
+			return e.runTUI(nil)
+		}
+		cli.PrintShortUsage(e.stderr)
+		return ExitUsage
 	}
 
 	switch args[0] {
-	case "tui":
-		result, err := tui.Run()
-		if err != nil {
-			return fail(err)
-		}
-		if result.Cancelled() {
-			return ExitSuccess
-		}
-		// TODO: send result to sort/undo pipeline
-		_ = result
-		return ExitSuccess
-	case "undo":
-		return runUndo(args[1:])
 	case "sort":
-		return runSort(args[1:])
+		return e.runSort(args[1:])
+	case "undo":
+		return e.runUndo(args[1:])
+	case "history":
+		return e.runHistory(args[1:])
+	case "presets":
+		return e.runPresets(args[1:])
+	case "tui":
+		return e.runTUI(args[1:])
+	case "help":
+		cli.PrintUsage(e.stdout, Version)
+		return ExitSuccess
+	}
+
+	// a bare folder or flags first mean sort
+	if strings.HasPrefix(args[0], "-") || looksLikePath(args[0]) {
+		return e.runSort(args)
+	}
+
+	msg := fmt.Sprintf("unknown command or folder %q.", args[0])
+	if guess, ok := suggest.Closest(args[0], subcommands); ok {
+		msg += fmt.Sprintf(" Did you mean %q?", guess)
+	}
+	fmt.Fprintln(e.stderr, "fiona: "+msg)
+	cli.PrintShortUsage(e.stderr)
+	return ExitUsage
+}
+
+func looksLikePath(arg string) bool {
+	if info, err := os.Stat(arg); err == nil && info.IsDir() {
+		return true
+	}
+	return strings.ContainsAny(arg, `/\`) || strings.HasPrefix(arg, ".") || strings.HasPrefix(arg, "~")
+}
+
+// fail prints the error and returns the exit code that fits it.
+func (e env) fail(err error) int {
+	code := ExitFailure
+	var usageErr *cli.UsageError
+	var cfgErr *config.Error
+	if errors.As(err, &usageErr) || errors.As(err, &cfgErr) {
+		code = ExitUsage
+	}
+
+	for _, line := range strings.Split(err.Error(), "\n") {
+		if strings.HasPrefix(line, "Available: ") {
+			fmt.Fprintln(e.stderr, line)
+			continue
+		}
+		fmt.Fprintln(e.stderr, "fiona: "+line)
+	}
+	return code
+}
+
+func (e env) warn(format string, args ...any) {
+	fmt.Fprintf(e.stderr, "fiona: "+format+"\n", args...)
+}
+
+func (e env) println(lines ...string) {
+	for _, line := range lines {
+		fmt.Fprintln(e.stdout, line)
+	}
+}
+
+func (e env) prompt() *cli.Prompt {
+	return cli.NewPrompt(e.stdin, e.stdout, !e.stdinTerminal)
+}
+
+func (e env) runTUI(args []string) int {
+	source := "."
+	switch len(args) {
+	case 0:
+	case 1:
+		source = args[0]
 	default:
-		fmt.Println("!!! ⚠ Unknown command ⚠ !!!")
-		cli.PrintShortUsage()
-		return ExitFailure
-	}
-}
-
-func fail(err error) int {
-	if errors.Is(err, flag.ErrHelp) {
-		cli.PrintUsage()
-		return ExitSuccess
-	}
-	fmt.Fprintf(os.Stderr, "Something went wrong:\n%v\n", err)
-	return ExitFailure
-}
-
-func runSort(args []string) int {
-	var opts cli.Opts
-	if err := opts.ParseSortFlags(args); err != nil {
-		return fail(err)
+		return e.fail(&cli.UsageError{Err: fmt.Errorf("unexpected arguments: %s", strings.Join(args[1:], " "))})
 	}
 
-	rls, err := opts.ParseSortFlagsToRules()
+	resolved, err := cli.ResolvePath(source)
 	if err != nil {
-		return fail(err)
+		return e.fail(err)
+	}
+	if info, err := os.Stat(resolved); err != nil || !info.IsDir() {
+		return e.fail(&cli.UsageError{Err: fmt.Errorf("not a folder: %s", source)})
 	}
 
-	scanOpts := scanner.Options{Recursive: opts.Recursive, IncludeHidden: opts.Hidden}
-	if cli.IsInside(opts.SourcePath, opts.DestPath) {
-		scanOpts.Exclude = []string{opts.DestPath}
-	}
-
-	scanned, err := scanner.Scan(opts.SourcePath, scanOpts)
+	cfg, err := config.Load()
 	if err != nil {
-		return fail(err)
+		return e.fail(err)
 	}
-	files := scanned.Files
-
-	if opts.Sort.Primary == "ml" || opts.Sort.Secondary == "ml" {
-		server := ml.NewServer(opts.MlConfigPath)
-		if err = server.Start(); err != nil {
-			return fail(err)
-		}
-		defer server.Stop()
-
-		client := ml.NewClient(server.BaseURL())
-
-		paths := make([]string, 0, len(files))
-		for _, file := range files {
-			paths = append(paths, file.Path)
-		}
-
-		tags, mlErr := client.Classify(paths)
-		if mlErr != nil {
-			return fail(mlErr)
-		}
-
-		for i := range files {
-			tag := tags[files[i].Path]
-			if tag == "__not_image__" {
-				files[i].Tag = files[i].Type
-			} else {
-				files[i].Tag = tag
-			}
-		}
-	}
-
-	plan := sorter.NewPlan(files, rls, scanned.Skipped, sorter.PlanParams{
-		Source:     opts.SourcePath,
-		Dest:       opts.DestPath,
-		FileAction: opts.FileAction,
-		OnConflict: opts.ConflictStrategy,
-		RunID:      journal.NewRunID(time.Now()),
-	})
-	plan.Print(os.Stdout, true)
-
-	if opts.DryRun {
-		fmt.Println("Dry run: nothing is changed.")
-		return ExitSuccess
-	}
-	if plan.Stats().Files == 0 {
-		fmt.Println("Nothing to do.")
-		return ExitSuccess
-	}
-	if !opts.Yes && !cli.Confirm(os.Stdin, os.Stdout, "Would you like to continue?") {
-		fmt.Println("Cancelled: nothing is changed.")
-		return ExitSuccess
-	}
-
-	// side effects start here
-	if err = os.MkdirAll(opts.DestPath, 0755); err != nil {
-		return fail(fmt.Errorf("cannot create destination directory: %w", err))
-	}
-
-	logDir := opts.LogPath
-	if logDir == "" {
-		logDir = filepath.Join(opts.DestPath, journal.StateDir, journal.RunsDir)
-	}
-	jrn, err := journal.Create(logDir, plan.RunID)
+	historyDir, err := config.Dir()
 	if err != nil {
-		return fail(err)
+		return e.fail(err)
 	}
 
-	removed, err := sorter.CleanTrash(opts.DestPath, time.Now())
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "!!! ⚠ !!! Failed to clean old trash: %v\n", err)
+	if err := tui.Run(tui.Options{Source: resolved, Config: cfg, HistoryDir: historyDir, Version: Version}); err != nil {
+		return e.fail(err)
 	}
-	if removed > 0 {
-		fmt.Printf("Removed trash of %d runs older than %d days.\n", removed, int(sorter.TrashRetention.Hours()/24))
-	}
-
-	ctx, stop := notifyContext()
-	defer stop()
-
-	executor := sorter.NewExecutor(plan, jrn, opts.Workers, Version)
-	summary, err := executor.Run(ctx, cli.NewSortReporter(os.Stdout))
-
-	fmt.Printf("Journal: %s\n", jrn.Path())
-	if opts.LogPath == "" {
-		fmt.Printf("To undo: fiona undo --dest %s\n", opts.DestPath)
-	} else {
-		fmt.Printf("To undo: fiona undo --log %s\n", jrn.Path())
-	}
-
-	if err != nil {
-		return fail(err)
-	}
-	return summary.ExitCode()
-}
-
-func runUndo(args []string) int {
-	var opts cli.Opts
-	if err := opts.ParseUndoFlags(args); err != nil {
-		return fail(err)
-	}
-
-	var run *journal.Run
-	var err error
-	if opts.LogPath != "" {
-		run, err = journal.Read(opts.LogPath)
-	} else {
-		run, err = journal.FindLatest(filepath.Join(opts.DestPath, journal.StateDir, journal.RunsDir))
-		if err == nil && run.Header.Dest != opts.DestPath {
-			err = fmt.Errorf("%w: %s belongs to dest %q, not to %q",
-				journal.ErrRejected, filepath.Base(run.Path), run.Header.Dest, opts.DestPath)
-		}
-	}
-	if err != nil {
-		return fail(err)
-	}
-
-	plan, err := sorter.NewUndoPlan(run)
-	if err != nil {
-		return fail(err)
-	}
-	plan.Print(os.Stdout)
-
-	if opts.DryRun {
-		fmt.Println("Dry run: nothing is changed.")
-		return ExitSuccess
-	}
-	if !opts.Yes && !cli.Confirm(os.Stdin, os.Stdout, "Would you like to continue?") {
-		fmt.Println("Cancelled: nothing is changed.")
-		return ExitSuccess
-	}
-
-	ctx, stop := notifyContext()
-	defer stop()
-
-	reverter := sorter.NewReverter(plan, opts.Workers)
-	summary, err := reverter.Run(ctx, cli.NewUndoReporter(os.Stdout))
-	if err != nil {
-		return fail(err)
-	}
-	return summary.ExitCode()
+	return ExitSuccess
 }
 
 // notifyContext cancels the context on SIGINT and SIGTERM. After the first
@@ -247,4 +187,15 @@ func notifyContext() (context.Context, context.CancelFunc) {
 		stop()
 	}()
 	return ctx, stop
+}
+
+func resolvedCwd() string {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	if resolved, err := cli.ResolvePath(cwd); err == nil {
+		return resolved
+	}
+	return filepath.Clean(cwd)
 }

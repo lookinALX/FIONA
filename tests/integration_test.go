@@ -14,12 +14,15 @@ import (
 	"reflect"
 	"runtime"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
+	"github.com/lookinalx/fiona/internal/app"
 	"github.com/lookinalx/fiona/internal/cli"
+	"github.com/lookinalx/fiona/internal/config"
 	"github.com/lookinalx/fiona/internal/journal"
-	"github.com/lookinalx/fiona/internal/scanner"
+	"github.com/lookinalx/fiona/internal/rules"
 	"github.com/lookinalx/fiona/internal/sorter"
 	"github.com/lookinalx/fiona/internal/types"
 	"github.com/lookinalx/fiona/ml"
@@ -64,12 +67,38 @@ type result struct {
 	code   int
 }
 
+// configDirs keeps one configuration and history folder per test, so that
+// parallel tests do not see each other's runs and the user's own are never touched.
+var configDirs sync.Map
+
+func configDir(t *testing.T) string {
+	t.Helper()
+	if dir, ok := configDirs.Load(t); ok {
+		return dir.(string)
+	}
+	dir := t.TempDir()
+	configDirs.Store(t, dir)
+	return dir
+}
+
+// fionaEnv is the environment of the binary under test.
+func fionaEnv(t *testing.T) []string {
+	return append(os.Environ(), config.EnvDir+"="+configDir(t))
+}
+
 // fiona runs the binary in an empty working directory and feeds it stdin.
 func fiona(t *testing.T, stdin string, args ...string) result {
 	t.Helper()
+	return fionaIn(t, t.TempDir(), stdin, args...)
+}
+
+// fionaIn runs the binary in dir.
+func fionaIn(t *testing.T, dir, stdin string, args ...string) result {
+	t.Helper()
 
 	cmd := exec.Command(fionaBin, args...)
-	cmd.Dir = t.TempDir()
+	cmd.Dir = dir
+	cmd.Env = fionaEnv(t)
 	cmd.Stdin = strings.NewReader(stdin)
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout, cmd.Stderr = &stdout, &stderr
@@ -253,7 +282,7 @@ func TestS1_MoveTwice_DestInsideSource(t *testing.T) {
 
 			second := mustFiona(t, 0, "", args...)
 
-			assertOutput(t, second.stdout, "No files to process.", "Nothing to do.")
+			assertOutput(t, second.stdout, "Nothing to sort in ", ": no files.")
 			assertSnapshot(t, src, want)
 			if n := len(journals(t, filepath.Join(dest, journal.StateDir, journal.RunsDir))); n != 1 {
 				t.Errorf("a run that did nothing left a journal: %d journals", n)
@@ -283,7 +312,7 @@ func TestS2_MoveTwice_SourceEqualsDest(t *testing.T) {
 
 	second := mustFiona(t, 0, "", args...)
 
-	assertOutput(t, second.stdout, "Already in place: 3", "No files to process.", "Nothing to do.")
+	assertOutput(t, second.stdout, "Already in place: 3", "Nothing to do.")
 	assertSnapshot(t, dir, want)
 }
 
@@ -301,7 +330,7 @@ func TestS3_SameNameFromDifferentSubdirectories(t *testing.T) {
 		"images/IMG_0001.jpg":   "trip",
 		"images/IMG_0001_1.jpg": "wedding",
 	})
-	assertOutput(t, res.stdout, "copied: 2", "renamed: 1", "errors: 0")
+	assertOutput(t, res.stdout, "Renamed on conflict: 1", "✓ Moved 2 files")
 }
 
 // S4: 200 files with the same name survive a parallel move with rename.
@@ -326,7 +355,7 @@ func TestS4_ManySameNamedFiles_Rename(t *testing.T) {
 		if got := contents(t, dest); !reflect.DeepEqual(got, want) {
 			t.Fatalf("repeat %d: contents of the files are not preserved", i)
 		}
-		assertOutput(t, res.stdout, fmt.Sprintf("moved: %d", numFiles), "errors: 0")
+		assertOutput(t, res.stdout, fmt.Sprintf("✓ Moved %d files", numFiles))
 	}
 }
 
@@ -343,7 +372,7 @@ func TestS5_ManySameNamedFiles_Skip(t *testing.T) {
 
 		res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-r", "--on-conflict", "skip", "-w", "16", "-y")
 
-		assertOutput(t, res.stdout, "moved: 1", fmt.Sprintf("skipped: %d", numFiles-1), "errors: 0")
+		assertOutput(t, res.stdout, fmt.Sprintf("Skipped, already exist: %d", numFiles-1), "✓ Moved 1 file ")
 
 		left, moved := snapshot(t, src), snapshot(t, dest)
 		if len(left) != numFiles-1 || len(moved) != 1 {
@@ -373,14 +402,14 @@ func TestS6_ReplaceUsesTrashAndUndoRestores(t *testing.T) {
 
 			res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", action, "--on-conflict", "replace", "-y")
 
-			assertOutput(t, res.stdout, "replaced: 1", "errors: 0")
+			assertOutput(t, res.stdout, "Replaced, old files go to trash: 1", "✓ ")
 			run := lastRun(t, dest)
 			assertFileContent(t, filepath.Join(dest, "images", "photo.jpg"), "new photo")
 			assertFileContent(t, filepath.Join(dest, ".fiona", "trash", run.Header.RunID, "images", "photo.jpg"), "old photo")
 
 			undo := mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
 
-			assertOutput(t, undo.stdout, "restored from trash: 1", "errors: 0")
+			assertOutput(t, undo.stdout, "Restore from trash: 1", "restored 1 from trash")
 			assertSnapshot(t, src, srcBefore)
 			assertSnapshot(t, dest, destBefore)
 			assertNotExists(t, filepath.Join(dest, ".fiona", "trash"))
@@ -407,7 +436,7 @@ func TestS7_UndoKeepsPreexistingFiles(t *testing.T) {
 
 				undo := mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
 
-				assertOutput(t, undo.stdout, "errors: 0")
+				assertOutput(t, undo.stdout, "✓ ")
 				assertSnapshot(t, src, srcBefore)
 				assertSnapshot(t, dest, destBefore)
 			})
@@ -429,7 +458,7 @@ func TestS8_DryRunChangesNothing(t *testing.T) {
 			args := append([]string{"sort", "-s", src, "-d", dest, "-a", "move"}, flags...)
 			res := mustFiona(t, 0, "", args...)
 
-			assertOutput(t, res.stdout, "Total: 1 file", "photo.jpg", "Dry run: nothing is changed.")
+			assertOutput(t, res.stdout, "images/", "1 file", "Dry run: nothing is changed.")
 			assertSnapshot(t, src, before)
 			assertNotExists(t, filepath.Dir(dest))
 			assertNotExists(t, filepath.Join(src, ".fiona"))
@@ -464,12 +493,12 @@ func TestS9_InvalidFlags(t *testing.T) {
 		{
 			name: "everything at once",
 			args: []string{"-w", "0", "--on-conflict", "bogus", "--log", missingLog},
-			want: []string{"invalid number of workers", "invalid on-conflict", "log path doesn't exists"},
+			want: []string{"invalid number of workers", "invalid on-conflict", "log path doesn't exist"},
 		},
 		{
 			name: "negative workers",
 			args: []string{"-w", "-3", "--on-conflict", "bogus", "--log", missingLog},
-			want: []string{"invalid number of workers", "invalid on-conflict", "log path doesn't exists"},
+			want: []string{"invalid number of workers", "invalid on-conflict", "log path doesn't exist"},
 		},
 		{
 			name: "zero workers only",
@@ -483,7 +512,7 @@ func TestS9_InvalidFlags(t *testing.T) {
 			dest := filepath.Join(t.TempDir(), "not", "created")
 
 			args := append([]string{"sort", "-s", src, "-d", dest, "-y"}, tt.args...)
-			res := mustFiona(t, 1, "", args...)
+			res := mustFiona(t, 2, "", args...)
 
 			assertOutput(t, res.stderr, tt.want...)
 			assertNotExists(t, filepath.Dir(dest))
@@ -515,7 +544,7 @@ func TestS10_Symlinks(t *testing.T) {
 
 	res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-r", "-y")
 
-	assertOutput(t, res.stdout, "Skipped by scanner: 3 (3 symlinks)", "moved: 1", "errors: 0")
+	assertOutput(t, res.stdout, "Skipped by scanner: 3 (3 symlinks)", "✓ Moved 1 file ")
 	assertSnapshot(t, dest, map[string]string{"images/photo.jpg": "photo"})
 	for name := range links {
 		if info, err := os.Lstat(filepath.Join(src, name)); err != nil || info.Mode()&os.ModeSymlink == 0 {
@@ -578,7 +607,7 @@ func TestS16_FailedOperation(t *testing.T) {
 
 	res := mustFiona(t, 1, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
 
-	assertOutput(t, res.stdout, "moved: 1", "errors: 1", "photo.jpg")
+	assertOutput(t, res.stdout, "! Moved 1 of 2 files, 1 failed:", "✗ photo.jpg: ", "Undo: fiona undo")
 	assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
 	assertSnapshot(t, dest, map[string]string{"documents/report.pdf": "report"})
 
@@ -588,26 +617,23 @@ func TestS16_FailedOperation(t *testing.T) {
 	}
 }
 
-func TestSort_DefaultsAreSafe(t *testing.T) {
+func TestSort_Defaults(t *testing.T) {
 	t.Parallel()
 
-	src, dest := t.TempDir(), t.TempDir()
-	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
-	createTestFile(t, filepath.Join(src, ".hidden.jpg"), []byte("hidden"))
-	createTestFile(t, filepath.Join(src, "sub", "nested.jpg"), []byte("nested"))
-	createTestFile(t, filepath.Join(dest, "images", "photo.jpg"), []byte("old photo"))
+	dir := t.TempDir()
+	createTestFile(t, filepath.Join(dir, "photo.jpg"), []byte("photo"))
+	createTestFile(t, filepath.Join(dir, ".hidden.jpg"), []byte("hidden"))
+	createTestFile(t, filepath.Join(dir, "sub", "nested.jpg"), []byte("nested"))
+	createTestFile(t, filepath.Join(dir, "images", "photo.jpg"), []byte("old photo"))
 
-	// no flags: copy, top level only, no hidden files, rename on conflict
-	mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-y")
+	// no flags: move into the source itself, top level only, no hidden files, rename on conflict
+	mustFiona(t, 0, "", "sort", dir, "-y")
 
-	assertSnapshot(t, dest, map[string]string{
+	assertSnapshot(t, dir, map[string]string{
 		"images/photo.jpg":   "old photo",
 		"images/photo_1.jpg": "photo",
-	})
-	assertSnapshot(t, src, map[string]string{
-		"photo.jpg":      "photo",
-		".hidden.jpg":    "hidden",
-		"sub/nested.jpg": "nested",
+		".hidden.jpg":        "hidden",
+		"sub/nested.jpg":     "nested",
 	})
 }
 
@@ -635,12 +661,13 @@ func TestSort_Confirmation(t *testing.T) {
 		name     string
 		stdin    string
 		executed bool
+		message  string
 	}{
-		{"y", "y\n", true},
-		{"yes with windows line ending", "YES\r\n", true},
-		{"n", "n\n", false},
-		{"empty line", "\n", false},
-		{"end of input", "", false},
+		{"y", "y\n", true, ""},
+		{"yes with windows line ending", "YES\r\n", true, ""},
+		{"n", "n\n", false, "Cancelled: nothing is changed."},
+		{"empty line", "\n", false, "Cancelled: nothing is changed."},
+		{"end of input", "", false, "No answer: nothing is changed. Use --yes to run without confirmation."},
 	}
 
 	for _, tt := range tests {
@@ -651,12 +678,12 @@ func TestSort_Confirmation(t *testing.T) {
 
 			res := mustFiona(t, 0, tt.stdin, "sort", "-s", src, "-d", dest, "-a", "move")
 
-			assertOutput(t, res.stdout, "Total: 1 file", "Would you like to continue? [y/N]")
+			assertOutput(t, res.stdout, "Move 1 file (5 B) into 1 folder in ", "? [y/N/l]")
 			if tt.executed {
 				assertSnapshot(t, dest, map[string]string{"images/photo.jpg": "photo"})
 				assertSnapshot(t, src, map[string]string{})
 			} else {
-				assertOutput(t, res.stdout, "Cancelled: nothing is changed.")
+				assertOutput(t, res.stdout, tt.message)
 				assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
 				assertNotExists(t, dest)
 			}
@@ -670,9 +697,9 @@ func TestSort_RemovedForceFlag(t *testing.T) {
 	src, dest := t.TempDir(), t.TempDir()
 	createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
 
-	res := mustFiona(t, 1, "", "sort", "-s", src, "-d", dest, "-a", "move", "--force", "yes")
+	res := mustFiona(t, 2, "", "sort", "-s", src, "-d", dest, "-a", "move", "--force", "yes")
 
-	assertOutput(t, res.stderr, "flag provided but not defined")
+	assertOutput(t, res.stderr, "unknown flag: --force")
 	assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
 	assertSnapshot(t, dest, map[string]string{})
 }
@@ -691,7 +718,7 @@ func TestSort_JournalLocation(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if run.Header.Dest != resolvedDest || run.Header.FileAction != "copy" || run.Header.OnConflict != "rename" || run.Header.FionaVersion != "0.4.0" {
+		if run.Header.Dest != resolvedDest || run.Header.FileAction != "move" || run.Header.OnConflict != "rename" || run.Header.FionaVersion != "0.5.0" {
 			t.Errorf("header = %+v", run.Header)
 		}
 		if _, ok := journal.RunTime(run.Header.RunID); !ok || filepath.Base(run.Path) != run.Header.RunID+".jsonl" {
@@ -700,7 +727,7 @@ func TestSort_JournalLocation(t *testing.T) {
 		if run.Footer == nil || run.Footer.OK != 1 {
 			t.Errorf("footer = %+v", run.Footer)
 		}
-		assertOutput(t, res.stdout, "Journal: ", "To undo: fiona undo --dest ")
+		assertOutput(t, res.stdout, "Undo: fiona undo\n")
 	})
 
 	t.Run("custom directory", func(t *testing.T) {
@@ -723,8 +750,8 @@ func TestSort_JournalLocation(t *testing.T) {
 		src, dest := t.TempDir(), t.TempDir()
 		createTestFile(t, filepath.Join(src, "photo.jpg"), []byte("photo"))
 
-		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-y")
-		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-y")
+		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "--copy", "-y")
+		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "--copy", "-y")
 
 		if n := len(journals(t, filepath.Join(dest, journal.StateDir, journal.RunsDir))); n != 2 {
 			t.Errorf("expected 2 journals, got %d", n)
@@ -750,7 +777,10 @@ func TestSort_CleansTrashOlderThanFiveDays(t *testing.T) {
 
 	res := mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-y")
 
-	assertOutput(t, res.stdout, "Removed trash of 1 runs older than 5 days.")
+	// cleaning is silent unless it fails
+	if strings.Contains(res.stdout+res.stderr, "trash") {
+		t.Errorf("unexpected output about the trash:\n%s%s", res.stdout, res.stderr)
+	}
 	assertNotExists(t, filepath.Join(trash, expired))
 	assertFileContent(t, filepath.Join(trash, recent, "images", "old.jpg"), "recent")
 }
@@ -759,7 +789,7 @@ func TestVersion(t *testing.T) {
 	t.Parallel()
 
 	res := mustFiona(t, 0, "", "--version")
-	assertOutput(t, res.stdout, "FIONA 0.4.0")
+	assertOutput(t, res.stdout, "FIONA 0.5.0")
 }
 
 // ── UNDO ───────────────────────────────────────────────────────────────
@@ -816,7 +846,7 @@ func TestS12_ForgedJournal(t *testing.T) {
 
 		res := mustFiona(t, 0, "", "undo", "--log", path, "-y")
 
-		assertOutput(t, res.stdout, "skip (changed after the run): 1", "copies removed: 0", "skipped: 1")
+		assertOutput(t, res.stdout, "Skip, changed after the run: 1", "! Removed 0 of 1 copy, 1 skipped:", "⊘ documents/mine.txt: skipped")
 		assertFileContent(t, mine, "my own file, not a copy made by fiona")
 	})
 
@@ -826,16 +856,16 @@ func TestS12_ForgedJournal(t *testing.T) {
 		mustFiona(t, 0, "", "sort", "-s", src, "-d", dest, "-a", "move", "-y")
 		sorted := snapshot(t, dest)
 
-		for _, stdin := range []string{"", "n\n"} {
+		for stdin, message := range map[string]string{"": "No answer: nothing is changed.", "n\n": "Cancelled: nothing is changed."} {
 			res := mustFiona(t, 0, stdin, "undo", "--dest", dest)
 
-			assertOutput(t, res.stdout, "Undo of run ", "move back to ", "Would you like to continue? [y/N]", "Cancelled: nothing is changed.")
+			assertOutput(t, res.stdout, "Undo the run from today ", "(moved 1 file from ", "? [y/N]", message)
 			assertSnapshot(t, dest, sorted)
 		}
 
 		res := mustFiona(t, 0, "y\n", "undo", "--dest", dest)
 
-		assertOutput(t, res.stdout, "Would you like to continue? [y/N]", "moved back: 1")
+		assertOutput(t, res.stdout, "? [y/N]", "✓ Restored 1 file")
 		assertSnapshot(t, src, map[string]string{"photo.jpg": "photo"})
 	})
 
@@ -905,7 +935,7 @@ func TestS13_UndoOfKilledRun(t *testing.T) {
 
 	res := mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
 
-	assertOutput(t, res.stdout, "The run was interrupted", "moved back: 30", "errors: 0")
+	assertOutput(t, res.stdout, "The run was interrupted:", "✓ Restored 30 files")
 	assertSnapshot(t, src, before)
 	assertSnapshot(t, dest, map[string]string{})
 }
@@ -929,8 +959,8 @@ func TestS17_UndoTwice(t *testing.T) {
 	byLog := mustFiona(t, 1, "", "undo", "--log", run.Path, "-y")
 	assertOutput(t, byLog.stderr, "already undone")
 
-	byDest := mustFiona(t, 1, "", "undo", "--dest", dest, "-y")
-	assertOutput(t, byDest.stderr, "already undone")
+	byDest := mustFiona(t, 0, "", "undo", "--dest", dest, "-y")
+	assertOutput(t, byDest.stdout, "Nothing to undo: the last run in ", "is already undone")
 
 	assertFileContent(t, filepath.Join(dest, "images", "photo.jpg"), "photo")
 	assertFileContent(t, filepath.Join(src, "photo.jpg"), "photo")
@@ -945,7 +975,7 @@ func TestUndo_DryRun(t *testing.T) {
 
 	res := mustFiona(t, 0, "", "undo", "--dest", dest, "-n", "-y")
 
-	assertOutput(t, res.stdout, "move back to ", ": 1 file", "remove empty directories: 1", "Dry run: nothing is changed.")
+	assertOutput(t, res.stdout, "Would undo the run from today ", "(moved 1 file from ", "Dry run: nothing is changed.")
 	assertSnapshot(t, dest, map[string]string{"images/photo.jpg": "photo"})
 
 	// the run is still there to be undone
@@ -979,12 +1009,12 @@ func TestUndo_LatestRunFirst(t *testing.T) {
 func TestUndo_NothingToUndo(t *testing.T) {
 	t.Parallel()
 
-	res := mustFiona(t, 1, "", "undo", "--dest", t.TempDir(), "-y")
-	assertOutput(t, res.stderr, "no runs to undo")
+	res := mustFiona(t, 0, "", "undo", "--dest", t.TempDir(), "-y")
+	assertOutput(t, res.stdout, "Nothing to undo: no runs in ")
 
-	// without flags the current directory is used
-	res = mustFiona(t, 1, "", "undo", "-y")
-	assertOutput(t, res.stderr, "no runs to undo")
+	// without flags the history is used, then the current folder
+	res = mustFiona(t, 0, "", "undo", "-y")
+	assertOutput(t, res.stdout, "Nothing to undo: no runs yet.")
 }
 
 // ── ML ─────────────────────────────────────────────────────────────────
@@ -1027,69 +1057,36 @@ func mockMLServer(t *testing.T, tagMap map[string]string) *httptest.Server {
 	return srv
 }
 
-// runMLSort replicates the ML sort flow from main.go using a mock server URL.
+// runMLSort runs the pipeline of fiona sort --to "{ml}" with a mock classifier.
 func runMLSort(t *testing.T, srcDir, destDir, serverURL string) sorter.Summary {
 	t.Helper()
 
-	opts := cli.Opts{
-		SourcePath:       srcDir,
-		DestPath:         destDir,
-		Sort:             cli.SortOption{Primary: cli.CritML},
-		FileAction:       "copy",
-		ConflictStrategy: cli.ConflictSkip,
-		Workers:          runtime.NumCPU(),
-	}
-
-	rls, err := opts.ParseSortFlagsToRules()
+	set, err := rules.Compile([]rules.Rule{{To: "{ml}"}})
 	if err != nil {
-		t.Fatalf("ParseSortFlagsToRules: %v", err)
+		t.Fatal(err)
+	}
+	req := app.Request{
+		Source:     srcDir,
+		Dest:       destDir,
+		Rules:      set,
+		Action:     "copy",
+		OnConflict: types.OnConflictSkip,
 	}
 
-	scanned, err := scanner.Scan(opts.SourcePath, scanner.Options{})
+	scanned, err := app.Scan(req)
 	if err != nil {
 		t.Fatalf("Scan: %v", err)
 	}
-	files := scanned.Files
-
-	// ML tagging via mock server
-	client := ml.NewClient(serverURL)
-	paths := make([]string, 0, len(files))
-	for _, f := range files {
-		paths = append(paths, f.Path)
-	}
-
-	tags, err := client.Classify(paths)
-	if err != nil {
+	if err := app.Classify(context.Background(), app.NeedsML(scanned, set), app.Client(serverURL)); err != nil {
 		t.Fatalf("Classify: %v", err)
 	}
 
-	for i := range files {
-		tag := tags[files[i].Path]
-		if tag == "__not_image__" {
-			files[i].Tag = files[i].Type
-		} else {
-			files[i].Tag = tag
-		}
-	}
-
-	plan := sorter.NewPlan(files, rls, scanned.Skipped, sorter.PlanParams{
-		Source:     opts.SourcePath,
-		Dest:       opts.DestPath,
-		FileAction: opts.FileAction,
-		OnConflict: opts.ConflictStrategy,
-		RunID:      journal.NewRunID(time.Now()),
-	})
-
-	jrn, err := journal.Create(t.TempDir(), plan.RunID)
+	plan := app.Plan(scanned, req, journal.NewRunID(time.Now()))
+	out, err := app.Execute(context.Background(), plan, app.ExecOptions{Workers: runtime.NumCPU(), LogDir: t.TempDir(), Version: "test"}, silentReporter{})
 	if err != nil {
-		t.Fatalf("journal.Create: %v", err)
+		t.Fatalf("Execute: %v", err)
 	}
-
-	summary, err := sorter.NewExecutor(plan, jrn, opts.Workers, "test").Run(context.Background(), silentReporter{})
-	if err != nil {
-		t.Fatalf("Run: %v", err)
-	}
-	return summary
+	return out.Summary
 }
 
 type silentReporter struct{}

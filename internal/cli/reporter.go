@@ -2,47 +2,52 @@ package cli
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"sync"
-
-	"github.com/lookinalx/fiona/internal/sorter"
-	"github.com/lookinalx/fiona/internal/types"
+	"time"
 
 	"github.com/schollz/progressbar/v3"
+
+	"github.com/lookinalx/fiona/internal/report"
+	"github.com/lookinalx/fiona/internal/sorter"
+	"github.com/lookinalx/fiona/internal/types"
 )
 
-const separator = "================================================"
+// progressDelay keeps quick runs free of a flashing progress bar.
+const progressDelay = 500 * time.Millisecond
 
-// Reporter shows the progress of a run in the terminal. It implements sorter.Reporter.
+// Reporter shows a progress bar in a terminal and collects the files that
+// failed. It implements sorter.Reporter; the result itself is printed by the caller.
 type Reporter struct {
-	out  io.Writer
-	undo bool
+	out        io.Writer
+	terminal   bool
+	undo       bool
+	root       string // problems are shown relative to it
+	totalBytes int64  // progress in bytes instead of files, for copies
 
 	mu       sync.Mutex
+	start    time.Time
+	total    int
+	files    int
+	bytes    int64
 	bar      *progressbar.ProgressBar
-	problems []string
+	problems []report.Problem
 }
 
-func NewSortReporter(out io.Writer) *Reporter {
-	return &Reporter{out: out}
+// NewSortReporter shows progress in files, or in bytes when totalBytes is set.
+func NewSortReporter(out io.Writer, terminal bool, source string, totalBytes int64) *Reporter {
+	return &Reporter{out: out, terminal: terminal, root: source, totalBytes: totalBytes}
 }
 
-func NewUndoReporter(out io.Writer) *Reporter {
-	return &Reporter{out: out, undo: true}
+func NewUndoReporter(out io.Writer, terminal bool, dest string) *Reporter {
+	return &Reporter{out: out, terminal: terminal, undo: true, root: dest}
 }
 
 func (r *Reporter) Start(total int) {
-	fmt.Fprintln(r.out, separator)
-	if r.undo {
-		fmt.Fprintln(r.out, "Starting undo process...")
-	} else {
-		fmt.Fprintln(r.out, "Starting execution...")
-	}
-
-	if total > 0 {
-		r.bar = progressbar.Default(int64(total))
-	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.start = time.Now()
+	r.total = total
 }
 
 func (r *Reporter) Done(a types.Action, err error) {
@@ -54,66 +59,58 @@ func (r *Reporter) Done(a types.Action, err error) {
 		if r.undo {
 			path = a.TargetPath
 		}
-		mark := "✗"
-		if errors.Is(err, sorter.ErrUndoSkipped) {
-			mark = "⊘"
-		}
-		r.problems = append(r.problems, fmt.Sprintf("%s %s: %v", mark, path, err))
+		r.problems = append(r.problems, report.Problem{
+			Path:    report.ProblemPath(r.root, path),
+			Err:     err.Error(),
+			Skipped: errors.Is(err, sorter.ErrUndoSkipped),
+		})
 	}
 
+	r.files++
+	if err == nil {
+		r.bytes += a.Size
+	}
+
+	if r.bar == nil && r.terminal && r.total > 1 && time.Since(r.start) > progressDelay {
+		r.bar = r.newBar()
+	}
 	if r.bar != nil {
-		r.bar.Add(1)
+		if r.totalBytes > 0 {
+			r.bar.Set64(r.bytes)
+		} else {
+			r.bar.Set(r.files)
+		}
 	}
 }
 
-func (r *Reporter) Finish(s sorter.Summary) {
+func (r *Reporter) newBar() *progressbar.ProgressBar {
+	max := int64(r.total)
+	if r.totalBytes > 0 {
+		max = r.totalBytes
+	}
+	return progressbar.NewOptions64(max,
+		progressbar.OptionSetWriter(r.out),
+		progressbar.OptionSetWidth(30),
+		progressbar.OptionShowCount(),
+		progressbar.OptionShowBytes(r.totalBytes > 0),
+		progressbar.OptionSetPredictTime(true),
+		progressbar.OptionThrottle(100*time.Millisecond),
+		progressbar.OptionClearOnFinish(),
+	)
+}
+
+func (r *Reporter) Finish(sorter.Summary) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-
-	if r.bar != nil && !s.Interrupted {
-		r.bar.Finish()
-	}
-	fmt.Fprintln(r.out)
-
-	for _, problem := range r.problems {
-		fmt.Fprintln(r.out, problem)
-	}
-
-	if r.undo {
-		r.finishUndo(s)
-	} else {
-		r.finishSort(s)
+	if r.bar != nil {
+		r.bar.Clear()
+		r.bar = nil
 	}
 }
 
-func (r *Reporter) finishSort(s sorter.Summary) {
-	if s.Interrupted {
-		fmt.Fprintln(r.out, "Execution is interrupted.")
-	} else {
-		fmt.Fprintln(r.out, "Execution is ended.")
-	}
-
-	fmt.Fprintf(r.out, "  moved: %d\n", s.Moved)
-	fmt.Fprintf(r.out, "  copied: %d\n", s.Copied)
-	fmt.Fprintf(r.out, "  renamed: %d\n", s.Renamed)
-	fmt.Fprintf(r.out, "  replaced: %d\n", s.Replaced)
-	fmt.Fprintf(r.out, "  skipped: %d\n", s.Skipped)
-	fmt.Fprintf(r.out, "  already in place: %d\n", s.Noop)
-	fmt.Fprintf(r.out, "  rejected: %d\n", s.Rejected)
-	fmt.Fprintf(r.out, "  errors: %d\n", s.Failed)
-}
-
-func (r *Reporter) finishUndo(s sorter.Summary) {
-	if s.Interrupted {
-		fmt.Fprintln(r.out, "Undo process is interrupted.")
-	} else {
-		fmt.Fprintln(r.out, "Undo process is ended.")
-	}
-
-	fmt.Fprintf(r.out, "  moved back: %d\n", s.Restored)
-	fmt.Fprintf(r.out, "  copies removed: %d\n", s.Removed)
-	fmt.Fprintf(r.out, "  restored from trash: %d\n", s.TrashRestored)
-	fmt.Fprintf(r.out, "  empty directories removed: %d\n", s.DirsRemoved)
-	fmt.Fprintf(r.out, "  skipped: %d\n", s.Skipped)
-	fmt.Fprintf(r.out, "  errors: %d\n", s.Failed)
+// Problems are the files that failed or were skipped, in the order they happened.
+func (r *Reporter) Problems() []report.Problem {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return append([]report.Problem(nil), r.problems...)
 }

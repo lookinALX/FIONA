@@ -3,6 +3,7 @@ package scanner
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"testing"
 )
@@ -311,10 +312,40 @@ func TestScan_FillsFileInfo(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if fi.Path != path || fi.Name != "photo.jpg" || fi.Extension != ".jpg" || fi.Size != 5 || fi.Type != "images" {
+	if fi.Path != path || fi.Name != "photo.jpg" || fi.Ext != "jpg" || fi.Size != 5 || fi.Category() != "images" {
 		t.Errorf("unexpected file info: %+v", fi)
 	}
 	if !fi.ModTime.Equal(info.ModTime()) {
 		t.Errorf("ModTime = %v, want %v", fi.ModTime, info.ModTime())
+	}
+}
+
+func TestScan_KeptFolders(t *testing.T) {
+	tfs := NewTestFileSystem(t)
+	tfs.CreateFile("photo.jpg", "photo")
+	tfs.CreateFile("inbox/a.txt", "a")
+	tfs.CreateFile("Foo.app/Contents/Info.plist", "plist")
+	tfs.CreateFile("project/go.mod", "module x")
+	tfs.CreateFile(".hidden/b.txt", "b")
+
+	kept := func(opt Options) []string {
+		res, err := Scan(tfs.Root, opt)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var names []string
+		for _, path := range res.Kept {
+			rel, _ := filepath.Rel(tfs.Root, path)
+			names = append(names, rel)
+		}
+		sort.Strings(names)
+		return names
+	}
+
+	if got, want := kept(Options{}), []string{"Foo.app", "inbox", "project"}; !reflect.DeepEqual(got, want) {
+		t.Errorf("without -r kept = %v, want %v", got, want)
+	}
+	if got, want := kept(Options{Recursive: true}), []string{"Foo.app", "project"}; !reflect.DeepEqual(got, want) {
+		t.Errorf("with -r kept = %v, want %v", got, want)
 	}
 }

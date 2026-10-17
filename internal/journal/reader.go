@@ -191,12 +191,29 @@ func (r *Run) Validate() error {
 	return nil
 }
 
+// NoRunsError means a directory has no run left to undo.
+type NoRunsError struct {
+	Dir  string
+	Last *Run // the newest run, already undone; nil if there are no runs at all
+}
+
+func (e *NoRunsError) Error() string {
+	if e.Last != nil {
+		return fmt.Sprintf("%v in %s: the last run %s is already undone", ErrNoRuns, e.Dir, e.Last.Header.RunID)
+	}
+	return fmt.Sprintf("%v in %s", ErrNoRuns, e.Dir)
+}
+
+func (e *NoRunsError) Is(target error) bool { return target == ErrNoRuns }
+
 // FindLatest returns the most recent run in dir that has not been undone yet.
+// A journal that cannot be read stops the search: an older run is never
+// undone in place of a newer one by mistake.
 func FindLatest(dir string) (*Run, error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return nil, fmt.Errorf("%w in %s", ErrNoRuns, dir)
+			return nil, &NoRunsError{Dir: dir}
 		}
 		return nil, fmt.Errorf("failed to read journal directory: %w", err)
 	}
@@ -209,6 +226,7 @@ func FindLatest(dir string) (*Run, error) {
 	}
 	sort.Sort(sort.Reverse(sort.StringSlice(names)))
 
+	var newest *Run
 	for _, name := range names {
 		run, err := Read(filepath.Join(dir, name))
 		if err != nil {
@@ -217,13 +235,12 @@ func FindLatest(dir string) (*Run, error) {
 		if run.UndoneAt == nil {
 			return run, nil
 		}
+		if newest == nil {
+			newest = run
+		}
 	}
 
-	if len(names) > 0 {
-		lastRun := strings.TrimSuffix(names[0], fileExt)
-		return nil, fmt.Errorf("%w in %s: the last run %s is already undone", ErrNoRuns, dir, lastRun)
-	}
-	return nil, fmt.Errorf("%w in %s", ErrNoRuns, dir)
+	return nil, &NoRunsError{Dir: dir, Last: newest}
 }
 
 func isOldFormat(data []byte) bool {

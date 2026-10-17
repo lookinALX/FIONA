@@ -1,111 +1,65 @@
 # TUI API
 
-Package `internal/tui` exposes a single entry point. The caller launches the TUI, waits for the user to choose an action, and receives a `Result`.
+Package `internal/tui` is the interactive mode. It runs the whole pipeline itself through `internal/app`: the caller only starts it and waits until the user quits.
 
 ## Entry point
 
 ```go
-func Run() (Result, error)
+func Run(opts Options) error
 ```
 
-Blocks until the user confirms an action or cancels. Returns an error only if the TUI framework itself fails to start.
-
----
-
-## Result
+Blocks until the user quits. Returns an error only if the terminal UI cannot run. Background work (scans, the classifier, a running sort) is stopped before `Run` returns.
 
 ```go
-type Result struct {
-    Action     Action // what the user requested
-    Primary    string // populated when Action == ActionSort
-    Secondary  string // populated when Action == ActionSort
-    SourcePath string // populated when Action == ActionSort
-    DestPath   string // populated when Action == ActionSort
-    FileAction string // "move" | "copy" — populated when Action == ActionSort
+type Options struct {
+    Source     string         // resolved folder the tree opens at
+    Config     *config.Config // presets, default preset, action and on-conflict
+    HistoryDir string         // where history.jsonl lives
+    Version    string         // written to run journals
+    Workers    int            // default: twice the number of CPUs
+
+    // NewClassifier makes the ML classifier on first use; default fiona-classifier.
+    NewClassifier func() app.Classifier
 }
 ```
 
-### Action values
+`cmd/fiona` starts it for `fiona tui [FOLDER]` and for `fiona` without arguments when stdin and stdout are terminals.
 
-| Constant       | Trigger                        | Fields populated                        |
-|----------------|--------------------------------|-----------------------------------------|
-| `ActionSort`   | User pressed **Sort**          | Primary, Secondary, SourcePath, DestPath, FileAction |
-| `ActionUndo`   | User pressed **Undo**          | None                                    |
-| `ActionCancel` | User pressed **Quit** / ctrl+c | None                                    |
-
-### Helper method
-
-```go
-func (r Result) Cancelled() bool
-```
-
-Returns `true` when `Action == ActionCancel`. Shorthand for the common "did the user abort?" check.
-
----
-
-## Field values
-
-### Primary / Secondary
-
-Possible strings for `Primary`:
+## Screens
 
 ```
-"mimetype"  "extension"  "date"  "year"  "month"  "size"  "ml"
+main ─enter→ confirm ─y→ running → done ─n→ main
+ │ h            └─esc→ main          │ u
+ ↓                                   ↓
+history ─enter→ undoConfirm ─y→ running → done
 ```
 
-Possible strings for `Secondary` (same set plus):
+| Screen | Shows | Keys |
+|--------|-------|------|
+| `main` | folder tree; plan of the selected folder with the chosen preset; preset line; hints | `↑↓→←` `e` tree, `tab` tree ⇄ plan, `l` files in the plan, `p`/`P` preset, `t` template of `custom`, `c` copy, `d` destination, `r` subfolders, `.` hidden, `m` classify, `enter` sort, `h` history, `?` help, `q` quit |
+| `confirm` | the question of the CLI in the hint bar | `y`/`enter`, `n`/`esc` |
+| `running` | progress bar, current file, time | `ctrl+c` stops after the current files |
+| `done` | the result line of the CLI and the problems | `u` undo, `o` open folder, `n` new sort, `h` history, `q` quit |
+| `history` | runs with their state | `enter` undo the selected run, `esc` back |
+| `undoConfirm` | what will be returned, the question in the hint bar | `y`, `n` |
 
-```
-"none"
-```
+## How the plan follows the user
 
-### SourcePath / DestPath
+- Moving the cursor in the tree schedules a scan 200 ms after the last key; a newer scan cancels the older one through its context. Every result carries the scan sequence number; a result for a folder that is no longer selected is dropped.
+- The scan also decides the category of every file, so that reading file contents does not happen while planning.
+- Changing the preset, the template, copy/move re-plans from the same scan; the destination, subfolders and hidden files scan again.
+- Planning and ML classification never run at the same time: both use the tags of the files. A request that comes while one is running is queued.
+- The classifier is never started by itself. While files wait for it, the plan says so and `enter` asks to press `m` first.
+- The disk is not touched before `y` on the `confirm` screen.
 
-Absolute filesystem paths as selected in the file tree. Always non-empty when `Action == ActionSort`.
+## Progress
 
-### FileAction
+A running sort or undo is a command that calls `app.Execute` or `app.ExecuteUndo` with a `sorter.Reporter` that keeps counters under a mutex. The screen reads them on a 100 ms tick; the command returns a message with the result when the run ends.
 
-`"move"` — files are moved to the destination (default).  
-`"copy"` — files are copied, originals remain in place.
+## Mouse
 
----
+A click selects a folder in the tree (a second click opens it), a preset in the preset line, or a hint in the hint bar. Only a click right on a hint acts; the gaps between hints and the empty space after them do nothing. The wheel moves through the tree or scrolls the plan.
 
-## Usage pattern in main.go
+## Tests
 
-```go
-result, err := tui.Run()
-if err != nil {
-    // TUI failed to start
-}
-
-switch result.Action {
-case tui.ActionCancel:
-    os.Exit(0)
-
-case tui.ActionUndo:
-    // run undo pipeline (no criteria needed)
-
-case tui.ActionSort:
-    opts.Sort.Primary   = result.Primary
-    opts.Sort.Secondary = result.Secondary
-    opts.SourcePath     = result.SourcePath
-    opts.DestPath       = result.DestPath
-    opts.FileAction     = result.FileAction // "move" | "copy"
-    // run sort pipeline
-}
-```
-
----
-
-## Bottom bar buttons
-
-| Button    | Keyboard     | Mouse  | Effect                          |
-|-----------|--------------|--------|---------------------------------|
-| Sort      | enter        | click  | Confirms sort → `ActionSort`    |
-| Undo      | enter        | click  | Confirms undo → `ActionUndo`    |
-| Move/Copy | enter, space | click  | Toggles `FileAction` in-place   |
-| Quit      | enter        | click  | Cancels → `ActionCancel`        |
-| —         | ctrl+c       | —      | Cancels → `ActionCancel`        |
-
-Tab / Shift+Tab cycle focus between all buttons and selectors.  
-The Move/Copy button shows the **currently active** mode; pressing it switches to the other.
+`internal/tui/model_test.go` drives the model with messages and runs every command it returns until nothing is left, so background work finishes inside the test. The scan delay is set to zero there.

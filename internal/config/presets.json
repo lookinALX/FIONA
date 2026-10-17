@@ -1,0 +1,26 @@
+{
+  "downloads": {
+    "description": "Everything into folders by type: images, documents, archives, …",
+    "rules": [
+      { "to": "{category}" }
+    ]
+  },
+  "photos": {
+    "description": "Photos and videos by year and month taken; everything else stays",
+    "rules": [
+      { "match": { "category": ["images", "videos"] }, "to": "{year}/{month}" }
+    ]
+  },
+  "by-date": {
+    "description": "Everything by year and month",
+    "rules": [
+      { "to": "{year}/{month}" }
+    ]
+  },
+  "by-type": {
+    "description": "By type, then by extension",
+    "rules": [
+      { "to": "{category}/{ext}" }
+    ]
+  }
+}

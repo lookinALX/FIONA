@@ -2,119 +2,76 @@ package cli
 
 import (
 	"fmt"
-	"os"
+	"io"
+	"strings"
+
+	"github.com/lookinalx/fiona/internal/config"
+	"github.com/lookinalx/fiona/internal/rules"
+	"github.com/lookinalx/fiona/internal/scanner"
 )
 
-func PrintUsage() {
-	fmt.Fprintf(os.Stderr, `
-╔════════════════════════════════════════════════════╗
-║            FIONA - File Organizer                  ║
-╚════════════════════════════════════════════════════╝
+const commands = `Usage:
+  fiona [FOLDER]                      sort FOLDER (default: the current one) with the default preset
+  fiona sort [FLAGS] [SOURCE] [DEST]  sort SOURCE into folders inside DEST (default: SOURCE)
+  fiona undo [RUN-ID] [FLAGS]         undo the last run, or the one given; again for the one before
+  fiona history [--all]               list runs and whether they are undone
+  fiona presets [show NAME]           list presets, or print one as JSON to copy into the config
+  fiona tui [FOLDER]                  interactive mode, also started by fiona without arguments
+`
 
-Usage:
-	fiona sort [OPTIONS]
-	fiona undo [OPTIONS]
+// PrintUsage prints the full help. The flag lists come from the flag sets
+// themselves, so they cannot go out of date.
+func PrintUsage(w io.Writer, version string) {
+	fmt.Fprintf(w, "FIONA %s — sorts files into folders.\n\n", version)
+	fmt.Fprint(w, commands)
 
-Organize and sort files into directories based on various criteria.
+	fmt.Fprintf(w, "\nSort flags:\n%s", SortFlags(&SortOpts{}).FlagUsages())
+	fmt.Fprintf(w, "\nUndo flags:\n%s", UndoFlags(&UndoOpts{}).FlagUsages())
 
-OPTIONS SORT:
-  -c, --criteria <string>
-        Primary sorting criteria (default: mimetype)
-        Available: mimetype, extension, year, month, date, size
+	fmt.Fprintln(w, "\nRules come from, first found: --to, -c/-t, --preset, default_preset of the config, downloads.")
+	fmt.Fprintln(w, "\nPresets:")
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Fprintf(w, "  (the config cannot be read: %v)\n", err)
+	} else {
+		for _, name := range cfg.Names() {
+			preset, _ := cfg.Preset(name)
+			fmt.Fprintf(w, "  %-12s %s\n", name, preset.Description)
+		}
+	}
+	if path, err := config.FilePath(); err == nil {
+		fmt.Fprintf(w, "  Your own presets go to %s; start from `fiona presets show downloads`.\n", path)
+	}
 
-  -t, --then <string>
-        Secondary sorting criteria (optional)
-        Available: mimetype, extension, year, month, date, size
+	fmt.Fprintln(w, "\nPlaceholders of --to and of presets:")
+	for _, p := range rules.Placeholders {
+		fmt.Fprintf(w, "  %-12s %s\n", "{"+p.Name+"}", p.Description)
+	}
 
-  -s, --source <path>
-        Source directory to scan for files (default: current directory)
+	fmt.Fprintln(w, "\nCategories:")
+	for _, c := range scanner.Categories {
+		exts := scanner.CategoryExtensions[c]
+		if c == scanner.CategoryOther {
+			fmt.Fprintf(w, "  %-12s everything else; files without a known extension are recognised by content\n", c)
+			continue
+		}
+		fmt.Fprintf(w, "  %-12s %s\n", c, strings.Join(exts, " "))
+	}
 
-  -d, --dest <path>
-        Destination directory for organized files (default: current directory)
-        Created right before execution if it does not exist
+	fmt.Fprint(w, `
+Examples:
+  fiona ~/Downloads                          sort by type, after one question
+  fiona -p photos ~/Pictures                 photos by year and month taken
+  fiona sort ~/Downloads --to "{year}/{ext}" -n
+  fiona sort ~/Downloads ~/Sorted --copy -r  copy, subfolders included
+  fiona undo                                 undo the last run
 
-  -a, --action <string>
-        How to handle files: copy or move (default: copy)
-
-  --on-conflict <string>
-        How to handle file conflicts: rename, skip, or replace (default: rename)
-        replace moves the existing file to <dest>/.fiona/trash/<run-id>/,
-        trash older than 5 days is removed on the next executed sort
-
-  -r, --recursive
-        Scan subdirectories too (default: top-level files only)
-        Never enters bundles (.app, .bundle, .framework, .photoslibrary, .xcodeproj)
-        and projects (folders with .git, .hg, .svn, node_modules, go.mod, package.json)
-
-  --hidden
-        Include files and directories starting with a dot (default: skipped)
-
-  -n, --dry-run
-        Print the plan and exit, nothing on disk is changed; stronger than --yes
-
-  -y, --yes
-        Execute without confirmation
-
-  -w, --workers <int>
-        Number of workers for the current run, 1 or more (default: max availible)
-
-  --log <path>
-        Directory to write the run journal to (default: <dest>/.fiona/runs)
-
-OPTIONS UNDO:
-  --log <path>
-        Journal file of the run to undo (<run-id>.jsonl)
-
-  -d, --dest <path>
-        Undo the last run of this destination directory that is not undone yet
-        (default: current directory); cannot be combined with --log
-
-  -n, --dry-run
-        Print the undo preview and exit, nothing on disk is changed
-
-  -y, --yes
-        Execute without confirmation
-
-  -w, --workers <int>
-        Number of workers for the current run, 1 or more (default: max availible)
-
-EXAMPLES:
-  # Sort the top-level files of the current directory by extension (asks before executing)
-  fiona sort -c extension
-
-  # Sort photos by year, then month, and move them
-  fiona sort -c year -t month -a move -s ~/Photos
-
-  # Copy documents by type, including subdirectories, skipping files that already exist
-  fiona sort -c mimetype -r --on-conflict skip -s ~/Documents -d ~/Organized
-
-  # Preview only
-  fiona sort -c extension --dry-run
-
-  # Execute immediately without confirmation
-  fiona sort -c extension --yes
-
-  # Undo the last run of a destination directory
-  fiona undo --dest ~/Organized
-
-AVAILABLE CRITERIA:
-  mimetype   - Group by MIME type (images, videos, documents, etc.)
-  extension  - Group by file extension (.jpg, .pdf, .txt, etc.)
-  year       - Group by file year
-  month      - Group by file month
-  date       - Group by full date
-  size       - Group by file size ranges
-
-For more information: https://github.com/lookinalx/fiona
+Exit codes: 0 done or cancelled, 1 something failed, 2 mistake in the command or the config.
+More: https://github.com/lookinalx/fiona
 `)
 }
 
-func PrintShortUsage() {
-	fmt.Fprintf(os.Stderr, `
-Usage:
-	fiona sort [OPTIONS]
-	fiona undo [OPTIONS])
-
-Use fiona -h or --help for more information.
-`)
+func PrintShortUsage(w io.Writer) {
+	fmt.Fprint(w, commands)
+	fmt.Fprintln(w, "\nUse fiona --help for flags, presets and examples.")
 }

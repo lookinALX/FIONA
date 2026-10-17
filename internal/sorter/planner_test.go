@@ -1,14 +1,13 @@
 package sorter
 
 import (
-	"bytes"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
-	"github.com/lookinalx/fiona/internal/rules"
 	"github.com/lookinalx/fiona/internal/scanner"
 	"github.com/lookinalx/fiona/internal/types"
 )
@@ -17,19 +16,40 @@ import (
 
 const testRunID = "20261010-153012-a1b2"
 
-func makeFileInfo(path string, fileType string, size int64) *scanner.FileInfo {
+// makeFileInfo keeps the wanted folder in Tag, so that files need not exist.
+func makeFileInfo(path string, folder string, size int64) *scanner.FileInfo {
 	return &scanner.FileInfo{
-		Path:      path,
-		Name:      filepath.Base(path),
-		Extension: filepath.Ext(path),
-		Size:      size,
-		Date:      "January 2025",
-		Type:      fileType,
+		Path:    path,
+		Name:    filepath.Base(path),
+		Ext:     strings.ToLower(strings.TrimPrefix(filepath.Ext(path), ".")),
+		Size:    size,
+		ModTime: time.Date(2025, 1, 15, 12, 0, 0, 0, time.Local),
+		Tag:     folder,
 	}
 }
 
-func byType() []rules.Rule {
-	return []rules.Rule{&rules.ByTypeRule{IsPrimary: true}}
+type routerFunc func(fi *scanner.FileInfo) ([]string, bool)
+
+func (f routerFunc) Route(fi *scanner.FileInfo) ([]string, bool) { return f(fi) }
+
+// byType sends a file to the folder in its Tag.
+func byType() Router {
+	return routerFunc(func(fi *scanner.FileInfo) ([]string, bool) { return []string{fi.Tag}, true })
+}
+
+// byTypeAndExt adds a subfolder for the extension.
+func byTypeAndExt() Router {
+	return routerFunc(func(fi *scanner.FileInfo) ([]string, bool) { return []string{fi.Tag, fi.Ext}, true })
+}
+
+// byYear uses the year of the modification time.
+func byYear() Router {
+	return routerFunc(func(fi *scanner.FileInfo) ([]string, bool) { return []string{fi.ModTime.Format("2006")}, true })
+}
+
+// planOf plans files that need not exist on disk.
+func planOf(files []*scanner.FileInfo, router Router, skipped []scanner.SkippedEntry, p PlanParams) *Plan {
+	return NewPlan(&scanner.Result{Files: files, Skipped: skipped}, router, p)
 }
 
 func params(source, dest, onConflict string) PlanParams {
@@ -48,7 +68,7 @@ func TestNewPlan_PrimaryOnly(t *testing.T) {
 	source, dest := t.TempDir(), t.TempDir()
 	fi := makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1024)
 
-	plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
+	plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
 
 	if len(plan.Actions) != 1 {
 		t.Fatalf("expected 1 action, got %d", len(plan.Actions))
@@ -79,12 +99,9 @@ func TestNewPlan_PrimaryAndSecondary(t *testing.T) {
 	source, dest := t.TempDir(), t.TempDir()
 	fi := makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 2048)
 
-	ruleSet := []rules.Rule{
-		&rules.ByTypeRule{IsPrimary: true},
-		&rules.ByExtensionRule{IsPrimary: false},
-	}
+	ruleSet := byTypeAndExt()
 
-	plan := NewPlan([]*scanner.FileInfo{fi}, ruleSet, nil, params(source, dest, types.OnConflictRename))
+	plan := planOf([]*scanner.FileInfo{fi}, ruleSet, nil, params(source, dest, types.OnConflictRename))
 	action := plan.Actions[0]
 
 	if want := filepath.Join("images", "jpg"); action.DestDir != want {
@@ -101,7 +118,7 @@ func TestNewPlan_CopyAction(t *testing.T) {
 
 	p := params(source, dest, types.OnConflictRename)
 	p.FileAction = "copy"
-	plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, p)
+	plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, p)
 
 	if plan.Actions[0].Kind != types.OpCopy {
 		t.Errorf("Kind = %q, want %q", plan.Actions[0].Kind, types.OpCopy)
@@ -116,7 +133,7 @@ func TestNewPlan_SortedBySourcePath(t *testing.T) {
 		makeFileInfo(filepath.Join(source, "b.jpg"), "images", 1),
 	}
 
-	plan := NewPlan(files, byType(), nil, params(source, dest, types.OnConflictRename))
+	plan := planOf(files, byType(), nil, params(source, dest, types.OnConflictRename))
 
 	for i, name := range []string{"a.jpg", "b.jpg", "c.jpg"} {
 		action := plan.Actions[i]
@@ -127,7 +144,7 @@ func TestNewPlan_SortedBySourcePath(t *testing.T) {
 }
 
 func TestNewPlan_EmptyPlan(t *testing.T) {
-	plan := NewPlan(nil, byType(), nil, params(t.TempDir(), t.TempDir(), types.OnConflictRename))
+	plan := planOf(nil, byType(), nil, params(t.TempDir(), t.TempDir(), types.OnConflictRename))
 
 	if len(plan.Actions) != 0 || len(plan.Mkdirs) != 0 {
 		t.Errorf("expected empty plan, got %+v", plan)
@@ -144,7 +161,7 @@ func TestNewPlan_SanitizesRuleComponents(t *testing.T) {
 	fi := makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1)
 	fi.Tag = "../../x"
 
-	plan := NewPlan([]*scanner.FileInfo{fi}, []rules.Rule{&rules.ByMLRule{IsPrimary: true}}, nil,
+	plan := planOf([]*scanner.FileInfo{fi}, byType(), nil,
 		params(source, dest, types.OnConflictRename))
 	action := plan.Actions[0]
 
@@ -161,7 +178,7 @@ func TestNewPlan_RejectsWhenDestDirIsFile(t *testing.T) {
 	createTestFile(t, filepath.Join(dest, "images"), []byte("I am a file"), 0644)
 	fi := makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1)
 
-	plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
+	plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
 	action := plan.Actions[0]
 
 	if action.Kind != types.OpReject || action.Note == "" {
@@ -179,7 +196,7 @@ func TestNewPlan_RejectsWhenDestDirIsSymlink(t *testing.T) {
 	}
 	fi := makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1)
 
-	plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
+	plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
 
 	if plan.Actions[0].Kind != types.OpReject {
 		t.Errorf("Kind = %q, want %q: a symlink must not lead the write out of dest", plan.Actions[0].Kind, types.OpReject)
@@ -195,7 +212,7 @@ func TestNewPlan_NoopWhenFileIsInPlace(t *testing.T) {
 	fi := makeFileInfo(path, "images", 5)
 
 	for _, strategy := range []string{types.OnConflictRename, types.OnConflictSkip, types.OnConflictReplace} {
-		plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(dest, dest, strategy))
+		plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(dest, dest, strategy))
 		action := plan.Actions[0]
 
 		if action.Kind != types.OpNoop {
@@ -218,7 +235,7 @@ func TestNewPlan_NoopForHardLink(t *testing.T) {
 		t.Skipf("cannot create hard link: %v", err)
 	}
 
-	plan := NewPlan([]*scanner.FileInfo{makeFileInfo(original, "images", 5)}, byType(), nil,
+	plan := planOf([]*scanner.FileInfo{makeFileInfo(original, "images", 5)}, byType(), nil,
 		params(source, dest, types.OnConflictReplace))
 
 	if plan.Actions[0].Kind != types.OpNoop {
@@ -234,7 +251,7 @@ func TestNewPlan_RenameOnExistingFile(t *testing.T) {
 	createTestFile(t, filepath.Join(dest, "images", "photo_1.jpg"), []byte("old"), 0644)
 	fi := makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1)
 
-	plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
+	plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
 	action := plan.Actions[0]
 
 	if action.Kind != types.OpMove || action.Conflict != types.ConflictRenamed {
@@ -255,7 +272,7 @@ func TestNewPlan_RenameWithinPlan(t *testing.T) {
 
 	// every strategy must keep all three files: a target reserved by this plan is never replaced
 	for _, strategy := range []string{types.OnConflictRename, types.OnConflictReplace} {
-		plan := NewPlan(files, byType(), nil, params(source, dest, strategy))
+		plan := planOf(files, byType(), nil, params(source, dest, strategy))
 
 		var targets []string
 		for _, action := range plan.Actions {
@@ -279,7 +296,7 @@ func TestNewPlan_NamesDifferingByCaseCollide(t *testing.T) {
 		makeFileInfo(filepath.Join(source, "b", "photo.jpg"), "images", 1),
 	}
 
-	plan := NewPlan(files, byType(), nil, params(source, dest, types.OnConflictRename))
+	plan := planOf(files, byType(), nil, params(source, dest, types.OnConflictRename))
 
 	if got := filepath.Base(plan.Actions[0].TargetPath); got != "Photo.JPG" {
 		t.Errorf("first target = %q, want %q", got, "Photo.JPG")
@@ -298,7 +315,7 @@ func TestNewPlan_UniqueTargetsForManyFiles(t *testing.T) {
 		files = append(files, makeFileInfo(filepath.Join(source, strings.Repeat("d", i+1), "same.txt"), "documents", 1))
 	}
 
-	plan := NewPlan(files, byType(), nil, params(source, dest, types.OnConflictRename))
+	plan := planOf(files, byType(), nil, params(source, dest, types.OnConflictRename))
 
 	seen := make(map[string]struct{})
 	for _, action := range plan.Actions {
@@ -324,7 +341,7 @@ func TestNewPlan_Skip(t *testing.T) {
 		makeFileInfo(filepath.Join(source, "old.jpg"), "images", 1),
 	}
 
-	plan := NewPlan(files, byType(), nil, params(source, dest, types.OnConflictSkip))
+	plan := planOf(files, byType(), nil, params(source, dest, types.OnConflictSkip))
 
 	wantKinds := []types.OpKind{types.OpMove, types.OpSkip, types.OpSkip}
 	for i, action := range plan.Actions {
@@ -345,7 +362,7 @@ func TestNewPlan_ReplaceMovesExistingFileToTrash(t *testing.T) {
 	createTestFile(t, filepath.Join(dest, "images", "photo.jpg"), []byte("old"), 0644)
 	fi := makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1)
 
-	plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictReplace))
+	plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictReplace))
 	action := plan.Actions[0]
 
 	if action.Kind != types.OpMove || action.Conflict != types.ConflictReplaced {
@@ -377,7 +394,7 @@ func TestNewPlan_ReplaceFallsBackToRename(t *testing.T) {
 		}
 		fi := makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1)
 
-		plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictReplace))
+		plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictReplace))
 		action := plan.Actions[0]
 
 		if action.Conflict != types.ConflictRenamed || action.TrashPath != "" || filepath.Base(action.TargetPath) != "photo_1.jpg" {
@@ -395,7 +412,7 @@ func TestNewPlan_ReplaceFallsBackToRename(t *testing.T) {
 		}
 		fi := makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1)
 
-		plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictReplace))
+		plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictReplace))
 		action := plan.Actions[0]
 
 		if action.Conflict != types.ConflictRenamed || action.TrashPath != "" {
@@ -412,11 +429,11 @@ func TestNewPlan_ReplaceFallsBackToRename(t *testing.T) {
 		createTestFile(t, incoming, []byte("incoming"), 0644)
 
 		occupantInfo := makeFileInfo(occupant, "images", 8)
-		occupantInfo.Date = "March 2024"
+		occupantInfo.ModTime = time.Date(2024, 3, 1, 12, 0, 0, 0, time.Local)
 		incomingInfo := makeFileInfo(incoming, "images", 8)
-		incomingInfo.Date = "March 2025"
+		incomingInfo.ModTime = time.Date(2025, 3, 1, 12, 0, 0, 0, time.Local)
 
-		plan := NewPlan([]*scanner.FileInfo{occupantInfo, incomingInfo}, []rules.Rule{&rules.ByYearRule{IsPrimary: true}}, nil,
+		plan := planOf([]*scanner.FileInfo{occupantInfo, incomingInfo}, byYear(), nil,
 			params(dest, dest, types.OnConflictReplace))
 
 		for _, action := range plan.Actions {
@@ -444,10 +461,10 @@ func TestFreeName(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			source, dest := t.TempDir(), t.TempDir()
-			createTestFile(t, filepath.Join(dest, "unknown", tt.name), []byte("old"), 0644)
-			fi := makeFileInfo(filepath.Join(source, tt.name), "unknown", 1)
+			createTestFile(t, filepath.Join(dest, "other", tt.name), []byte("old"), 0644)
+			fi := makeFileInfo(filepath.Join(source, tt.name), "other", 1)
 
-			plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
+			plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
 
 			if got := filepath.Base(plan.Actions[0].TargetPath); got != tt.want {
 				t.Errorf("renamed to %q, want %q", got, tt.want)
@@ -470,12 +487,9 @@ func TestNewPlan_MkdirsListsOnlyMissingDirectoriesOnce(t *testing.T) {
 		makeFileInfo(filepath.Join(source, "c.pdf"), "documents", 1),
 		makeFileInfo(filepath.Join(source, "d.pdf"), "documents", 1),
 	}
-	ruleSet := []rules.Rule{
-		&rules.ByTypeRule{IsPrimary: true},
-		&rules.ByExtensionRule{IsPrimary: false},
-	}
+	ruleSet := byTypeAndExt()
 
-	plan := NewPlan(files, ruleSet, nil, params(source, dest, types.OnConflictRename))
+	plan := planOf(files, ruleSet, nil, params(source, dest, types.OnConflictRename))
 
 	want := []string{
 		filepath.Join(dest, "images", "jpg"),
@@ -493,7 +507,7 @@ func TestNewPlan_MkdirsNeverContainsDest(t *testing.T) {
 	dest := filepath.Join(t.TempDir(), "not", "created", "yet")
 	fi := makeFileInfo(filepath.Join(source, "a.jpg"), "images", 1)
 
-	plan := NewPlan([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
+	plan := planOf([]*scanner.FileInfo{fi}, byType(), nil, params(source, dest, types.OnConflictRename))
 
 	if want := []string{filepath.Join(dest, "images")}; !reflect.DeepEqual(plan.Mkdirs, want) {
 		t.Errorf("Mkdirs = %v, want %v", plan.Mkdirs, want)
@@ -503,7 +517,7 @@ func TestNewPlan_MkdirsNeverContainsDest(t *testing.T) {
 	}
 }
 
-// ─── Summary, stats, print ───────────────────────────────────────────────────
+// ─── Summary, stats, folders ───────────────────────────────────────────────────
 
 func TestSummary_GroupsByDestDir(t *testing.T) {
 	source, dest := t.TempDir(), t.TempDir()
@@ -513,7 +527,7 @@ func TestSummary_GroupsByDestDir(t *testing.T) {
 		makeFileInfo(filepath.Join(source, "report.pdf"), "documents", 300),
 	}
 
-	plan := NewPlan(files, byType(), nil, params(source, dest, types.OnConflictRename))
+	plan := planOf(files, byType(), nil, params(source, dest, types.OnConflictRename))
 	summary := plan.Summary()
 
 	if len(summary) != 2 || len(summary["images"]) != 2 || len(summary["documents"]) != 1 {
@@ -527,55 +541,115 @@ func TestSummary_GroupsByDestDir(t *testing.T) {
 	}
 }
 
-func TestPrint_ShowsTotals(t *testing.T) {
+// byCategory sends a real file to the folder of its category.
+func byCategory() Router {
+	return routerFunc(func(fi *scanner.FileInfo) ([]string, bool) { return []string{fi.Category()}, true })
+}
+
+func TestNewPlan_UnmatchedFilesStayInPlace(t *testing.T) {
 	source, dest := t.TempDir(), t.TempDir()
-	createTestFile(t, filepath.Join(dest, "images", "photo.jpg"), []byte("old"), 0644)
-	createTestFile(t, filepath.Join(dest, "documents"), []byte("I am a file"), 0644)
-	inPlace := filepath.Join(dest, "images", "placed.png")
-	createTestFile(t, inPlace, []byte("placed"), 0644)
-
 	files := []*scanner.FileInfo{
-		makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 100),
-		makeFileInfo(filepath.Join(source, "clip.mp4"), "videos", 200),
-		makeFileInfo(filepath.Join(source, "report.pdf"), "documents", 300),
-		makeFileInfo(inPlace, "images", 6),
+		makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1),
+		makeFileInfo(filepath.Join(source, "report.pdf"), "", 1),
 	}
-	skipped := []scanner.SkippedEntry{
-		{Path: filepath.Join(source, "link1"), Reason: scanner.ReasonSymlink},
-		{Path: filepath.Join(source, "link2"), Reason: scanner.ReasonSymlink},
-		{Path: filepath.Join(source, "locked"), Reason: scanner.ReasonNoAccess},
+	onlyImages := routerFunc(func(fi *scanner.FileInfo) ([]string, bool) {
+		return []string{fi.Tag}, fi.Tag == "images"
+	})
+
+	plan := planOf(files, onlyImages, nil, params(source, dest, types.OnConflictRename))
+
+	if len(plan.Actions) != 1 || plan.Actions[0].SourcePath != files[0].Path || plan.Actions[0].Seq != 0 {
+		t.Errorf("Actions = %+v", plan.Actions)
 	}
-
-	plan := NewPlan(files, byType(), skipped, params(source, dest, types.OnConflictRename))
-
-	var out bytes.Buffer
-	plan.Print(&out, true)
-	text := out.String()
-
-	for _, want := range []string{
-		"Total: 2 files, 300 B",
-		"photo_1.jpg  (renamed from photo.jpg)",
-		"clip.mp4",
-		"Renamed: 1",
-		"Replaced: 0",
-		"Skipped: 0",
-		"Already in place: 1",
-		"Rejected: 1",
-		"Skipped by scanner: 3 (1 no access, 2 symlinks)",
-	} {
-		if !strings.Contains(text, want) {
-			t.Errorf("plan does not contain %q:\n%s", want, text)
-		}
+	if !reflect.DeepEqual(plan.Unmatched, []string{files[1].Path}) {
+		t.Errorf("Unmatched = %v", plan.Unmatched)
+	}
+	if stats := plan.Stats(); stats.Files != 1 || stats.Unmatched != 1 {
+		t.Errorf("Stats() = %+v", stats)
 	}
 }
 
-func TestPrint_EmptyPlan(t *testing.T) {
-	plan := NewPlan(nil, byType(), nil, params(t.TempDir(), t.TempDir(), types.OnConflictRename))
+func TestNewPlan_ReusesFolderDifferingByCase(t *testing.T) {
+	source, dest := t.TempDir(), t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dest, "Images", "JPG"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	files := []*scanner.FileInfo{
+		makeFileInfo(filepath.Join(source, "a.jpg"), "images", 1),
+		makeFileInfo(filepath.Join(source, "b.PDF"), "Docs", 1),
+		makeFileInfo(filepath.Join(source, "c.pdf"), "docs", 1),
+	}
 
-	var out bytes.Buffer
-	plan.Print(&out, true)
+	plan := planOf(files, byTypeAndExt(), nil, params(source, dest, types.OnConflictRename))
 
-	if !strings.Contains(out.String(), "No files to process.") || !strings.Contains(out.String(), "Skipped by scanner: 0") {
-		t.Errorf("unexpected plan:\n%s", out.String())
+	want := []string{
+		filepath.Join(dest, "Images", "JPG", "a.jpg"),
+		filepath.Join(dest, "Docs", "pdf", "b.PDF"),
+		filepath.Join(dest, "Docs", "pdf", "c.pdf"),
+	}
+	for i, action := range plan.Actions {
+		if action.TargetPath != want[i] {
+			t.Errorf("target %d = %q, want %q", i, action.TargetPath, want[i])
+		}
+	}
+	wantMkdirs := []string{filepath.Join(dest, "Docs"), filepath.Join(dest, "Docs", "pdf")}
+	if !reflect.DeepEqual(plan.Mkdirs, wantMkdirs) {
+		t.Errorf("Mkdirs = %v, want %v", plan.Mkdirs, wantMkdirs)
+	}
+}
+
+func TestFolders(t *testing.T) {
+	source, dest := t.TempDir(), t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dest, "documents"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	files := []*scanner.FileInfo{
+		makeFileInfo(filepath.Join(source, "a.torrent"), "other", 10),
+		makeFileInfo(filepath.Join(source, "b.torrent"), "other", 10),
+		makeFileInfo(filepath.Join(source, "c.ics"), "other", 10),
+		makeFileInfo(filepath.Join(source, "report.pdf"), "documents", 100),
+		makeFileInfo(filepath.Join(source, "photo.jpg"), "images", 1000),
+	}
+
+	folders := planOf(files, byType(), nil, params(source, dest, types.OnConflictRename)).Folders()
+
+	var names []string
+	for _, f := range folders {
+		names = append(names, f.Name)
+	}
+	if want := []string{"images", "documents", "other"}; !reflect.DeepEqual(names, want) {
+		t.Fatalf("folders = %v, want category order %v", names, want)
+	}
+	if folders[0].Exists || !folders[1].Exists {
+		t.Errorf("Exists: images = %v, documents = %v", folders[0].Exists, folders[1].Exists)
+	}
+	other := folders[2]
+	if other.Files != 3 || other.Size != 30 {
+		t.Errorf("other = %+v", other)
+	}
+	if want := []ExtCount{{"torrent", 2}, {"ics", 1}}; !reflect.DeepEqual(other.Exts, want) {
+		t.Errorf("other.Exts = %v, want %v", other.Exts, want)
+	}
+}
+
+func TestFolders_TwoLevels(t *testing.T) {
+	source, dest := t.TempDir(), t.TempDir()
+	deep := routerFunc(func(fi *scanner.FileInfo) ([]string, bool) {
+		return []string{"2025", fi.Tag, "deeper"}, true
+	})
+	files := []*scanner.FileInfo{
+		makeFileInfo(filepath.Join(source, "a.jpg"), "02", 1),
+		makeFileInfo(filepath.Join(source, "b.jpg"), "01", 2),
+		makeFileInfo(filepath.Join(source, "c.jpg"), "01", 3),
+	}
+
+	folders := planOf(files, deep, nil, params(source, dest, types.OnConflictRename)).Folders()
+
+	if len(folders) != 1 || folders[0].Name != "2025" || folders[0].Files != 3 {
+		t.Fatalf("folders = %+v", folders)
+	}
+	children := folders[0].Children
+	if len(children) != 2 || children[0].Name != "01" || children[0].Files != 2 || children[0].Size != 5 || children[1].Name != "02" {
+		t.Errorf("children = %+v", children)
 	}
 }

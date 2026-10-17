@@ -1,7 +1,6 @@
 package sorter
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -556,7 +555,7 @@ func TestNewUndoPlan_RejectsForgedJournal(t *testing.T) {
 	assertFileContent(t, victim, []byte("victim"))
 }
 
-func TestUndoPlan_Print(t *testing.T) {
+func TestUndoPlan_Stats(t *testing.T) {
 	source, dest := t.TempDir(), t.TempDir()
 	createTestFile(t, filepath.Join(source, "photo.jpg"), []byte("new photo"), 0644)
 	createTestFile(t, filepath.Join(source, "doc.pdf"), []byte("pdf content"), 0644)
@@ -571,20 +570,9 @@ func TestUndoPlan_Print(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var out bytes.Buffer
-	plan.Print(&out)
-	text := out.String()
-
-	for _, want := range []string{
-		"Undo of run " + run.Header.RunID + " (move, ",
-		"move back to " + source + ": 2 files",
-		"restore from trash: 1",
-		// documents and the four levels of .fiona/trash/<run-id>/images; videos keeps the changed file
-		"remove empty directories: 5",
-		"skip (changed after the run): 1",
-	} {
-		if !strings.Contains(text, want) {
-			t.Errorf("preview does not contain %q:\n%s", want, text)
-		}
+	// documents and the four levels of .fiona/trash/<run-id>/images; videos keeps the changed file
+	want := UndoStats{MoveBack: 2, TrashRestore: 1, EmptyDirs: 5, Skipped: 1}
+	if plan.Stats != want {
+		t.Errorf("Stats = %+v, want %+v", plan.Stats, want)
 	}
 }

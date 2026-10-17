@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"context"
 	"fmt"
 	"io/fs"
 	"os"
@@ -28,6 +29,8 @@ type Options struct {
 	Recursive     bool     // false by default
 	IncludeHidden bool     // false by default
 	Exclude       []string // absolute paths: dest, if it is inside source
+	// Context stops a long scan early; nil means it runs to the end.
+	Context context.Context
 }
 
 type SkippedEntry struct {
@@ -38,6 +41,7 @@ type SkippedEntry struct {
 type Result struct {
 	Files   []*FileInfo
 	Skipped []SkippedEntry
+	Kept    []string // folders left as is: not entered without -r, bundles and projects
 }
 
 type walker struct {
@@ -61,12 +65,22 @@ func Scan(root string, opt Options) (*Result, error) {
 	}
 
 	w.walk(root, entries)
+	if w.cancelled() {
+		return nil, w.opt.Context.Err()
+	}
 
 	return w.res, nil
 }
 
+func (w *walker) cancelled() bool {
+	return w.opt.Context != nil && w.opt.Context.Err() != nil
+}
+
 func (w *walker) walk(dir string, entries []fs.DirEntry) {
 	for _, d := range entries {
+		if w.cancelled() {
+			return
+		}
 		name := d.Name()
 		path := filepath.Join(dir, name)
 
@@ -99,7 +113,11 @@ func (w *walker) walk(dir string, entries []fs.DirEntry) {
 
 func (w *walker) walkDir(path string, d fs.DirEntry) {
 	name := d.Name()
-	if !w.opt.Recursive || name == stateDir || hasOpaqueSuffix(name) || w.excluded(path, d) {
+	if name == stateDir || w.excluded(path, d) {
+		return
+	}
+	if !w.opt.Recursive || hasOpaqueSuffix(name) {
+		w.res.Kept = append(w.res.Kept, path)
 		return
 	}
 
@@ -111,6 +129,7 @@ func (w *walker) walkDir(path string, d fs.DirEntry) {
 
 	for _, e := range entries {
 		if _, isMarker := projectMarkers[e.Name()]; isMarker {
+			w.res.Kept = append(w.res.Kept, path)
 			return
 		}
 	}

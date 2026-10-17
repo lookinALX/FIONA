@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -230,32 +229,6 @@ func willBeEmpty(dir string, gone map[string]struct{}) bool {
 		}
 	}
 	return true
-}
-
-// Print shows what the undo is going to do, before the user confirms it.
-func (p *UndoPlan) Print(w io.Writer) {
-	header := p.Run.Header
-
-	fmt.Fprintf(w, "Undo of run %s (%s, %s)\n",
-		header.RunID, header.FileAction, header.StartedAt.Local().Format("02.01.2006 15:04"))
-	if p.Run.Footer == nil {
-		fmt.Fprintln(w, "  The run was interrupted: only operations that really happened are reverted.")
-	}
-
-	if header.FileAction == string(types.OpCopy) {
-		fmt.Fprintf(w, "  remove copies from %s: %d %s\n", header.Dest, p.Stats.RemoveCopy, pluralize(p.Stats.RemoveCopy))
-	} else {
-		fmt.Fprintf(w, "  move back to %s: %d %s\n", header.Source, p.Stats.MoveBack, pluralize(p.Stats.MoveBack))
-	}
-	fmt.Fprintf(w, "  restore from trash: %d\n", p.Stats.TrashRestore)
-	fmt.Fprintf(w, "  remove empty directories: %d\n", p.Stats.EmptyDirs)
-	fmt.Fprintf(w, "  skip (changed after the run): %d\n", p.Stats.Skipped)
-
-	for _, action := range p.Actions {
-		if action.Kind == types.UndoSkip {
-			fmt.Fprintf(w, "    %s: %s\n", action.Op.TargetPath, action.Note)
-		}
-	}
 }
 
 type Reverter struct {

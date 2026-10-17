@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/lookinalx/fiona/internal/journal"
-	"github.com/lookinalx/fiona/internal/rules"
 	"github.com/lookinalx/fiona/internal/scanner"
 	"github.com/lookinalx/fiona/internal/types"
 )
@@ -132,7 +131,7 @@ func scanPlan(t *testing.T, source, dest, fileAction, onConflict string) *Plan {
 		t.Fatalf("Scan() error = %v", err)
 	}
 
-	return NewPlan(scanned.Files, []rules.Rule{&rules.ByTypeRule{IsPrimary: true}}, scanned.Skipped, PlanParams{
+	return NewPlan(scanned, byCategory(), PlanParams{
 		Source:     source,
 		Dest:       dest,
 		FileAction: fileAction,
